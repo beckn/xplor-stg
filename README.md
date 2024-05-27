@@ -7,7 +7,6 @@ Singular Transaction Gateway (STG) is a gateway service designed for implementin
 
 ## Table of Contents
 
-- [Working Demo](#working-demo)
 - [Pre-requisites](#pre-requisites)
 - [Installation](#installation)
 - [Running tests](#running-tests)
@@ -72,7 +71,7 @@ The service has test cases for each module's service functions which you will ge
 ## Working of STG
 Singular Transaction Gateway (STG) provides a robust framework for implementing transactions across various networks, ensuring seamless communication, validation, and integration. With clearly defined layers and functionalities, STG streamlines the process of onboarding participants, handling requests, and managing protocol interactions.
 
-![image](https://gitlab.thewitslab.com/wil-workspace/xplor/STG-nest-backend/uploads/408cf094d0d0f02488496b6f25f0982d/image.png)
+![image](https://gitlab.thewitslab.com/wil-workspace/xplor/STG-nest-backend/raw/feat/develop/diagram.png)
 
 This diagram illustrates the flow of transactions through the three layers of the Singular Transaction Gateway, depicting their interactions and responsibilities.
 
@@ -127,7 +126,7 @@ IS_NETWORK_MOCK=
 
 ## Deployment
 
-Deploying the Registry service can be achieved through:
+Deploying the STG service can be achieved through:
 
 - **Docker**: Create a Docker image and launch your service.
 - **Kubernetes**: Use Kubernetes for scalable container management.
