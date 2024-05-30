@@ -63,17 +63,18 @@ export class CourseInitService {
             {
               customer: {
                 person: {
-                  name: request.message.order.fulfillment.customer.person.name,
-                  age: request.message.order.fulfillment.customer.person.age,
+                  name: request.message.order.fulfillment[0].customer.person
+                    .name,
+                  age: request.message.order.fulfillment[0].customer.person.age,
                   gender:
-                    request.message.order.fulfillment.customer.person.gender,
+                    request.message.order.fulfillment[0].customer.person.gender,
                   tags: [],
                 },
                 contact: {
                   phone:
-                    request.message.order.fulfillment.customer.contact.phone,
+                    request.message.order.fulfillment[0].customer.contact.phone,
                   email:
-                    request.message.order.fulfillment.customer.contact.email,
+                    request.message.order.fulfillment[0].customer.contact.email,
                 },
               },
             },

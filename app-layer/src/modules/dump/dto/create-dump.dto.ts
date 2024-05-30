@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsObject,
-  IsOptional,
-  IsArray,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsObject, IsOptional } from 'class-validator';
 
 export class CreateDumpDto {
   @IsString()
@@ -15,17 +9,9 @@ export class CreateDumpDto {
   @IsString()
   domain?: string;
 
-  @IsOptional()
-  @IsArray()
-  domains?: Array<string>;
-
   @IsString()
   @IsNotEmpty()
-  request_type: string;
-
-  @IsString()
-  @IsNotEmpty()
-  message_id: string;
+  provider_id: string;
 
   @IsObject()
   @IsNotEmpty()

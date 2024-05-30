@@ -34,7 +34,7 @@ export class CourseConfirmService {
       const context = selectRequestDetails?.context as unknown as SelectContext;
       const billing = selectRequestDetails?.message?.order?.billing;
       delete billing?.id;
-      const fulfillments = selectRequestDetails?.message?.order?.billing;
+      const fulfillments = selectRequestDetails?.message?.order?.fulfillment;
       if (!context) throw new NotFoundException('Context not found');
       const contextPayload: SelectContext = {
         ...context,
@@ -44,6 +44,7 @@ export class CourseConfirmService {
           this.configService.get('PROTOCOL_SERVICE_URL') +
           `/${xplorDomain.course}`,
         message_id: request.context.message_id,
+        transaction_id: request.context.transaction_id,
         version: OnestContextConstants.version,
         timestamp: new Date().toISOString(),
         ttl: request.context.ttl

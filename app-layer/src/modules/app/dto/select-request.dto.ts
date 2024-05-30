@@ -6,7 +6,7 @@ class OrderItem {
   @IsString({ each: true })
   items_id: string[];
 
-  @IsString()
+  @IsOptional()
   provider_id: string;
 
   @IsOptional()

@@ -84,11 +84,21 @@ export class AppController {
 
   @Post('on_status')
   onStatus(@Body() onStatusRequest: OndcContext | OnestContext | any) {
-    return this.appService.onInit(onStatusRequest);
+    return this.appService.onStatus(onStatusRequest);
   }
 
   @Post('on_confirm')
   onConfirm(@Body() confirmRequest: OndcContext | OnestContext | any) {
     return this.appService.onConfirm(confirmRequest);
+  }
+
+  @Get('subscribe')
+  subscribe() {
+    return this.appService.subscribe();
+  }
+
+  @Get('get_search_data')
+  getSearchData() {
+    return this.appService.getSearchData();
   }
 }

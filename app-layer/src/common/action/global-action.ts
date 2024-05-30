@@ -117,7 +117,7 @@ export class GlobalActionService {
               await this.retailService.sendSearchPayload(
                 retailContext,
                 message,
-              );
+              );``
             // Log the search response for the retail domain
             console.log(`Retail: ${JSON.stringify(searchResponseRetail)}`);
             break;

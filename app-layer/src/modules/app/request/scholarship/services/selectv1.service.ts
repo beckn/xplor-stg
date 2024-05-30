@@ -43,8 +43,10 @@ export class ScholarshipSelectService {
           ...context,
           action: Action.select,
           domain: DomainsEnum.SCHOLARSHIP_DOMAIN,
-          bpp_uri:this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.scholarship}`,
+          bpp_uri:
+            this.configService.get('PROTOCOL_SERVICE_URL') +
+            `/${xplorDomain.scholarship}`,
+          transaction_id: request.context.transaction_id,
           message_id: request.context.message_id,
           version: OnestContextConstants.version,
           timestamp: new Date().toISOString(),
@@ -62,12 +64,7 @@ export class ScholarshipSelectService {
               { id: request.message.order.items_id[0] },
               ...request.message.order.items_id.slice(1).map((id) => ({ id })),
             ],
-            fulfillments: [
-              { id: request.message.order.fulfillment_id[0] },
-              ...request.message.order.fulfillment_id
-                .slice(1)
-                .map((id) => ({ id })),
-            ],
+            fulfillments: itemsFromDb?.fulfillments,
           },
         };
 

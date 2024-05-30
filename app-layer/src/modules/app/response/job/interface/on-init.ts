@@ -24,9 +24,9 @@ interface Quantity {
   maximum: Maximum;
 }
 
-interface Media {
-  url: string;
-}
+// interface Media {
+//   url: string;
+// }
 
 interface Creator {
   descriptor: Descriptor;
