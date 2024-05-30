@@ -269,7 +269,7 @@ export const onInitSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          email: { type: 'string', format: 'email' },
+                          email: { type: 'string' },
                         },
                         required: ['email'],
                       },
@@ -328,7 +328,7 @@ export const onInitSchema = {
                         type: 'object',
                         properties: {
                           phone: { type: 'string' },
-                          email: { type: 'string', format: 'email' },
+                          email: { type: 'string' },
                         },
                         required: ['phone', 'email'],
                       },
@@ -358,7 +358,7 @@ export const onInitSchema = {
               properties: {
                 name: { type: 'string' },
                 phone: { type: 'string' },
-                email: { type: 'string', format: 'email' },
+                email: { type: 'string' },
                 address: { type: 'string' },
               },
               required: ['name', 'phone', 'email', 'address'],

@@ -24,11 +24,12 @@ export class ScholarshipStatusService {
 
   async createPayload(request: StatusRequestDto) {
     try {
-      const initRequestDetails = await this.dbService.findByActiontransaction_id(
-        request?.context?.transaction_id,
-        request?.context?.domain,
-        'on_init',
-      );
+      const initRequestDetails =
+        await this.dbService.findByActiontransaction_id(
+          request?.context?.transaction_id,
+          request?.context?.domain,
+          'on_init',
+        );
       if (!initRequestDetails) return null;
       const context = initRequestDetails?.context as unknown as SelectContext;
       const contextPayload: SelectContext = {

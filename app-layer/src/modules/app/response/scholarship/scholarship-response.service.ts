@@ -76,7 +76,7 @@ export class ScholarshipResponseService {
   createSelectPayload(response: IScholarshipSelectResponseMessage) {
     try {
       // Initialize the order object with necessary properties extracted from the response.
-      console.log(response,"schoilarResonsiveService")
+      console.log(response, 'schoilarResonsiveService');
       const order: IScholarshipSelectResponseMessageOrder = {
         provider: {
           id: response?.order?.provider?.id, // Extracts the provider ID.

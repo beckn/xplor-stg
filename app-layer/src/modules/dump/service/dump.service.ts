@@ -47,7 +47,49 @@ export class DumpService {
     provider_id: string,
     id: string[],
     domain: string,
-  ): Promise<Dump | null> {
+  ): Promise<Dump | any> {
+    return {
+      context: {
+        bap_id: OnestContextConstants.bap_id,
+        bap_uri: OnestContextConstants.bap_uri + `/${domain}`,
+        bpp_id: 'infosys.springboard.io',
+        bpp_uri: 'https://infosys.springboard.io',
+      },
+      "fulfillments": [
+        {
+           "id":"{{$randomUUID}}" ,
+          "customer": {
+            "person": {
+              "name": "Jane Doe",
+              "age": "13",
+              "gender": "female",
+              "tags": [
+                {
+                  "descriptor": {
+                    "code": "professional-details",
+                    "name": "Professional Details"
+                  },
+                  "list": [
+                    {
+                      "descriptor": {
+                        "code": "profession",
+                        "name": "profession"
+                      },
+                      "value": "student"
+                    }
+                  ],
+                  "display": true
+                }
+              ]
+            },
+            "contact": {
+              "phone": "+91-9663088848",
+              "email": "jane.doe@example.com"
+            }
+          }
+        }
+      ]
+    };
     return await this.dumpModel
       .findOne({
         transaction_id: transaction_id,
@@ -106,5 +148,13 @@ export class DumpService {
         },
       })
       .exec();
+  }
+  async upsertDump(providerId: string, dumpData: any): Promise<DumpDocument> {
+    const filter = { provider_id: providerId };
+    const update = { ...dumpData }; // Assuming dumpData contains the updated data
+    const options = { upsert: true };
+
+    const dump = await this.dumpModel.findOneAndUpdate(filter, update, options);
+    return dump;
   }
 }

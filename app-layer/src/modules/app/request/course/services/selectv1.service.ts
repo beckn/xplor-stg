@@ -44,6 +44,7 @@ export class CourseSelectService {
           ? request.context.ttl
           : OnestContextConstants.ttl,
       };
+      console.log('contextPayload', contextPayload);
       itemsFromDb.context as unknown as SelectContext;
       const messagePayload: IMessageSelect = {
         order: {

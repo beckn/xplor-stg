@@ -37,7 +37,11 @@ export class ScholarshipInitService {
         request?.message?.order?.provider_id,
         request?.context?.domain,
       );
-      console.log('selectRequestSetails', selectRequestDetails, onSearchResponseDetails)
+      console.log(
+        'selectRequestSetails',
+        selectRequestDetails,
+        onSearchResponseDetails,
+      );
       if (!selectRequestDetails || !onSearchResponseDetails) return null;
       const context = selectRequestDetails?.context as unknown as SelectContext;
       const contextPayload: SelectContext = {
@@ -65,7 +69,8 @@ export class ScholarshipInitService {
             {
               customer: {
                 person: {
-                  name: request.message.order.fulfillment[0].customer.person.name,
+                  name: request.message.order.fulfillment[0].customer.person
+                    .name,
                   age: request.message.order.fulfillment[0].customer.person.age,
                   gender:
                     request.message.order.fulfillment[0].customer.person.gender,
@@ -87,7 +92,7 @@ export class ScholarshipInitService {
         context: contextPayload,
         message: messagePayload,
       };
-      console.log("ScholarshipPayload", payload);
+      console.log('ScholarshipPayload', payload);
       return {
         ...payload,
         gatewayUrl: Gateway.scholarship,

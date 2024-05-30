@@ -211,7 +211,7 @@ export const onConfirmSchema = {
                         type: 'object',
                         properties: {
                           phone: { type: 'string' },
-                          email: { type: 'string', format: 'email' },
+                          email: { type: 'string' },
                         },
                         required: ['phone', 'email'],
                       },

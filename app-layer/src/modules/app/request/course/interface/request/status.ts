@@ -11,9 +11,9 @@ export interface IMessageStatus {
   order_id: string;
 }
 
-interface Order {
-  order_id: string;
-}
+// interface Order {
+//   order_id: string;
+// }
 /**
  * Interface for a job status, including a context and a message.
  */

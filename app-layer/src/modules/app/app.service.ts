@@ -5,19 +5,19 @@ import { ConfigService } from '@nestjs/config';
 import { SearchRequestDto } from './dto/search-request.dto';
 import { GlobalActionService } from '../../common/action/global-action';
 import { JobResponseService } from './response/job/job-response.service';
-import { Action, DomainsEnum } from '../../common/constants/enums';
+import { DomainsEnum } from '../../common/constants/enums';
 import { AxiosService } from '../../common/axios/axios.service';
 import { getResponse } from '../../util/response';
 import { coreResponseMessage } from '../../common/constants/http-response-message';
 import { RetailResponseService } from './response/retail/retail-response.service';
 import { DumpService } from '../dump/service/dump.service';
-import { CreateDumpDto } from '../dump/dto/create-dump.dto';
 import { SelectRequestDto } from './dto/select-request.dto';
 import { ScholarshipResponseService } from './response/scholarship/scholarship-response.service';
 import { CourseResponseService } from './response/course/course-response.service';
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
+import { KafkaService } from 'src/services/kafka/kafka.service';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
@@ -33,6 +33,7 @@ export class AppService {
     private readonly httpService: AxiosService, // Service for making HTTP requests
     private readonly configService: ConfigService, // Service for accessing configuration values
     private readonly dumpService: DumpService, // Service for dumping the request & response
+    private readonly kafkaService: KafkaService,
   ) {
     // Initialize the configService with a new instance
     this.configService = new ConfigService();
@@ -47,16 +48,16 @@ export class AppService {
   async search(searchRequest: SearchRequestDto) {
     try {
       // Dump the request into database
-      const createDumpDto: CreateDumpDto = {
-        context: searchRequest.context,
-        domains: [...searchRequest.domain],
-        transaction_id: searchRequest.context.transaction_id,
-        message_id: searchRequest.context.message_id,
-        request_type: Action.search,
-        message: searchRequest.message,
-      };
+      // const createDumpDto: CreateDumpDto = {
+      //   context: searchRequest.context,
+      //   domains: [...searchRequest.domain],
+      //   transaction_id: searchRequest.context.transaction_id,
+      //   message_id: searchRequest.context.message_id,
+      //   request_type: Action.search,
+      //   message: searchRequest.message,
+      // };
 
-      await this.dumpService.create(createDumpDto);
+      // await this.dumpService.create(createDumpDto);
       // Perform the global search using the injected service
       await this.globalActionService.globalSearch(
         searchRequest.domain,
@@ -87,31 +88,29 @@ export class AppService {
         JSON.stringify(response),
         '=============================',
       );
-      const domain =
-        response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-          ? 'course'
-          : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-          ? 'job'
-          : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-          ? 'scholarship'
-          : 'retail';
+      // const domain =
+      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
+      //     ? 'course'
+      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
+      //     ? 'job'
+      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
+      //     ? 'scholarship'
+      //     : 'retail';
 
       // Dump the response into database
-      const createDumpDto: CreateDumpDto = {
+      const providerId = response?.message?.catalog?.providers[0]?.id;
+      const updateData = {
         context: response?.context,
         transaction_id: response?.context?.transaction_id,
-        domain: domain,
-        message_id: response?.context?.message_id,
-        request_type: response?.context?.action,
+        domain: response?.context?.domain,
+        provider_id: response?.message?.catalog?.providers[0]?.id,
         message: response?.message,
       };
 
-      await this.dumpService.create(createDumpDto);
-      // Delegate the search operation to the sendSearch method
-      await this.sendSearch(response);
+      await this.dumpService.upsertDump(providerId, updateData);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error?.response);
+      console.log(error);
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -119,54 +118,67 @@ export class AppService {
   }
 
   // Method to send a search request to a specific service
-  async sendSearch(response: SearchRequestDto) {
+  async sendSearch(response: SearchRequestDto | any) {
     try {
       // Initialize variables for job, course, and scholarship payloads
-      let job: object, course: object, scholarship: object, retail: object;
-      // Determine which type of payload to create based on the domain
-      switch (response.context.domain) {
-        case DomainsEnum.JOB_DOMAIN:
-          job = response.message
-            ? this.onestCreatePayload.createPayload(response.message)
-            : {};
-          break;
-        case DomainsEnum.COURSE_DOMAIN:
-          course = response.message
-            ? this.onestCreatePayload.createPayload(response.message)
-            : {};
-          break;
-        case DomainsEnum.SCHOLARSHIP_DOMAIN:
-          scholarship = response.message
-            ? this.onestCreatePayload.createPayload(response.message)
-            : {};
-        case DomainsEnum.RETAIL_DOMAIN:
-          retail = response.message
-            ? this.ondcCreatePayload.createPayload(response.message)
-            : {};
-          break;
-        default:
-          break;
-      }
-      // Construct the payload for the search request
-      const payload = {
-        context: response.context,
-        data: {
-          job: job != null ? { context: response.context, ...job } : {},
-          course:
-            course != null ? { context: response.context, ...course } : {},
-          scholarship:
-            scholarship != null
-              ? { context: response.context, ...scholarship }
-              : {},
-          retail:
-            retail != null ? { context: response.context, ...retail } : {},
+
+      console.log('on_search Response', response);
+      const payloadSendToKafka = {
+        context: {
+          transaction_id: response?.context?.transaction_id,
+          domain: response?.context?.domain,
+        },
+        message: {
+          catalog: response?.message?.catalog,
         },
       };
-      // Construct the URL for the search request
-      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_search';
-      // Send the search request and log the response
-      const resp = await this.httpService.post(url, payload);
-      console.log('resp', resp);
+      await this.kafkaService.produceMessage(payloadSendToKafka);
+
+      // let job: object, course: object, scholarship: object, retail: object;
+      // // Determine which type of payload to create based on the domain
+      // switch (response.context.domain) {
+      //   case DomainsEnum.JOB_DOMAIN:
+      //     job = response.message
+      //       ? this.onestCreatePayload.createPayload(response.message)
+      //       : {};
+      //     break;
+      //   case DomainsEnum.COURSE_DOMAIN:
+      //     course = response.message
+      //       ? this.onestCreatePayload.createPayload(response.message)
+      //       : {};
+      //     break;
+      //   case DomainsEnum.SCHOLARSHIP_DOMAIN:
+      //     scholarship = response.message
+      //       ? this.onestCreatePayload.createPayload(response.message)
+      //       : {};
+      //   case DomainsEnum.RETAIL_DOMAIN:
+      //     retail = response.message
+      //       ? this.ondcCreatePayload.createPayload(response.message)
+      //       : {};
+      //     break;
+      //   default:
+      //     break;
+      // }
+      // // Construct the payload for the search request
+      // const payload = {
+      //   context: response.context,
+      //   data: {
+      //     job: job != null ? { context: response.context, ...job } : {},
+      //     course:
+      //       course != null ? { context: response.context, ...course } : {},
+      //     scholarship:
+      //       scholarship != null
+      //         ? { context: response.context, ...scholarship }
+      //         : {},
+      //     retail:
+      //       retail != null ? { context: response.context, ...retail } : {},
+      //   },
+      // };
+      // // Construct the URL for the search request
+      // const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_search';
+      // // Send the search request and log the response
+      // const resp = await this.httpService.post(url, payload);
+      // console.log('resp', resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       console.log(error);
@@ -200,27 +212,26 @@ export class AppService {
   async onSelect(response: any) {
     try {
       console.log(JSON.stringify(response), 'onSelect');
-      const domain =
-        response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-          ? 'course'
-          : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-          ? 'job'
-          : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-          ? 'scholarship'
-          : 'retail';
+      // const domain =
+      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
+      //     ? 'course'
+      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
+      //     ? 'job'
+      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
+      //     ? 'scholarship'
+      //     : 'retail';
 
       // Dump the response into database
-      const createDumpDto: CreateDumpDto = {
-        context: response?.context,
-        transaction_id: response?.context?.transaction_id,
-        domain: domain,
-        message_id: response?.context?.message_id,
-        request_type: Action.on_select,
-        message: response?.message,
-      };
-      console.log(createDumpDto, 'createDumpDto');
+      // const createDumpDto: CreateDumpDto = {
+      //   context: response?.context,
+      //   transaction_id: response?.context?.transaction_id,
+      //   domain: response?.context?.domain,
+      //   provider_id: response?.context?.message?.catalog?.provider?.id,
+      //   message: response?.message,
+      // };
+      // console.log(createDumpDto, 'createDumpDto');
 
-      await this.dumpService.create(createDumpDto);
+      // await this.dumpService.create(createDumpDto);
       // Delegate the search operation to the sendSearch method
       await this.sendSelect(response);
     } catch (error) {
@@ -298,16 +309,16 @@ export class AppService {
   }
   async init(initRequest: InitRequestDto) {
     try {
-      const createDumpDto: CreateDumpDto = {
-        context: initRequest?.context,
-        transaction_id: initRequest?.context?.transaction_id,
-        domain: initRequest.context.domain,
-        message_id: initRequest?.context?.message_id,
-        request_type: Action.init,
-        message: initRequest?.message,
-      };
+      // const createDumpDto: CreateDumpDto = {
+      //   context: initRequest?.context,
+      //   transaction_id: initRequest?.context?.transaction_id,
+      //   domain: initRequest.context.domain,
+      //   message_id: initRequest?.context?.message_id,
+      //   request_type: Action.init,
+      //   message: initRequest?.message,
+      // };
 
-      await this.dumpService.create(createDumpDto);
+      // await this.dumpService.create(createDumpDto);
       this.globalActionService.globalInit(initRequest);
       // Return a success response
       return getResponse(
@@ -332,26 +343,26 @@ export class AppService {
         JSON.stringify(response),
         '=============================',
       );
-      const domain =
-        response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-          ? 'course'
-          : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-          ? 'job'
-          : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-          ? 'scholarship'
-          : 'retail';
+      // const domain =
+      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
+      //     ? 'course'
+      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
+      //     ? 'job'
+      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
+      //     ? 'scholarship'
+      //     : 'retail';
 
-      // Dump the response into database
-      const createDumpDto: CreateDumpDto = {
-        context: response?.context,
-        transaction_id: response?.context?.transaction_id,
-        domain: domain,
-        message_id: response?.context?.message_id,
-        request_type: Action.on_init,
-        message: response?.message,
-      };
+      // // Dump the response into database
+      // const createDumpDto: CreateDumpDto = {
+      //   context: response?.context,
+      //   transaction_id: response?.context?.transaction_id,
+      //   domain: domain,
+      //   message_id: response?.context?.message_id,
+      //   request_type: Action.on_init,
+      //   message: response?.message,
+      // };
 
-      await this.dumpService.create(createDumpDto);
+      // await this.dumpService.create(createDumpDto);
       // Delegate the search operation to the sendSearch method
       await this.sendInit(response);
     } catch (error) {
@@ -443,16 +454,16 @@ export class AppService {
 
   async status(statusRequest: StatusRequestDto) {
     try {
-      const createDumpDto: CreateDumpDto = {
-        context: statusRequest?.context,
-        transaction_id: statusRequest?.context?.transaction_id,
-        domain: statusRequest.context.domain,
-        message_id: statusRequest?.context?.message_id,
-        request_type: Action.init,
-        message: statusRequest?.message,
-      };
+      // const createDumpDto: CreateDumpDto = {
+      //   context: statusRequest?.context,
+      //   transaction_id: statusRequest?.context?.transaction_id,
+      //   domain: statusRequest.context.domain,
+      //   message_id: statusRequest?.context?.message_id,
+      //   request_type: Action.init,
+      //   message: statusRequest?.message,
+      // };
 
-      await this.dumpService.create(createDumpDto);
+      // await this.dumpService.create(createDumpDto);
       this.globalActionService.globalStatus(statusRequest);
       // Return a success response
       return getResponse(
@@ -477,26 +488,26 @@ export class AppService {
         JSON.stringify(response),
         '=============================',
       );
-      const domain =
-        response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-          ? 'course'
-          : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-          ? 'job'
-          : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-          ? 'scholarship'
-          : 'retail';
+      // const domain =
+      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
+      //     ? 'course'
+      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
+      //     ? 'job'
+      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
+      //     ? 'scholarship'
+      //     : 'retail';
 
       // Dump the response into database
-      const createDumpDto: CreateDumpDto = {
-        context: response?.context,
-        transaction_id: response?.context?.transaction_id,
-        domain: domain,
-        message_id: response?.context?.message_id,
-        request_type: Action.status,
-        message: response?.message,
-      };
+      // const createDumpDto: CreateDumpDto = {
+      //   context: response?.context,
+      //   transaction_id: response?.context?.transaction_id,
+      //   domain: domain,
+      //   message_id: response?.context?.message_id,
+      //   request_type: Action.status,
+      //   message: response?.message,
+      // };
 
-      await this.dumpService.create(createDumpDto);
+      // await this.dumpService.create(createDumpDto);
       // Delegate the search operation to the sendSearch method
       await this.sendStatus(response);
     } catch (error) {
@@ -555,13 +566,15 @@ export class AppService {
             retail != null ? { context: response.context, ...retail } : {},
         },
       };
-      console.log('initPayload', JSON.stringify(payload));
+      
+      console.log('statusPayload', payload);
 
       // Construct the URL for the search request
       const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_status';
       // Send the search request and log the response
+      console.log('resp Url to status', url);
       const resp = await this.httpService.post(url, payload);
-      console.log('resp', resp);
+      console.log('resp Url to status', url,resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       console.log(error);
@@ -574,26 +587,26 @@ export class AppService {
   // Method to handle search requests and delegate to the sendSearch method
   async onConfirm(response: any) {
     try {
-      const domain =
-        response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-          ? 'course'
-          : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-          ? 'job'
-          : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-          ? 'scholarship'
-          : 'retail';
+      // const domain =
+      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
+      //     ? 'course'
+      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
+      //     ? 'job'
+      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
+      //     ? 'scholarship'
+      //     : 'retail';
 
       // Dump the response into database
-      const createDumpDto: CreateDumpDto = {
-        context: response?.context,
-        transaction_id: response?.context?.transaction_id,
-        domain: domain,
-        message_id: response?.context?.message_id,
-        request_type: Action.on_confirm,
-        message: response?.message,
-      };
+      // const createDumpDto: CreateDumpDto = {
+      //   context: response?.context,
+      //   transaction_id: response?.context?.transaction_id,
+      //   domain: domain,
+      //   message_id: response?.context?.message_id,
+      //   request_type: Action.on_confirm,
+      //   message: response?.message,
+      // };
 
-      await this.dumpService.create(createDumpDto);
+      // await this.dumpService.create(createDumpDto);
       // Delegate the search operation to the sendSearch method
       await this.sendConfirm(response);
     } catch (error) {
@@ -668,5 +681,57 @@ export class AppService {
         getResponse(false, error?.message, null, error?.response?.data),
       );
     }
+  }
+
+  async subscribe() {
+    try {
+      const payload = await this.dumpService.findAll();
+      // console.log(payload);
+      const subscribedResponse = await Promise.all(
+        payload.map(async (data) => {
+          const messagePayload = {
+            context: {
+              transaction_id: data?.transaction_id,
+              domain: data?.domain,
+            },
+            message: data?.message,
+          };
+          return await this.kafkaService.produceMessage(messagePayload);
+        }),
+   
+      );
+      console.log(subscribedResponse)
+      return subscribedResponse;
+    } catch (error) {
+      console.log(error)
+    }
+  
+    
+  }
+
+  async getSearchData() {
+    try {
+      const payload = await this.dumpService.findAll();
+      // console.log(payload);
+      const transformedPayload = await Promise.all(
+        payload.map(async (data) => {
+          const messagePayload = {
+            context: {
+              transaction_id: data?.transaction_id,
+              domain: data?.domain,
+            },
+            message: data?.message,
+          };
+          return await messagePayload
+        }),
+   
+      );
+      console.log(transformedPayload)
+      return transformedPayload;
+    } catch (error) {
+      console.log(error)
+    }
+  
+    
   }
 }

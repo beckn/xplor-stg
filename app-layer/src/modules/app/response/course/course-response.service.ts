@@ -107,9 +107,11 @@ export class CourseResponseService {
             id: item?.id,
           };
         }),
-        fulfillment: {
-          id: response?.order?.fulfillments[0]?.id,
-        },
+        fulfillment: response?.order?.fulfillments[0]?.id
+          ? {
+              id: response?.order?.fulfillments[0]?.id,
+            }
+          : response?.order?.fulfillments,
         quote: response?.order?.quote,
         payments: response?.order?.payments,
       };

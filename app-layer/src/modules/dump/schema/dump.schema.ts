@@ -12,14 +12,8 @@ export class Dump extends Document {
   @Prop({ type: String, optional: true })
   domain: string | Array<string>;
 
-  @Prop({ type: Array<string> })
-  domains: Array<string>;
-
   @Prop({ required: true })
-  request_type: string;
-
-  @Prop({ required: true })
-  message_id: string;
+  provider_id: string;
 
   @Prop({ type: Object, required: true })
   context: Record<string, any>;

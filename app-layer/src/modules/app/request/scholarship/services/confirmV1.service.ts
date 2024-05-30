@@ -52,6 +52,7 @@ export class ScholarshipConfirmService {
           ? request.context.ttl
           : OnestContextConstants.ttl,
       };
+      console.log(request?.message?.order?.items_id[0])
       const messagePayload: IScholarshipConfirmMessage = {
         order: {
           provider: {
@@ -59,19 +60,9 @@ export class ScholarshipConfirmService {
               ? selectRequestDetails?.message?.order?.provider_id
               : request?.message?.order?.provider_id,
           },
-          items: selectRequestDetails?.message?.order?.items_id[0]
-            ? [
-                { id: selectRequestDetails?.message?.order?.items_id[0] },
-                ...selectRequestDetails?.message?.order?.items_id
-                  .slice(1)
-                  .map((id) => ({ id })),
-              ]
-            : [
+          items: [
                 {
-                  id: request?.message?.order?.items_id[0],
-                  ...request?.message?.order?.items_id
-                    .slice(1)
-                    .map((id) => ({ id })),
+                  id: request?.message?.order?.items_id[0]
                 },
               ],
           billing: billing
@@ -117,11 +108,13 @@ export class ScholarshipConfirmService {
         context: contextPayload,
         message: messagePayload,
       };
+      console.log("paylooooad","payload")
       return {
         ...payload,
         gatewayUrl: Gateway.scholarship,
       };
     } catch (error) {
+      console.log(error?.message)
       return error?.message;
     }
   }

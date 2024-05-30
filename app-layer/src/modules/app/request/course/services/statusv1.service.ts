@@ -11,8 +11,8 @@ import {
   xplorDomain,
 } from 'src/common/constants/enums';
 import { DumpService } from 'src/modules/dump/service/dump.service';
-import { InitRequestDto } from 'src/modules/app/dto/init-request.dto';
-import { IMessageInit } from '../interface/request/init';
+// import { InitRequestDto } from 'src/modules/app/dto/init-request.dto';
+// import { IMessageInit } from '../interface/request/init';
 import { StatusRequestDto } from 'src/modules/app/dto/status-request.dto';
 import { IMessageStatus } from '../interface/request/status';
 
@@ -26,11 +26,12 @@ export class CourseStatusService {
 
   async createPayload(request: StatusRequestDto) {
     try {
-      const initRequestDetails = await this.dbService.findByActiontransaction_id(
-        request?.context?.transaction_id,
-        request?.context?.domain,
-        'on_init',
-      );
+      const initRequestDetails =
+        await this.dbService.findByActiontransaction_id(
+          request?.context?.transaction_id,
+          request?.context?.domain,
+          'on_init',
+        );
       if (!initRequestDetails) return null;
       const context = initRequestDetails?.context as unknown as SelectContext;
       const contextPayload: SelectContext = {
