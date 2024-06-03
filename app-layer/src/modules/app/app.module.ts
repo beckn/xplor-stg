@@ -14,7 +14,7 @@ import { ScholarshipResponseService } from './response/scholarship/scholarship-r
 import { CourseResponseService } from './response/course/course-response.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SchedulerService } from 'src/services/cron/scheduler.service';
-import { KafkaService } from 'src/services/kafka/kafka.service';
+// import { KafkaService } from 'src/services/kafka/kafka.service';
 
 /**
  * Module decorator for defining the module's metadata.
@@ -63,7 +63,7 @@ import { KafkaService } from 'src/services/kafka/kafka.service';
     ScholarshipResponseService,
     CourseResponseService,
     SchedulerService,
-    KafkaService,
+    // KafkaService,
   ],
 })
 export class AppModule {}
