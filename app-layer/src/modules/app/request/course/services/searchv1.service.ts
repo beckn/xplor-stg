@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { CourseSearchPayload } from '../entity/search.entity';
 import { Context } from '../interface/context';
@@ -19,6 +19,8 @@ import {
  */
 @Injectable()
 export class CourseSearchService {
+  private readonly logger = new Logger(CourseSearchService.name)
+  
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -70,7 +72,7 @@ export class CourseSearchService {
       const response = await this.httpService.post(url, searchPayload);
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

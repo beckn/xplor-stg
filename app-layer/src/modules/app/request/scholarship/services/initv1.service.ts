@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { OnestContextConstants } from 'src/common/constants/context.constant';
 import { AxiosService } from 'src/common/axios/axios.service';
@@ -16,6 +16,8 @@ import { SelectContext } from '../../course/interface/context';
 
 @Injectable()
 export class ScholarshipInitService {
+  private readonly logger = new Logger(ScholarshipInitService.name)
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -24,7 +26,7 @@ export class ScholarshipInitService {
 
   async createPayload(request: InitRequestDto) {
     try {
-      console.log('request', JSON.stringify(request));
+      this.logger.log('request', JSON.stringify(request));
       const selectRequestDetails =
         await this.dbService.findByActiontransaction_id(
           request?.context?.transaction_id,
@@ -37,7 +39,7 @@ export class ScholarshipInitService {
         request?.message?.order?.provider_id,
         request?.context?.domain,
       );
-      console.log(
+      this.logger.log(
         'selectRequestSetails',
         selectRequestDetails,
         onSearchResponseDetails,
@@ -92,7 +94,7 @@ export class ScholarshipInitService {
         context: contextPayload,
         message: messagePayload,
       };
-      console.log('ScholarshipPayload', payload);
+      this.logger.log('ScholarshipPayload', payload);
       return {
         ...payload,
         gatewayUrl: Gateway.scholarship,
@@ -111,10 +113,10 @@ export class ScholarshipInitService {
         `/${xplorDomain.scholarship}/${Action.init}`;
 
       const response = await this.httpService.post(url, initPayload);
-      console.log('initPayload', JSON.stringify(initPayload));
+      this.logger.log('initPayload', JSON.stringify(initPayload));
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

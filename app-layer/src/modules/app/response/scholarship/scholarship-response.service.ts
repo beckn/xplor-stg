@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Catalog, MessageResponse, Provider } from './interface/on-search';
 import {
@@ -20,6 +20,8 @@ import {
  */
 @Injectable()
 export class ScholarshipResponseService {
+  private readonly logger = new Logger(ScholarshipResponseService.name)
+
   constructor() {}
 
   /**
@@ -60,7 +62,7 @@ export class ScholarshipResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -76,7 +78,7 @@ export class ScholarshipResponseService {
   createSelectPayload(response: IScholarshipSelectResponseMessage) {
     try {
       // Initialize the order object with necessary properties extracted from the response.
-      console.log(response, 'schoilarResonsiveService');
+      this.logger.log(response, 'schoilarResonsiveService');
       const order: IScholarshipSelectResponseMessageOrder = {
         provider: {
           id: response?.order?.provider?.id, // Extracts the provider ID.
@@ -104,7 +106,7 @@ export class ScholarshipResponseService {
       return resp;
     } catch (error) {
       // Logs the error and returns the error message if an exception occurs.
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -148,7 +150,7 @@ export class ScholarshipResponseService {
       return resp;
     } catch (error) {
       // Logs the error and returns the error message if an exception occurs.
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -166,7 +168,7 @@ export class ScholarshipResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -184,7 +186,7 @@ export class ScholarshipResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

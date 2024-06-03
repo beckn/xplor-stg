@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { SelectContext } from '../interface/context';
 import { OnestContextConstants } from 'src/common/constants/context.constant';
@@ -18,6 +18,8 @@ import { IMessageStatus } from '../interface/request/status';
 
 @Injectable()
 export class CourseStatusService {
+  private readonly logger = new Logger(CourseStatusService.name)
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -73,10 +75,10 @@ export class CourseStatusService {
         `/${xplorDomain.course}/${Action.status}`;
 
       const response = await this.httpService.post(url, statusPayload);
-      console.log('statusPayload', JSON.stringify(statusPayload));
+      this.logger.log('statusPayload', JSON.stringify(statusPayload));
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

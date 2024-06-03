@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
 
 import { AppService } from './app.service';
 import { SearchRequestDto } from './dto/search-request.dto';
@@ -14,6 +14,7 @@ import { StatusRequestDto } from './dto/status-request.dto';
  */
 @Controller({ version: '1' })
 export class AppController {
+  private readonly logger = new Logger(AppController.name)
   /**
    * Constructor for the AppController, injecting the AppService for handling business logic.
    */
@@ -58,12 +59,12 @@ export class AppController {
 
   @Post('on_select')
   onSelect(@Body() selectResponse: OndcContext | OnestContext | any) {
-    console.log('on_select===========', JSON.stringify(selectResponse));
+    this.logger.log('on_select===========', JSON.stringify(selectResponse));
     return this.appService.onSelect(selectResponse);
   }
   @Post('init')
   init(@Body() initRequest: InitRequestDto) {
-    console.log('initRequest===========', JSON.stringify(initRequest));
+    this.logger.log('initRequest===========', JSON.stringify(initRequest));
     return this.appService.init(initRequest);
   }
 

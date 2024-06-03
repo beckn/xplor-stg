@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { ISelectContext } from '../interface/context';
 import { OnestContextConstants } from 'src/common/constants/context.constant';
@@ -16,6 +16,8 @@ import { IScholarshipConfirmMessage } from '../interface/request/confirm';
 
 @Injectable()
 export class ScholarshipConfirmService {
+  private readonly logger = new Logger(ScholarshipConfirmService.name)
+  
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -30,7 +32,7 @@ export class ScholarshipConfirmService {
           request?.context?.domain,
           'on_search',
         );
-      console.log('selectRequestDetails', selectRequestDetails);
+      this.logger.log('selectRequestDetails', selectRequestDetails);
       const context =
         selectRequestDetails?.context as unknown as ISelectContext;
       const billing = selectRequestDetails?.message?.order?.billing;
@@ -52,7 +54,7 @@ export class ScholarshipConfirmService {
           ? request.context.ttl
           : OnestContextConstants.ttl,
       };
-      console.log(request?.message?.order?.items_id[0])
+      this.logger.log(request?.message?.order?.items_id[0])
       const messagePayload: IScholarshipConfirmMessage = {
         order: {
           provider: {
@@ -108,13 +110,13 @@ export class ScholarshipConfirmService {
         context: contextPayload,
         message: messagePayload,
       };
-      console.log("paylooooad","payload")
+      this.logger.log("paylooooad","payload")
       return {
         ...payload,
         gatewayUrl: Gateway.scholarship,
       };
     } catch (error) {
-      console.log(error?.message)
+      this.logger.error(error?.message)
       return error?.message;
     }
   }
@@ -122,16 +124,16 @@ export class ScholarshipConfirmService {
   async sendConfirmPayload(request: ConfirmRequestDto) {
     try {
       const ConfirmPayload = await this.createPayload(request);
-      console.log('ConfirmPayload', ConfirmPayload);
+      this.logger.log('ConfirmPayload', ConfirmPayload);
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
         `/${xplorDomain.scholarship}/${Action.confirm}`;
-      console.log('url', url);
+      this.logger.log('url', url);
       const response = await this.httpService.post(url, ConfirmPayload);
-      console.log('confirmPayload', JSON.stringify(ConfirmPayload));
+      this.logger.log('confirmPayload', JSON.stringify(ConfirmPayload));
       return response;
     } catch (error) {
-      console.log(error?.message);
+      this.logger.error(error?.message);
       return error?.message;
     }
   }

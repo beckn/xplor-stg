@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { ScholarshipSearchPayload } from '../entity/search.entity';
@@ -20,6 +20,8 @@ import { OnestContextConstants } from 'src/common/constants/context.constant';
  */
 @Injectable()
 export class ScholarshipSearchService {
+  private readonly logger = new Logger(ScholarshipSearchService.name)
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -61,6 +63,7 @@ export class ScholarshipSearchService {
    * @returns The response from the service.
    */
   async sendSearchPayload(context: Context, query: Message) {
+    
     try {
       const searchPayload: IScholarshipSearch = this.createPayload(
         context,
@@ -72,7 +75,7 @@ export class ScholarshipSearchService {
       const response = await this.httpService.post(url, searchPayload);
       return response;
     } catch (error) {
-      console.log(error?.message);
+      this.logger.error(error?.message);
       return error?.message;
     }
   }

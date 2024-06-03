@@ -1,5 +1,5 @@
 // Import necessary modules and services
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadGatewayException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { SearchRequestDto } from './dto/search-request.dto';
@@ -22,6 +22,8 @@ import { StatusRequestDto } from './dto/status-request.dto';
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
 export class AppService {
+  private readonly logger = new Logger(AppService.name)
+
   // Constructor to inject dependencies
   constructor(
     private readonly globalActionService: GlobalActionService, // Service for global actions
@@ -73,7 +75,7 @@ export class AppService {
       );
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(JSON.stringify(error?.response));
+      this.logger.log(JSON.stringify(error?.response));
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -83,7 +85,7 @@ export class AppService {
   // Method to handle search requests and delegate to the sendSearch method
   async onSearch(response: any) {
     try {
-      console.log(
+      this.logger.log(
         'response ==================',
         JSON.stringify(response),
         '=============================',
@@ -110,7 +112,7 @@ export class AppService {
       await this.dumpService.upsertDump(providerId, updateData);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error);
+      this.logger.error(error);
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -122,7 +124,7 @@ export class AppService {
     try {
       // Initialize variables for job, course, and scholarship payloads
 
-      console.log('on_search Response', response);
+      this.logger.log('on_search Response', response);
       const payloadSendToKafka = {
         context: {
           transaction_id: response?.context?.transaction_id,
@@ -178,10 +180,10 @@ export class AppService {
       // const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_search';
       // // Send the search request and log the response
       // const resp = await this.httpService.post(url, payload);
-      // console.log('resp', resp);
+      // this.logger.log('resp', resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error);
+      this.logger.error(error);
       return new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -190,7 +192,7 @@ export class AppService {
 
   async select(selectRequest: SelectRequestDto) {
     try {
-      console.log('selectRequest', selectRequest);
+      this.logger.log('selectRequest', selectRequest);
       await this.globalActionService.globalSelect(selectRequest);
       // Return a success response
       return getResponse(
@@ -201,7 +203,7 @@ export class AppService {
       );
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(JSON.stringify(error?.response));
+      this.logger.log(JSON.stringify(error?.response));
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -211,7 +213,7 @@ export class AppService {
   // Method to handle search requests and delegate to the sendSearch method
   async onSelect(response: any) {
     try {
-      console.log(JSON.stringify(response), 'onSelect');
+      this.logger.log(JSON.stringify(response), 'onSelect');
       // const domain =
       //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
       //     ? 'course'
@@ -229,14 +231,14 @@ export class AppService {
       //   provider_id: response?.context?.message?.catalog?.provider?.id,
       //   message: response?.message,
       // };
-      // console.log(createDumpDto, 'createDumpDto');
+      // this.logger.log(createDumpDto, 'createDumpDto');
 
       // await this.dumpService.create(createDumpDto);
       // Delegate the search operation to the sendSearch method
       await this.sendSelect(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error?.response);
+      this.logger.error(error?.response);
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -249,7 +251,7 @@ export class AppService {
       let job: object, course: object, scholarship: object, retail: object;
       // Determine which type of payload to create based on the domain
 
-      console.log(response, 'sendOnselect');
+      this.logger.log(response, 'sendOnselect');
       switch (response.context.domain) {
         case DomainsEnum.JOB_DOMAIN:
           job = response.message
@@ -292,16 +294,16 @@ export class AppService {
             retail != null ? { context: response.context, ...retail } : {},
         },
       };
-      console.log('selectPayload', JSON.stringify(payload));
+      this.logger.log('selectPayload', JSON.stringify(payload));
 
       // Construct the URL for the search request
       const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_select';
       // Send the search request and log the response
       const resp = await this.httpService.post(url, payload);
-      console.log('resp=== to core', JSON.stringify(resp));
+      this.logger.log('resp=== to core', JSON.stringify(resp));
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error);
+      this.logger.error(error);
       return new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -329,7 +331,7 @@ export class AppService {
       );
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(JSON.stringify(error?.response));
+      this.logger.log(JSON.stringify(error?.response));
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -338,7 +340,7 @@ export class AppService {
 
   async onInit(response: any) {
     try {
-      console.log(
+      this.logger.log(
         'response ==================',
         JSON.stringify(response),
         '=============================',
@@ -367,7 +369,7 @@ export class AppService {
       await this.sendInit(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error?.response);
+      this.logger.error(error?.response);
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -418,16 +420,16 @@ export class AppService {
             retail != null ? { context: response.context, ...retail } : {},
         },
       };
-      console.log('initPayload', JSON.stringify(payload));
+      this.logger.log('initPayload', JSON.stringify(payload));
 
       // Construct the URL for the search request
       const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_init';
       // Send the search request and log the response
       const resp = await this.httpService.post(url, payload);
-      console.log('resp', resp);
+      this.logger.log('resp', resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error);
+      this.logger.error(error);
       return new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -445,7 +447,7 @@ export class AppService {
       );
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(JSON.stringify(error?.response));
+      this.logger.log(JSON.stringify(error?.response));
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -474,7 +476,7 @@ export class AppService {
       );
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(JSON.stringify(error?.response));
+      this.logger.log(JSON.stringify(error?.response));
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -483,7 +485,7 @@ export class AppService {
 
   async onStatus(response: any) {
     try {
-      console.log(
+      this.logger.log(
         'response ==================',
         JSON.stringify(response),
         '=============================',
@@ -512,7 +514,7 @@ export class AppService {
       await this.sendStatus(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error?.response);
+      this.logger.error(error?.response);
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -567,17 +569,17 @@ export class AppService {
         },
       };
       
-      console.log('statusPayload', payload);
+      this.logger.log('statusPayload', payload);
 
       // Construct the URL for the search request
       const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_status';
       // Send the search request and log the response
-      console.log('resp Url to status', url);
+      this.logger.log('resp Url to status', url);
       const resp = await this.httpService.post(url, payload);
-      console.log('resp Url to status', url,resp);
+      this.logger.log('resp Url to status', url,resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error);
+      this.logger.error(error);
       return new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -611,7 +613,7 @@ export class AppService {
       await this.sendConfirm(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error?.response);
+      this.logger.error(error?.response);
       throw new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -666,17 +668,17 @@ export class AppService {
             retail != null ? { context: response.context, ...retail } : {},
         },
       };
-      console.log('confirmPayload', JSON.stringify(payload));
+      this.logger.log('confirmPayload', JSON.stringify(payload));
 
       // Construct the URL for the search request
       const url =
         this.configService.get('CORE_SERVICE_URL') + '/stg/on_confirm';
       // Send the search request and log the response
       const resp = await this.httpService.post(url, payload);
-      console.log('resp', resp);
+      this.logger.log('resp', resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
-      console.log(error);
+      this.logger.error(error);
       return new BadGatewayException(
         getResponse(false, error?.message, null, error?.response?.data),
       );
@@ -686,7 +688,7 @@ export class AppService {
   // async subscribe() {
   //   try {
   //     const payload = await this.dumpService.findAll();
-  //     // console.log(payload);
+  //     // this.logger.log(payload);
   //     const subscribedResponse = await Promise.all(
   //       payload.map(async (data) => {
   //         const messagePayload = {
@@ -700,10 +702,10 @@ export class AppService {
   //       }),
    
   //     );
-  //     console.log(subscribedResponse)
+  //     this.logger.log(subscribedResponse)
   //     return subscribedResponse;
   //   } catch (error) {
-  //     console.log(error)
+  //     this.logger.error(error)
   //   }
   
     
@@ -712,7 +714,7 @@ export class AppService {
   async getSearchData() {
     try {
       const payload = await this.dumpService.findAll();
-      // console.log(payload);
+      // this.logger.log(payload);
       const transformedPayload = await Promise.all(
         payload.map(async (data) => {
           const messagePayload = {
@@ -726,10 +728,10 @@ export class AppService {
         }),
    
       );
-      console.log(transformedPayload)
+      this.logger.log(transformedPayload)
       return transformedPayload;
     } catch (error) {
-      console.log(error)
+      this.logger.error(error)
     }
   
     

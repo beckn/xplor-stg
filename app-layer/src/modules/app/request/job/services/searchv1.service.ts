@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { JobSearchPayload } from '../entity/search.entity';
@@ -20,6 +20,8 @@ import {
  */
 @Injectable()
 export class JobSearchService {
+  private readonly logger = new Logger(JobSearchService.name)
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -66,12 +68,12 @@ export class JobSearchService {
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
         `/${xplorDomain.job}/${Action.search}`;
-      console.log(url);
+      this.logger.log(url);
 
       const response = await this.httpService.post(url, searchPayload);
       return response;
     } catch (error) {
-      console.log(error?.message);
+      this.logger.error(error?.message);
       return error?.message;
     }
   }

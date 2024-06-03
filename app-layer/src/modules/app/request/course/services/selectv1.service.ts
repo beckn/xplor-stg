@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { CourseSelectPayload } from '../entity/select.entity';
 import { SelectContext } from '../interface/context';
@@ -17,6 +17,8 @@ import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
 
 @Injectable()
 export class CourseSelectService {
+  private readonly logger = new Logger(CourseSelectService.name)
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -44,7 +46,7 @@ export class CourseSelectService {
           ? request.context.ttl
           : OnestContextConstants.ttl,
       };
-      console.log('contextPayload', contextPayload);
+      this.logger.log('contextPayload', contextPayload);
       itemsFromDb.context as unknown as SelectContext;
       const messagePayload: IMessageSelect = {
         order: {
@@ -77,10 +79,10 @@ export class CourseSelectService {
         `/${xplorDomain.course}/${Action.select}`;
 
       const response = await this.httpService.post(url, selectPayload);
-      console.log('selectPayload', JSON.stringify(selectPayload));
+      this.logger.log('selectPayload', JSON.stringify(selectPayload));
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
