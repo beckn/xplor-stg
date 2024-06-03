@@ -6,17 +6,17 @@ import {
   IScholarshipSelect,
   IMessageSelect,
 } from '../interface/request/select';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
 import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
-  Action,
   DomainsEnum,
-  Gateway,
   xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
+  Gateway,
+  Action,
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { SelectRequestDto } from '../../../dto/select-request.dto';
 
 @Injectable()
 export class ScholarshipSelectService {
@@ -47,7 +47,7 @@ export class ScholarshipSelectService {
           domain: DomainsEnum.SCHOLARSHIP_DOMAIN,
           bpp_uri:
             this.configService.get('PROTOCOL_SERVICE_URL') +
-            `/${xplorDomain.scholarship}`,
+            `/${xplorDomain.SCHOLARSHIP}`,
           transaction_id: request.context.transaction_id,
           message_id: request.context.message_id,
           version: OnestContextConstants.version,
@@ -92,7 +92,7 @@ export class ScholarshipSelectService {
       );
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.scholarship}/${Action.select}`;
+        `/${xplorDomain.SCHOLARSHIP}/${Action.select}`;
       this.logger.log(JSON.stringify(selectPayload));
       const response = await this.httpService.post(url, selectPayload);
       return response;

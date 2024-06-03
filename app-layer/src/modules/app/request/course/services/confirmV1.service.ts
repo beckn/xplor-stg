@@ -2,10 +2,14 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { SelectContext } from '../interface/context';
 import { ConfigService } from '@nestjs/config';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import { AxiosService } from '../../../../../common/axios/axios.service';
 import { OnestContextConstants } from '../../../../../common/constants/context.constant';
-import { DomainsEnum, xplorDomain, Gateway } from '../../../../../common/constants/enums';
+import {
+  DomainsEnum,
+  xplorDomain,
+  Gateway,
+  Action,
+} from '../../../../../common/constants/enums';
 import { DumpService } from '../../../../dump/service/dump.service';
 import { ConfirmRequestDto } from '../../../dto/confirm-request.dto';
 import { ICourseConfirmMessage } from '../interface/request/confirm';
@@ -40,7 +44,7 @@ export class CourseConfirmService {
         domain: DomainsEnum.COURSE_DOMAIN,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.course}`,
+          `/${xplorDomain.COURSE}`,
         message_id: request.context.message_id,
         transaction_id: request.context.transaction_id,
         version: OnestContextConstants.version,
@@ -116,7 +120,7 @@ export class CourseConfirmService {
       this.logger.log('ConfirmPayload', ConfirmPayload);
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.confirm}`;
+        `/${xplorDomain.COURSE}/${Action.confirm}`;
       this.logger.log('url', url);
       const response = await this.httpService.post(url, ConfirmPayload);
       this.logger.log('confirmPayload', JSON.stringify(ConfirmPayload));

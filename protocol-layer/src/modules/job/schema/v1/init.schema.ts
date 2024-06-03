@@ -1,4 +1,4 @@
-import { contextSchema } from 'src/modules/scholarship/schema/context.schema';
+import { contextSchema } from './context.schema';
 
 export const initSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',

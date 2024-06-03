@@ -39,7 +39,7 @@ import {
   courseInitResponse,
   courseSelectResponse,
   courseStatusResponse,
-} from 'src/utils/mock-response';
+} from '../../../utils/mock-response';
 @Injectable()
 export class CourseService {
   private readonly logger = new Logger(CourseService.name);

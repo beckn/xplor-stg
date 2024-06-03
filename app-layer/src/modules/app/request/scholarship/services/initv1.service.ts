@@ -1,18 +1,18 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
+import { IMessageInit } from '../interface/request/init';
+import { SelectContext } from '../../course/interface/context';
 import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
   Gateway,
   xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { InitRequestDto } from 'src/modules/app/dto/init-request.dto';
-import { IMessageInit } from '../interface/request/init';
-import { SelectContext } from '../../course/interface/context';
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { InitRequestDto } from '../../../dto/init-request.dto';
 
 @Injectable()
 export class ScholarshipInitService {
@@ -110,7 +110,7 @@ export class ScholarshipInitService {
       if (!initPayload) throw new NotFoundException('Context not found');
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.scholarship}/${Action.init}`;
+        `/${xplorDomain.SCHOLARSHIP}/${Action.init}`;
 
       const response = await this.httpService.post(url, initPayload);
       this.logger.log('initPayload', JSON.stringify(initPayload));

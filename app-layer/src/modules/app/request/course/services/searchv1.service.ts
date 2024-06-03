@@ -4,13 +4,13 @@ import { CourseSearchPayload } from '../entity/search.entity';
 import { Context } from '../interface/context';
 import { ICourseSearch, Message } from '../interface/request/search';
 import { ConfigService } from '@nestjs/config';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import { AxiosService } from '../../../../../common/axios/axios.service';
 import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   xplorDomain,
   DomainsEnum,
   Gateway,
+  Action,
 } from '../../../../../common/constants/enums';
 /**
  * Service for handling course search operations.
@@ -39,7 +39,7 @@ export class CourseSearchService {
         bap_id: OnestContextConstants.bap_id,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.course}`,
+          `/${xplorDomain.COURSE}`,
         domain: DomainsEnum.COURSE_DOMAIN,
       };
       const message: Message = query;
@@ -66,7 +66,7 @@ export class CourseSearchService {
 
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.search}`;
+        `/${xplorDomain.COURSE}/${Action.search}`;
 
       const response = await this.httpService.post(url, searchPayload);
       return response;

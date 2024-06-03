@@ -69,7 +69,7 @@ export class GlobalActionService {
       domain.forEach(async (currentDomain) => {
         // Switch statement to handle different domains
         switch (currentDomain) {
-          case xplorDomain.job:
+          case xplorDomain.JOB:
             // Logic for JOB_DOMAIN
             // Perform the search operation using the JobSearchService
             const searchResponse =
@@ -77,7 +77,7 @@ export class GlobalActionService {
             // Log the search response for the job domain
             this.logger.log(`Job: ${searchResponse}`);
             break;
-          case xplorDomain.course:
+          case xplorDomain.COURSE:
             // Logic for COURSE_DOMAIN
             // Perform the search operation using the CourseSearchService
             const searchResponseCourse =
@@ -88,7 +88,7 @@ export class GlobalActionService {
             // Log the search response for the course domain
             this.logger.log(`Course: ${JSON.stringify(searchResponseCourse)}`);
             break;
-          case xplorDomain.scholarship:
+          case xplorDomain.SCHOLARSHIP:
             // Logic for SCHOLARSHIP_DOMAIN
             // Perform the search operation using the ScholarshipSearchService
 
@@ -100,7 +100,7 @@ export class GlobalActionService {
             // Log the search response for the scholarship domain
             this.logger.log(`Scholarship: ${searchResponseScholarship}`);
             break;
-          case xplorDomain.retail:
+          case xplorDomain.RETAIL:
             const retailContext = {
               domain: null,
               bap_id: OndcContextConstants.bap_id,
@@ -142,7 +142,7 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           // Perform the search operation using the JobSearchService
           // const searchResponse =
@@ -150,7 +150,7 @@ export class GlobalActionService {
           // // Log the search response for the job domain
           // this.logger.log(`Job: ${searchResponse}`);
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
 
           const selectResponseCourse =
@@ -160,7 +160,7 @@ export class GlobalActionService {
             `course-select: ${JSON.stringify(selectResponseCourse)}`,
           );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =
@@ -187,10 +187,10 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
           const selectResponseCourse =
             await this.courseInitService.sendInitPayload(request);
@@ -199,7 +199,7 @@ export class GlobalActionService {
             `course-init: ${JSON.stringify(selectResponseCourse)}`,
           );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =
@@ -226,10 +226,10 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
           const selectResponseCourse =
             await this.courseConfirmService.sendConfirmPayload(request);
@@ -238,7 +238,7 @@ export class GlobalActionService {
             `course-select: ${JSON.stringify(selectResponseCourse)}`,
           );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =
@@ -264,10 +264,10 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
           const selectResponseCourse =
             await this.courseStatusService.sendStatusPayload(request);
@@ -276,7 +276,7 @@ export class GlobalActionService {
             `course-status: ${JSON.stringify(selectResponseCourse)}`,
           );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =

@@ -3,16 +3,6 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { searchSchema } from '../schema/search.schema';
 import { SearchScholarshipDto } from '../dto/search-scholarship.dto';
 import { AxiosService } from '../../../common/axios/axios.service';
-import { GrafanaLoggerService } from 'src/services/grafana/service/grafana.service';
-import validateJson from 'src/utils/validator';
-import { AckNackResponse } from 'src/utils/ack-nack';
-import {
-  ACK,
-  Action,
-  CONTEXT_ERROR,
-  ERROR_CODE_CONTEXT,
-  NACK,
-} from 'src/common/constants/action';
 import { ConfigService } from '@nestjs/config';
 import { onSearchSchema } from '../schema/onSearch.schema';
 import { selectSchema } from '../schema/select.schema';
@@ -32,12 +22,22 @@ import { confirmSchema } from '../schema/confirm.schema';
 import { onConfirmSchema } from '../schema/onConfirm.schema';
 import { onStatusSchema } from '../schema/onStatus.schema';
 import { statusSchema } from '../schema/status.schema';
+import { GrafanaLoggerService } from '../../../services/grafana/service/grafana.service';
 import {
-  scholarshipConfirmResponse,
+  NACK,
+  CONTEXT_ERROR,
+  ERROR_CODE_CONTEXT,
+  ACK,
+  Action,
+} from '../../../common/constants/action';
+import { AckNackResponse } from '../../../utils/ack-nack';
+import {
   scholarshipInitResponse,
   scholarshipSelectResponse,
+  scholarshipConfirmResponse,
   scholarshipStatusResponse,
-} from 'src/utils/mock-response';
+} from '../../../utils/mock-response';
+import validateJson from '../../../utils/validator';
 
 @Injectable()
 export class ScholarshipService {

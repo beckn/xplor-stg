@@ -2,10 +2,10 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { SelectContext } from '../interface/context';
 import { ConfigService } from '@nestjs/config';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import { AxiosService } from '../../../../../common/axios/axios.service';
 import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
+  Action,
   DomainsEnum,
   Gateway,
   xplorDomain,
@@ -70,7 +70,7 @@ export class CourseStatusService {
       if (!statusPayload) throw new NotFoundException('Context not found');
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.status}`;
+        `/${xplorDomain.COURSE}/${Action.status}`;
 
       const response = await this.httpService.post(url, statusPayload);
       this.logger.log('statusPayload', JSON.stringify(statusPayload));

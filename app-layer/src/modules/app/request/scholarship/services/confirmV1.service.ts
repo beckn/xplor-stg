@@ -1,18 +1,18 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { ISelectContext } from '../interface/context';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
-import { ConfigService } from '@nestjs/config';
-import {
-  Action,
-  DomainsEnum,
-  Gateway,
-  xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { ConfirmRequestDto } from 'src/modules/app/dto/confirm-request.dto';
 import { IScholarshipConfirmMessage } from '../interface/request/confirm';
+import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
+import {
+  DomainsEnum,
+  xplorDomain,
+  Gateway,
+  Action,
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { ConfirmRequestDto } from '../../../dto/confirm-request.dto';
 
 @Injectable()
 export class ScholarshipConfirmService {
@@ -45,7 +45,7 @@ export class ScholarshipConfirmService {
         domain: DomainsEnum.SCHOLARSHIP_DOMAIN,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.scholarship}`,
+          `/${xplorDomain.SCHOLARSHIP}`,
         transaction_id: request.context.transaction_id,
         message_id: request.context.message_id,
         version: OnestContextConstants.version,
@@ -127,7 +127,7 @@ export class ScholarshipConfirmService {
       this.logger.log('ConfirmPayload', ConfirmPayload);
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.scholarship}/${Action.confirm}`;
+        `/${xplorDomain.SCHOLARSHIP}/${Action.confirm}`;
       this.logger.log('url', url);
       const response = await this.httpService.post(url, ConfirmPayload);
       this.logger.log('confirmPayload', JSON.stringify(ConfirmPayload));

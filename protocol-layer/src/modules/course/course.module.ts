@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { CourseService } from './services/course.serviceV1';
 import { CourseController } from './course.controllerV1';
-import { AxiosService } from 'src/common/axios/axios.service';
-import { CommonModule } from 'src/common/common.module';
+import { AxiosService } from '../../common/axios/axios.service';
+import { CommonModule } from '../../common/common.module';
 
 @Module({
   imports: [CommonModule],

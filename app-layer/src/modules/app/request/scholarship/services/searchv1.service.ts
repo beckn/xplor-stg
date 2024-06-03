@@ -12,7 +12,7 @@ import {
   Gateway,
   xplorDomain,
 } from '../../../../../common/constants/enums';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 
 /**
  * Service for handling scholarship search operations.
@@ -41,7 +41,7 @@ export class ScholarshipSearchService {
         bap_id: OnestContextConstants.bap_id,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.scholarship}`,
+          `/${xplorDomain.SCHOLARSHIP}`,
         domain: DomainsEnum.SCHOLARSHIP_DOMAIN,
       };
       const message: Message = query;
@@ -70,7 +70,7 @@ export class ScholarshipSearchService {
       );
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.scholarship}/${Action.search}`;
+        `/${xplorDomain.SCHOLARSHIP}/${Action.search}`;
       const response = await this.httpService.post(url, searchPayload);
       return response;
     } catch (error) {

@@ -10,6 +10,15 @@ import { JobSearchService } from '../modules/app/request/job/services/searchv1.s
 import { CourseSearchService } from '../modules/app/request/course/services/searchv1.service';
 import { ScholarshipSearchService } from '../modules/app/request/scholarship/services/searchv1.service';
 import { DumpModule } from '../modules/dump/dump.module';
+import { CourseConfirmService } from '../modules/app/request/course/services/confirmV1.service';
+import { CourseInitService } from '../modules/app/request/course/services/initv1.service';
+import { CourseSelectService } from '../modules/app/request/course/services/selectv1.service';
+import { CourseStatusService } from '../modules/app/request/course/services/statusv1.service';
+import { RetailSearchService } from '../modules/app/request/retail/services/searchv1.service';
+import { ScholarshipConfirmService } from '../modules/app/request/scholarship/services/confirmV1.service';
+import { ScholarshipInitService } from '../modules/app/request/scholarship/services/initv1.service';
+import { ScholarshipSelectService } from '../modules/app/request/scholarship/services/selectv1.service';
+import { ScholarshipStatusService } from '../modules/app/request/scholarship/services/statusv1.service';
 
 /**
  * Decorates the CommonModule class with @Global() to make it a global module.

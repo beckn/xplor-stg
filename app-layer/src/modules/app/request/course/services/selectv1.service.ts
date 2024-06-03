@@ -4,10 +4,10 @@ import { CourseSelectPayload } from '../entity/select.entity';
 import { SelectContext } from '../interface/context';
 import { ICourseSelect, IMessageSelect } from '../interface/request/select';
 import { ConfigService } from '@nestjs/config';
-import { Action } from 'rxjs/internal/scheduler/Action';
 import { AxiosService } from '../../../../../common/axios/axios.service';
 import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
+  Action,
   DomainsEnum,
   Gateway,
   xplorDomain,
@@ -75,7 +75,7 @@ export class CourseSelectService {
 
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.select}`;
+        `/${xplorDomain.COURSE}/${Action.select}`;
 
       const response = await this.httpService.post(url, selectPayload);
       this.logger.log('selectPayload', JSON.stringify(selectPayload));

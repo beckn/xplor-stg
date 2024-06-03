@@ -5,9 +5,9 @@ import { HttpModule } from '@nestjs/axios';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { GrafanaLoggerService } from '../services/grafana/service/grafana.service';
-import { LoggingInterceptor } from 'src/utils/logger-interceptor';
 import configuration from '../config/env/env.config';
 import { AxiosService } from './axios/axios.service';
+import { LoggingInterceptor } from '../utils/logger-interceptor';
 
 // Decorate the class with @Global() to make it a global module.
 // This means that the providers and exports of this module will be available application-wide.

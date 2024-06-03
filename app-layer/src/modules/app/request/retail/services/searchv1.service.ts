@@ -14,7 +14,7 @@ import {
 import {
   OndcContextConstants,
   OnestContextConstants,
-} from 'src/common/constants/context.constant';
+} from '../../../../../common/constants/context.constant';
 
 /**
  * Service for handling course search operations.
@@ -41,7 +41,7 @@ export class RetailSearchService {
       const contextPayload: Context = {
         ...context,
         bap_id: OnestContextConstants.bap_id,
-        bap_uri: OndcContextConstants.bap_uri + `/${xplorDomain.retail}`,
+        bap_uri: OndcContextConstants.bap_uri + `/${xplorDomain.RETAIL}`,
         domain: DomainsEnum.RETAIL_DOMAIN,
       };
       const message: Message = query;
@@ -67,7 +67,7 @@ export class RetailSearchService {
       const searchPayload: ICourseSearch = this.createPayload(context, query);
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.retail}/${Action.search}`;
+        `/${xplorDomain.RETAIL}/${Action.search}`;
       const response = await this.httpService.post(url, searchPayload);
       return response;
     } catch (error) {

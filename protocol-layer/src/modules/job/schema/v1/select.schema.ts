@@ -1,4 +1,4 @@
-import { contextSchema } from 'src/modules/scholarship/schema/context.schema';
+import { contextSchema } from '../../../scholarship/schema/context.schema';
 
 export const selectSchema = {
   type: 'object',

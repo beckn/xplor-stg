@@ -3,7 +3,7 @@ import { CreateDumpDto } from '../dto/create-dump.dto';
 import { Dump, DumpDocument } from '../schema/dump.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
+import { OnestContextConstants } from '../../../common/constants/context.constant';
 
 @Injectable()
 export class DumpService {
