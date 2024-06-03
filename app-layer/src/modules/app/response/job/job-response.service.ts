@@ -8,7 +8,7 @@ import { Catalog, MessageResponse, Provider } from './interface/on-search';
  */
 @Injectable()
 export class JobResponseService {
-  private readonly logger = new Logger(JobResponseService.name)
+  private readonly logger = new Logger(JobResponseService.name);
 
   constructor() {}
 

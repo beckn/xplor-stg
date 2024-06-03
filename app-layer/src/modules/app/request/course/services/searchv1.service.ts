@@ -19,8 +19,8 @@ import {
  */
 @Injectable()
 export class CourseSearchService {
-  private readonly logger = new Logger(CourseSearchService.name)
-  
+  private readonly logger = new Logger(CourseSearchService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,

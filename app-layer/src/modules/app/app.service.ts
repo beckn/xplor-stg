@@ -22,7 +22,7 @@ import { StatusRequestDto } from './dto/status-request.dto';
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
 export class AppService {
-  private readonly logger = new Logger(AppService.name)
+  private readonly logger = new Logger(AppService.name);
 
   // Constructor to inject dependencies
   constructor(
@@ -34,8 +34,7 @@ export class AppService {
     private ondcCreatePayload: RetailResponseService, // Service to create job response payloads
     private readonly httpService: AxiosService, // Service for making HTTP requests
     private readonly configService: ConfigService, // Service for accessing configuration values
-    private readonly dumpService: DumpService, // Service for dumping the request & response
-    // private readonly kafkaService: KafkaService,
+    private readonly dumpService: DumpService, // Service for dumping the request & response // private readonly kafkaService: KafkaService,
   ) {
     // Initialize the configService with a new instance
     this.configService = new ConfigService();
@@ -124,63 +123,17 @@ export class AppService {
     try {
       // Initialize variables for job, course, and scholarship payloads
 
-      this.logger.log('on_search Response', response);
-      const payloadSendToKafka = {
-        context: {
-          transaction_id: response?.context?.transaction_id,
-          domain: response?.context?.domain,
-        },
-        message: {
-          catalog: response?.message?.catalog,
-        },
-      };
-      // await this.kafkaService.produceMessage(payloadSendToKafka);
-
-      // let job: object, course: object, scholarship: object, retail: object;
-      // // Determine which type of payload to create based on the domain
-      // switch (response.context.domain) {
-      //   case DomainsEnum.JOB_DOMAIN:
-      //     job = response.message
-      //       ? this.onestCreatePayload.createPayload(response.message)
-      //       : {};
-      //     break;
-      //   case DomainsEnum.COURSE_DOMAIN:
-      //     course = response.message
-      //       ? this.onestCreatePayload.createPayload(response.message)
-      //       : {};
-      //     break;
-      //   case DomainsEnum.SCHOLARSHIP_DOMAIN:
-      //     scholarship = response.message
-      //       ? this.onestCreatePayload.createPayload(response.message)
-      //       : {};
-      //   case DomainsEnum.RETAIL_DOMAIN:
-      //     retail = response.message
-      //       ? this.ondcCreatePayload.createPayload(response.message)
-      //       : {};
-      //     break;
-      //   default:
-      //     break;
-      // }
-      // // Construct the payload for the search request
-      // const payload = {
-      //   context: response.context,
-      //   data: {
-      //     job: job != null ? { context: response.context, ...job } : {},
-      //     course:
-      //       course != null ? { context: response.context, ...course } : {},
-      //     scholarship:
-      //       scholarship != null
-      //         ? { context: response.context, ...scholarship }
-      //         : {},
-      //     retail:
-      //       retail != null ? { context: response.context, ...retail } : {},
+      this.logger.debug('on_search Response', response);
+      // const payloadSendToKafka = {
+      //   context: {
+      //     transaction_id: response?.context?.transaction_id,
+      //     domain: response?.context?.domain,
+      //   },
+      //   message: {
+      //     catalog: response?.message?.catalog,
       //   },
       // };
-      // // Construct the URL for the search request
-      // const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_search';
-      // // Send the search request and log the response
-      // const resp = await this.httpService.post(url, payload);
-      // this.logger.log('resp', resp);
+      // await this.kafkaService.produceMessage(payloadSendToKafka);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);
@@ -214,27 +167,6 @@ export class AppService {
   async onSelect(response: any) {
     try {
       this.logger.log(JSON.stringify(response), 'onSelect');
-      // const domain =
-      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-      //     ? 'course'
-      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-      //     ? 'job'
-      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-      //     ? 'scholarship'
-      //     : 'retail';
-
-      // Dump the response into database
-      // const createDumpDto: CreateDumpDto = {
-      //   context: response?.context,
-      //   transaction_id: response?.context?.transaction_id,
-      //   domain: response?.context?.domain,
-      //   provider_id: response?.context?.message?.catalog?.provider?.id,
-      //   message: response?.message,
-      // };
-      // this.logger.log(createDumpDto, 'createDumpDto');
-
-      // await this.dumpService.create(createDumpDto);
-      // Delegate the search operation to the sendSearch method
       await this.sendSelect(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
@@ -311,15 +243,6 @@ export class AppService {
   }
   async init(initRequest: InitRequestDto) {
     try {
-      // const createDumpDto: CreateDumpDto = {
-      //   context: initRequest?.context,
-      //   transaction_id: initRequest?.context?.transaction_id,
-      //   domain: initRequest.context.domain,
-      //   message_id: initRequest?.context?.message_id,
-      //   request_type: Action.init,
-      //   message: initRequest?.message,
-      // };
-
       // await this.dumpService.create(createDumpDto);
       this.globalActionService.globalInit(initRequest);
       // Return a success response
@@ -345,27 +268,6 @@ export class AppService {
         JSON.stringify(response),
         '=============================',
       );
-      // const domain =
-      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-      //     ? 'course'
-      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-      //     ? 'job'
-      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-      //     ? 'scholarship'
-      //     : 'retail';
-
-      // // Dump the response into database
-      // const createDumpDto: CreateDumpDto = {
-      //   context: response?.context,
-      //   transaction_id: response?.context?.transaction_id,
-      //   domain: domain,
-      //   message_id: response?.context?.message_id,
-      //   request_type: Action.on_init,
-      //   message: response?.message,
-      // };
-
-      // await this.dumpService.create(createDumpDto);
-      // Delegate the search operation to the sendSearch method
       await this.sendInit(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
@@ -456,16 +358,6 @@ export class AppService {
 
   async status(statusRequest: StatusRequestDto) {
     try {
-      // const createDumpDto: CreateDumpDto = {
-      //   context: statusRequest?.context,
-      //   transaction_id: statusRequest?.context?.transaction_id,
-      //   domain: statusRequest.context.domain,
-      //   message_id: statusRequest?.context?.message_id,
-      //   request_type: Action.init,
-      //   message: statusRequest?.message,
-      // };
-
-      // await this.dumpService.create(createDumpDto);
       this.globalActionService.globalStatus(statusRequest);
       // Return a success response
       return getResponse(
@@ -490,27 +382,6 @@ export class AppService {
         JSON.stringify(response),
         '=============================',
       );
-      // const domain =
-      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-      //     ? 'course'
-      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-      //     ? 'job'
-      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-      //     ? 'scholarship'
-      //     : 'retail';
-
-      // Dump the response into database
-      // const createDumpDto: CreateDumpDto = {
-      //   context: response?.context,
-      //   transaction_id: response?.context?.transaction_id,
-      //   domain: domain,
-      //   message_id: response?.context?.message_id,
-      //   request_type: Action.status,
-      //   message: response?.message,
-      // };
-
-      // await this.dumpService.create(createDumpDto);
-      // Delegate the search operation to the sendSearch method
       await this.sendStatus(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
@@ -568,7 +439,7 @@ export class AppService {
             retail != null ? { context: response.context, ...retail } : {},
         },
       };
-      
+
       this.logger.log('statusPayload', payload);
 
       // Construct the URL for the search request
@@ -576,7 +447,7 @@ export class AppService {
       // Send the search request and log the response
       this.logger.log('resp Url to status', url);
       const resp = await this.httpService.post(url, payload);
-      this.logger.log('resp Url to status', url,resp);
+      this.logger.log('resp Url to status', url, resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);
@@ -589,27 +460,6 @@ export class AppService {
   // Method to handle search requests and delegate to the sendSearch method
   async onConfirm(response: any) {
     try {
-      // const domain =
-      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-      //     ? 'course'
-      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-      //     ? 'job'
-      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-      //     ? 'scholarship'
-      //     : 'retail';
-
-      // Dump the response into database
-      // const createDumpDto: CreateDumpDto = {
-      //   context: response?.context,
-      //   transaction_id: response?.context?.transaction_id,
-      //   domain: domain,
-      //   message_id: response?.context?.message_id,
-      //   request_type: Action.on_confirm,
-      //   message: response?.message,
-      // };
-
-      // await this.dumpService.create(createDumpDto);
-      // Delegate the search operation to the sendSearch method
       await this.sendConfirm(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
@@ -685,6 +535,8 @@ export class AppService {
     }
   }
 
+  //comment down it for future use.
+
   // async subscribe() {
   //   try {
   //     const payload = await this.dumpService.findAll();
@@ -700,15 +552,14 @@ export class AppService {
   //         };
   //         return await this.kafkaService.produceMessage(messagePayload);
   //       }),
-   
+
   //     );
   //     this.logger.log(subscribedResponse)
   //     return subscribedResponse;
   //   } catch (error) {
   //     this.logger.error(error)
   //   }
-  
-    
+
   // }
 
   async getSearchData() {
@@ -724,16 +575,13 @@ export class AppService {
             },
             message: data?.message,
           };
-          return await messagePayload
+          return await messagePayload;
         }),
-   
       );
-      this.logger.log(transformedPayload)
+      this.logger.log(transformedPayload);
       return transformedPayload;
     } catch (error) {
-      this.logger.error(error)
+      this.logger.error(error);
     }
-  
-    
   }
 }

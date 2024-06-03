@@ -16,8 +16,8 @@ import { IScholarshipConfirmMessage } from '../interface/request/confirm';
 
 @Injectable()
 export class ScholarshipConfirmService {
-  private readonly logger = new Logger(ScholarshipConfirmService.name)
-  
+  private readonly logger = new Logger(ScholarshipConfirmService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -54,7 +54,7 @@ export class ScholarshipConfirmService {
           ? request.context.ttl
           : OnestContextConstants.ttl,
       };
-      this.logger.log(request?.message?.order?.items_id[0])
+      this.logger.log(request?.message?.order?.items_id[0]);
       const messagePayload: IScholarshipConfirmMessage = {
         order: {
           provider: {
@@ -63,10 +63,10 @@ export class ScholarshipConfirmService {
               : request?.message?.order?.provider_id,
           },
           items: [
-                {
-                  id: request?.message?.order?.items_id[0]
-                },
-              ],
+            {
+              id: request?.message?.order?.items_id[0],
+            },
+          ],
           billing: billing
             ? billing
             : {
@@ -110,13 +110,13 @@ export class ScholarshipConfirmService {
         context: contextPayload,
         message: messagePayload,
       };
-      this.logger.log("paylooooad","payload")
+      this.logger.log('paylooooad', 'payload');
       return {
         ...payload,
         gatewayUrl: Gateway.scholarship,
       };
     } catch (error) {
-      this.logger.error(error?.message)
+      this.logger.error(error?.message);
       return error?.message;
     }
   }

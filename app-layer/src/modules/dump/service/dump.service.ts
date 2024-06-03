@@ -55,40 +55,40 @@ export class DumpService {
         bpp_id: 'infosys.springboard.io',
         bpp_uri: 'https://infosys.springboard.io',
       },
-      "fulfillments": [
+      fulfillments: [
         {
-           "id":"{{$randomUUID}}" ,
-          "customer": {
-            "person": {
-              "name": "Jane Doe",
-              "age": "13",
-              "gender": "female",
-              "tags": [
+          id: '{{$randomUUID}}',
+          customer: {
+            person: {
+              name: 'Jane Doe',
+              age: '13',
+              gender: 'female',
+              tags: [
                 {
-                  "descriptor": {
-                    "code": "professional-details",
-                    "name": "Professional Details"
+                  descriptor: {
+                    code: 'professional-details',
+                    name: 'Professional Details',
                   },
-                  "list": [
+                  list: [
                     {
-                      "descriptor": {
-                        "code": "profession",
-                        "name": "profession"
+                      descriptor: {
+                        code: 'profession',
+                        name: 'profession',
                       },
-                      "value": "student"
-                    }
+                      value: 'student',
+                    },
                   ],
-                  "display": true
-                }
-              ]
+                  display: true,
+                },
+              ],
             },
-            "contact": {
-              "phone": "+91-9663088848",
-              "email": "jane.doe@example.com"
-            }
-          }
-        }
-      ]
+            contact: {
+              phone: '+91-9663088848',
+              email: 'jane.doe@example.com',
+            },
+          },
+        },
+      ],
     };
     return await this.dumpModel
       .findOne({

@@ -14,7 +14,7 @@ import { StatusRequestDto } from './dto/status-request.dto';
  */
 @Controller({ version: '1' })
 export class AppController {
-  private readonly logger = new Logger(AppController.name)
+  private readonly logger = new Logger(AppController.name);
   /**
    * Constructor for the AppController, injecting the AppService for handling business logic.
    */

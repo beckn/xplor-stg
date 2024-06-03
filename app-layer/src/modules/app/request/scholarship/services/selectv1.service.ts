@@ -20,7 +20,7 @@ import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
 
 @Injectable()
 export class ScholarshipSelectService {
-  private readonly logger = new Logger(ScholarshipSelectService.name)
+  private readonly logger = new Logger(ScholarshipSelectService.name);
 
   constructor(
     private readonly configService: ConfigService,

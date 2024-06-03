@@ -20,7 +20,7 @@ import {
  */
 @Injectable()
 export class JobSearchService {
-  private readonly logger = new Logger(JobSearchService.name)
+  private readonly logger = new Logger(JobSearchService.name);
 
   constructor(
     private readonly configService: ConfigService,

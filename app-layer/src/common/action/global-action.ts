@@ -27,7 +27,7 @@ import { ScholarshipConfirmService } from 'src/modules/app/request/scholarship/s
 
 @Injectable()
 export class GlobalActionService {
-  private readonly logger = new Logger(GlobalActionService.name)
+  private readonly logger = new Logger(GlobalActionService.name);
   constructor(
     private readonly jobSearchService: JobSearchService,
     private readonly courseSearchService: CourseSearchService,
@@ -118,7 +118,8 @@ export class GlobalActionService {
               await this.retailService.sendSearchPayload(
                 retailContext,
                 message,
-              );``
+              );
+            ``;
             // Log the search response for the retail domain
             this.logger.log(`Retail: ${JSON.stringify(searchResponseRetail)}`);
             break;
@@ -155,7 +156,9 @@ export class GlobalActionService {
           const selectResponseCourse =
             await this.courseSelectService.sendSelectPayload(request);
           // Log the search response for the course domain
-          this.logger.log(`course-select: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-select: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
         case xplorDomain.scholarship:
           // Logic for SCHOLARSHIP_DOMAIN
@@ -192,7 +195,9 @@ export class GlobalActionService {
           const selectResponseCourse =
             await this.courseInitService.sendInitPayload(request);
           // Log the search response for the course domain
-          this.logger.log(`course-init: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-init: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
         case xplorDomain.scholarship:
           // Logic for SCHOLARSHIP_DOMAIN
@@ -229,7 +234,9 @@ export class GlobalActionService {
           const selectResponseCourse =
             await this.courseConfirmService.sendConfirmPayload(request);
           // Log the search response for the course domain
-          this.logger.log(`course-select: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-select: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
         case xplorDomain.scholarship:
           // Logic for SCHOLARSHIP_DOMAIN
@@ -265,7 +272,9 @@ export class GlobalActionService {
           const selectResponseCourse =
             await this.courseStatusService.sendStatusPayload(request);
           // Log the search response for the course domain
-          this.logger.log(`course-status: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-status: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
         case xplorDomain.scholarship:
           // Logic for SCHOLARSHIP_DOMAIN

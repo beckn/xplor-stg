@@ -16,7 +16,7 @@ import { SelectContext } from '../../course/interface/context';
 
 @Injectable()
 export class ScholarshipInitService {
-  private readonly logger = new Logger(ScholarshipInitService.name)
+  private readonly logger = new Logger(ScholarshipInitService.name);
 
   constructor(
     private readonly configService: ConfigService,

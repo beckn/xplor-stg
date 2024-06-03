@@ -17,7 +17,7 @@ import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
 
 @Injectable()
 export class CourseSelectService {
-  private readonly logger = new Logger(CourseSelectService.name)
+  private readonly logger = new Logger(CourseSelectService.name);
 
   constructor(
     private readonly configService: ConfigService,

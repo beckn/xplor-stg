@@ -20,7 +20,7 @@ import {
  */
 @Injectable()
 export class ScholarshipResponseService {
-  private readonly logger = new Logger(ScholarshipResponseService.name)
+  private readonly logger = new Logger(ScholarshipResponseService.name);
 
   constructor() {}
 

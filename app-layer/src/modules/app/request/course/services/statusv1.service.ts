@@ -18,7 +18,7 @@ import { IMessageStatus } from '../interface/request/status';
 
 @Injectable()
 export class CourseStatusService {
-  private readonly logger = new Logger(CourseStatusService.name)
+  private readonly logger = new Logger(CourseStatusService.name);
 
   constructor(
     private readonly configService: ConfigService,

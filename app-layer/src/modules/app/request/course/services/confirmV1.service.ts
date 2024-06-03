@@ -16,7 +16,7 @@ import { ICourseConfirmMessage } from '../interface/request/confirm';
 
 @Injectable()
 export class CourseConfirmService {
-  private readonly logger = new Logger(CourseConfirmService.name)
+  private readonly logger = new Logger(CourseConfirmService.name);
 
   constructor(
     private readonly configService: ConfigService,

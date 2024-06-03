@@ -16,7 +16,7 @@ import { IMessageInit } from '../interface/request/init';
 
 @Injectable()
 export class CourseInitService {
-  private readonly logger = new Logger(CourseInitService.name)
+  private readonly logger = new Logger(CourseInitService.name);
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,

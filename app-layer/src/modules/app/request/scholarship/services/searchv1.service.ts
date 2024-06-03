@@ -20,7 +20,7 @@ import { OnestContextConstants } from 'src/common/constants/context.constant';
  */
 @Injectable()
 export class ScholarshipSearchService {
-  private readonly logger = new Logger(ScholarshipSearchService.name)
+  private readonly logger = new Logger(ScholarshipSearchService.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -63,7 +63,6 @@ export class ScholarshipSearchService {
    * @returns The response from the service.
    */
   async sendSearchPayload(context: Context, query: Message) {
-    
     try {
       const searchPayload: IScholarshipSearch = this.createPayload(
         context,
