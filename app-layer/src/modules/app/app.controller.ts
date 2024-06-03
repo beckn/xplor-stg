@@ -98,7 +98,7 @@ export class AppController {
   //   return this.appService.subscribe();
   // }
 
-  @Get('get_search_data')
+  @Get('search')
   getSearchData() {
     return this.appService.getSearchData();
   }
