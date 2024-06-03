@@ -17,7 +17,7 @@ import { CourseResponseService } from './response/course/course-response.service
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
-import { KafkaService } from 'src/services/kafka/kafka.service';
+// import { KafkaService } from 'src/services/kafka/kafka.service';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
@@ -33,7 +33,7 @@ export class AppService {
     private readonly httpService: AxiosService, // Service for making HTTP requests
     private readonly configService: ConfigService, // Service for accessing configuration values
     private readonly dumpService: DumpService, // Service for dumping the request & response
-    private readonly kafkaService: KafkaService,
+    // private readonly kafkaService: KafkaService,
   ) {
     // Initialize the configService with a new instance
     this.configService = new ConfigService();
@@ -132,7 +132,7 @@ export class AppService {
           catalog: response?.message?.catalog,
         },
       };
-      await this.kafkaService.produceMessage(payloadSendToKafka);
+      // await this.kafkaService.produceMessage(payloadSendToKafka);
 
       // let job: object, course: object, scholarship: object, retail: object;
       // // Determine which type of payload to create based on the domain
@@ -683,31 +683,31 @@ export class AppService {
     }
   }
 
-  async subscribe() {
-    try {
-      const payload = await this.dumpService.findAll();
-      // console.log(payload);
-      const subscribedResponse = await Promise.all(
-        payload.map(async (data) => {
-          const messagePayload = {
-            context: {
-              transaction_id: data?.transaction_id,
-              domain: data?.domain,
-            },
-            message: data?.message,
-          };
-          return await this.kafkaService.produceMessage(messagePayload);
-        }),
+  // async subscribe() {
+  //   try {
+  //     const payload = await this.dumpService.findAll();
+  //     // console.log(payload);
+  //     const subscribedResponse = await Promise.all(
+  //       payload.map(async (data) => {
+  //         const messagePayload = {
+  //           context: {
+  //             transaction_id: data?.transaction_id,
+  //             domain: data?.domain,
+  //           },
+  //           message: data?.message,
+  //         };
+  //         return await this.kafkaService.produceMessage(messagePayload);
+  //       }),
    
-      );
-      console.log(subscribedResponse)
-      return subscribedResponse;
-    } catch (error) {
-      console.log(error)
-    }
+  //     );
+  //     console.log(subscribedResponse)
+  //     return subscribedResponse;
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
   
     
-  }
+  // }
 
   async getSearchData() {
     try {

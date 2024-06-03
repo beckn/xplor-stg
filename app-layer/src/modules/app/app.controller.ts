@@ -92,10 +92,10 @@ export class AppController {
     return this.appService.onConfirm(confirmRequest);
   }
 
-  @Get('subscribe')
-  subscribe() {
-    return this.appService.subscribe();
-  }
+  // @Get('subscribe')
+  // subscribe() {
+  //   return this.appService.subscribe();
+  // }
 
   @Get('get_search_data')
   getSearchData() {
