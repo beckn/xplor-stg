@@ -106,7 +106,7 @@ export const initSchema = {
                         type: 'object',
                         properties: {
                           phone: { type: 'string' },
-                          email: { type: 'string'},
+                          email: { type: 'string' },
                         },
                         required: ['phone', 'email'],
                       },

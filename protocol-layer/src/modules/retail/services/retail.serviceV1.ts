@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { SearchRetailDto } from '../dto/search-retail.dto';
 import { searchSchema } from '../schema/search.schema';
 import { AckNackResponse } from 'src/utils/ack-nack';
@@ -11,6 +11,8 @@ import { onSearchSchema } from '../schema/onSearch.schema';
 
 @Injectable()
 export class RetailService {
+  private readonly logger = new Logger(RetailService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly axiosService: AxiosService,
@@ -21,7 +23,7 @@ export class RetailService {
         context: searchRetailDto.context,
         message: searchRetailDto.message,
       });
-      console.log(isValid, 'searchRetailDto', searchRetailDto);
+      this.logger.log(isValid, 'searchRetailDto', searchRetailDto);
       if (!isValid) {
         const message = new AckNackResponse(
           'NACK',
@@ -44,7 +46,10 @@ export class RetailService {
         context: searchRetailDto.context,
         message: searchRetailDto.message,
       });
-      console.log('validatedRetailResponse', JSON.stringify(searchRetailDto));
+      this.logger.log(
+        'validatedRetailResponse',
+        JSON.stringify(searchRetailDto),
+      );
       if (!isValid) {
         const message = new AckNackResponse(
           'NACK',
@@ -55,7 +60,7 @@ export class RetailService {
         return message;
       } else {
         const message = new AckNackResponse('ACK');
-        console.log('on_search Response', searchRetailDto);
+        this.logger.log('on_search Response', searchRetailDto);
         await this.axiosService.post(
           this.configService.get('APP_SERVICE_URL') + `/${Action.on_search}`,
           searchRetailDto,

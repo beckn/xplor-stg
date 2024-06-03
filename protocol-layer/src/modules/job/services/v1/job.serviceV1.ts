@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
 import { SearchJobDto, SelectJobDto } from '../../dto/request-job.dto';
 import { searchSchema } from '../../schema/v1/search.schema';
@@ -17,6 +17,8 @@ import { onSearchSchema } from '../../schema/v1/on-search.schema';
 
 @Injectable()
 export class JobService {
+  private readonly logger = new Logger(JobService.name);
+
   constructor(
     private readonly axiosService: AxiosService,
     private readonly configService: ConfigService,
@@ -28,7 +30,7 @@ export class JobService {
         context: searchJobDto.context,
         message: searchJobDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -57,12 +59,12 @@ export class JobService {
       };
 
       const url = searchJobDto.gatewayUrl + '/search';
-      console.log(url);
+      this.logger.log(url);
       const searchResponse = await this.axiosService.post(url, searchPayload);
-      console.log('searchRequest=======', searchResponse);
+      this.logger.log('searchRequest=======', searchResponse);
       return searchResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -73,7 +75,7 @@ export class JobService {
         context: searchJobDto.context,
         message: searchJobDto.message,
       });
-      console.log('Job payload isValid', isValid);
+      this.logger.log('Job payload isValid', isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -84,7 +86,7 @@ export class JobService {
         throw new BadRequestException(message);
       } else {
         const message = new AckNackResponse(ACK);
-        console.log('on_search Job dto', searchJobDto);
+        this.logger.log('on_search Job dto', searchJobDto);
         await this.axiosService.post(
           this.configService.get('APP_SERVICE_URL') + `/${Action.on_search}`,
           searchJobDto,
@@ -102,7 +104,7 @@ export class JobService {
         context: selectJobDto.context,
         message: selectJobDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -131,12 +133,12 @@ export class JobService {
       };
 
       const url = selectJobDto.gatewayUrl + '/select';
-      console.log(url);
+      this.logger.log(url);
       const searchResponse = await this.axiosService.post(url, searchPayload);
-      console.log('selectRequest=======', searchResponse);
+      this.logger.log('selectRequest=======', searchResponse);
       return searchResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
