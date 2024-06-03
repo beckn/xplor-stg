@@ -13,8 +13,7 @@ import { DumpModule } from '../dump/dump.module';
 import { ScholarshipResponseService } from './response/scholarship/scholarship-response.service';
 import { CourseResponseService } from './response/course/course-response.service';
 import { ScheduleModule } from '@nestjs/schedule';
-import { SchedulerService } from 'src/services/cron/scheduler.service';
-// import { KafkaService } from 'src/services/kafka/kafka.service';
+import { SchedulerService } from '../../services/cron/scheduler.service';
 
 /**
  * Module decorator for defining the module's metadata.

@@ -7,6 +7,6 @@ export default () => ({
     .required()
     .valid('development', 'production', 'test', 'provision')
     .default('development'),
-  APP_LAYER_PORT: Joi.number().port().required().default(6000),
+  APP_LAYER_PORT: Joi.number().port().required().default(5001),
   MONGODB_URL: Joi.string().required(),
 });

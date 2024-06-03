@@ -5,25 +5,25 @@ import { CourseSearchService } from '../../modules/app/request/course/services/s
 import { Context } from '../../modules/app/request/job/interface/context';
 import { Message } from '../../modules/app/request/job/interface/request/search';
 import { JobSearchService } from '../../modules/app/request/job/services/searchv1.service';
-import { ScholarshipSearchService } from 'src/modules/app/request/scholarship/services/searchv1.service';
-import { RetailSearchService } from 'src/modules/app/request/retail/services/searchv1.service';
 import {
   OndcContextConstants,
   OnestContextConstants,
   searchContextConstants,
 } from '../constants/context.constant';
-import { CourseSelectService } from 'src/modules/app/request/course/services/selectv1.service';
-import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
-import { ScholarshipSelectService } from 'src/modules/app/request/scholarship/services/selectv1.service';
-import { InitRequestDto } from 'src/modules/app/dto/init-request.dto';
-import { CourseInitService } from 'src/modules/app/request/course/services/initv1.service';
-import { ScholarshipInitService } from 'src/modules/app/request/scholarship/services/initv1.service';
-import { CourseConfirmService } from 'src/modules/app/request/course/services/confirmV1.service';
-import { ConfirmRequestDto } from 'src/modules/app/dto/confirm-request.dto';
-import { StatusRequestDto } from 'src/modules/app/dto/status-request.dto';
-import { CourseStatusService } from 'src/modules/app/request/course/services/statusv1.service';
-import { ScholarshipStatusService } from 'src/modules/app/request/scholarship/services/statusv1.service';
-import { ScholarshipConfirmService } from 'src/modules/app/request/scholarship/services/confirmV1.service';
+import { CourseInitService } from '../../modules/app/request/course/services/initv1.service';
+import { ConfirmRequestDto } from '../../modules/app/dto/confirm-request.dto';
+import { InitRequestDto } from '../../modules/app/dto/init-request.dto';
+import { SelectRequestDto } from '../../modules/app/dto/select-request.dto';
+import { StatusRequestDto } from '../../modules/app/dto/status-request.dto';
+import { CourseConfirmService } from '../../modules/app/request/course/services/confirmV1.service';
+import { CourseSelectService } from '../../modules/app/request/course/services/selectv1.service';
+import { CourseStatusService } from '../../modules/app/request/course/services/statusv1.service';
+import { RetailSearchService } from '../../modules/app/request/retail/services/searchv1.service';
+import { ScholarshipConfirmService } from '../../modules/app/request/scholarship/services/confirmV1.service';
+import { ScholarshipInitService } from '../../modules/app/request/scholarship/services/initv1.service';
+import { ScholarshipSearchService } from '../../modules/app/request/scholarship/services/searchv1.service';
+import { ScholarshipSelectService } from '../../modules/app/request/scholarship/services/selectv1.service';
+import { ScholarshipStatusService } from '../../modules/app/request/scholarship/services/statusv1.service';
 
 @Injectable()
 export class GlobalActionService {

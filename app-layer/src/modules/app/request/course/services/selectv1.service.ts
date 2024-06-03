@@ -3,18 +3,17 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CourseSelectPayload } from '../entity/select.entity';
 import { SelectContext } from '../interface/context';
 import { ICourseSelect, IMessageSelect } from '../interface/request/select';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
 import { ConfigService } from '@nestjs/config';
+import { Action } from 'rxjs/internal/scheduler/Action';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
-  Action,
   DomainsEnum,
   Gateway,
   xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
-
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { SelectRequestDto } from '../../../dto/select-request.dto';
 @Injectable()
 export class CourseSelectService {
   private readonly logger = new Logger(CourseSelectService.name);

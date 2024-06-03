@@ -17,7 +17,6 @@ import { CourseResponseService } from './response/course/course-response.service
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
-// import { KafkaService } from 'src/services/kafka/kafka.service';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
