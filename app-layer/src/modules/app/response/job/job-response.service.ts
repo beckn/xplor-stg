@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Catalog, MessageResponse, Provider } from './interface/on-search';
 
@@ -8,6 +8,8 @@ import { Catalog, MessageResponse, Provider } from './interface/on-search';
  */
 @Injectable()
 export class JobResponseService {
+  private readonly logger = new Logger(JobResponseService.name);
+
   constructor() {}
 
   /**
@@ -48,7 +50,7 @@ export class JobResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

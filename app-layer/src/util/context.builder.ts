@@ -1,5 +1,6 @@
 // Import necessary enums
-import { Action, DomainsEnum } from 'src/common/constants/enums';
+
+import { Action, DomainsEnum } from '../common/constants/enums';
 
 // Define the OnestContext interface for the Onest context
 export interface OnestContext {

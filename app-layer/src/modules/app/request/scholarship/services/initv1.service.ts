@@ -1,21 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
+import { IMessageInit } from '../interface/request/init';
+import { SelectContext } from '../../course/interface/context';
 import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
   Gateway,
   xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { InitRequestDto } from 'src/modules/app/dto/init-request.dto';
-import { IMessageInit } from '../interface/request/init';
-import { SelectContext } from '../../course/interface/context';
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { InitRequestDto } from '../../../dto/init-request.dto';
 
 @Injectable()
 export class ScholarshipInitService {
+  private readonly logger = new Logger(ScholarshipInitService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -24,7 +26,7 @@ export class ScholarshipInitService {
 
   async createPayload(request: InitRequestDto) {
     try {
-      console.log('request', JSON.stringify(request));
+      this.logger.log('request', JSON.stringify(request));
       const selectRequestDetails =
         await this.dbService.findByActiontransaction_id(
           request?.context?.transaction_id,
@@ -37,7 +39,7 @@ export class ScholarshipInitService {
         request?.message?.order?.provider_id,
         request?.context?.domain,
       );
-      console.log(
+      this.logger.log(
         'selectRequestSetails',
         selectRequestDetails,
         onSearchResponseDetails,
@@ -92,7 +94,7 @@ export class ScholarshipInitService {
         context: contextPayload,
         message: messagePayload,
       };
-      console.log('ScholarshipPayload', payload);
+      this.logger.log('ScholarshipPayload', payload);
       return {
         ...payload,
         gatewayUrl: Gateway.scholarship,
@@ -108,13 +110,13 @@ export class ScholarshipInitService {
       if (!initPayload) throw new NotFoundException('Context not found');
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.scholarship}/${Action.init}`;
+        `/${xplorDomain.SCHOLARSHIP}/${Action.init}`;
 
       const response = await this.httpService.post(url, initPayload);
-      console.log('initPayload', JSON.stringify(initPayload));
+      this.logger.log('initPayload', JSON.stringify(initPayload));
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

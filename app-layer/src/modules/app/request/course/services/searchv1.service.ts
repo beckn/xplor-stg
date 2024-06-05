@@ -1,24 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { CourseSearchPayload } from '../entity/search.entity';
 import { Context } from '../interface/context';
 import { ICourseSearch, Message } from '../interface/request/search';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
 import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
-  Action,
+  xplorDomain,
   DomainsEnum,
   Gateway,
-  xplorDomain,
-} from 'src/common/constants/enums';
-
+  Action,
+} from '../../../../../common/constants/enums';
 /**
  * Service for handling course search operations.
  * This service is responsible for creating and sending search payloads for course-related queries.
  */
 @Injectable()
 export class CourseSearchService {
+  private readonly logger = new Logger(CourseSearchService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -38,7 +39,7 @@ export class CourseSearchService {
         bap_id: OnestContextConstants.bap_id,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.course}`,
+          `/${xplorDomain.COURSE}`,
         domain: DomainsEnum.COURSE_DOMAIN,
       };
       const message: Message = query;
@@ -65,12 +66,12 @@ export class CourseSearchService {
 
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.search}`;
+        `/${xplorDomain.COURSE}/${Action.search}`;
 
       const response = await this.httpService.post(url, searchPayload);
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

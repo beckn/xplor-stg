@@ -1,32 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { xplorDomain } from '../.../../../common/constants/enums';
 import { CourseSearchService } from '../../modules/app/request/course/services/searchv1.service';
 import { Context } from '../../modules/app/request/job/interface/context';
 import { Message } from '../../modules/app/request/job/interface/request/search';
 import { JobSearchService } from '../../modules/app/request/job/services/searchv1.service';
-import { ScholarshipSearchService } from 'src/modules/app/request/scholarship/services/searchv1.service';
-import { RetailSearchService } from 'src/modules/app/request/retail/services/searchv1.service';
 import {
   OndcContextConstants,
   OnestContextConstants,
   searchContextConstants,
 } from '../constants/context.constant';
-import { CourseSelectService } from 'src/modules/app/request/course/services/selectv1.service';
-import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
-import { ScholarshipSelectService } from 'src/modules/app/request/scholarship/services/selectv1.service';
-import { InitRequestDto } from 'src/modules/app/dto/init-request.dto';
-import { CourseInitService } from 'src/modules/app/request/course/services/initv1.service';
-import { ScholarshipInitService } from 'src/modules/app/request/scholarship/services/initv1.service';
-import { CourseConfirmService } from 'src/modules/app/request/course/services/confirmV1.service';
-import { ConfirmRequestDto } from 'src/modules/app/dto/confirm-request.dto';
-import { StatusRequestDto } from 'src/modules/app/dto/status-request.dto';
-import { CourseStatusService } from 'src/modules/app/request/course/services/statusv1.service';
-import { ScholarshipStatusService } from 'src/modules/app/request/scholarship/services/statusv1.service';
-import { ScholarshipConfirmService } from 'src/modules/app/request/scholarship/services/confirmV1.service';
+import { CourseInitService } from '../../modules/app/request/course/services/initv1.service';
+import { ConfirmRequestDto } from '../../modules/app/dto/confirm-request.dto';
+import { InitRequestDto } from '../../modules/app/dto/init-request.dto';
+import { SelectRequestDto } from '../../modules/app/dto/select-request.dto';
+import { StatusRequestDto } from '../../modules/app/dto/status-request.dto';
+import { CourseConfirmService } from '../../modules/app/request/course/services/confirmV1.service';
+import { CourseSelectService } from '../../modules/app/request/course/services/selectv1.service';
+import { CourseStatusService } from '../../modules/app/request/course/services/statusv1.service';
+import { RetailSearchService } from '../../modules/app/request/retail/services/searchv1.service';
+import { ScholarshipConfirmService } from '../../modules/app/request/scholarship/services/confirmV1.service';
+import { ScholarshipInitService } from '../../modules/app/request/scholarship/services/initv1.service';
+import { ScholarshipSearchService } from '../../modules/app/request/scholarship/services/searchv1.service';
+import { ScholarshipSelectService } from '../../modules/app/request/scholarship/services/selectv1.service';
+import { ScholarshipStatusService } from '../../modules/app/request/scholarship/services/statusv1.service';
 
 @Injectable()
 export class GlobalActionService {
+  private readonly logger = new Logger(GlobalActionService.name);
   constructor(
     private readonly jobSearchService: JobSearchService,
     private readonly courseSearchService: CourseSearchService,
@@ -68,15 +69,15 @@ export class GlobalActionService {
       domain.forEach(async (currentDomain) => {
         // Switch statement to handle different domains
         switch (currentDomain) {
-          case xplorDomain.job:
+          case xplorDomain.JOB:
             // Logic for JOB_DOMAIN
             // Perform the search operation using the JobSearchService
             const searchResponse =
               await this.jobSearchService.sendSearchPayload(contexts, message);
             // Log the search response for the job domain
-            console.log(`Job: ${searchResponse}`);
+            this.logger.log(`Job: ${searchResponse}`);
             break;
-          case xplorDomain.course:
+          case xplorDomain.COURSE:
             // Logic for COURSE_DOMAIN
             // Perform the search operation using the CourseSearchService
             const searchResponseCourse =
@@ -85,9 +86,9 @@ export class GlobalActionService {
                 message,
               );
             // Log the search response for the course domain
-            console.log(`Course: ${JSON.stringify(searchResponseCourse)}`);
+            this.logger.log(`Course: ${JSON.stringify(searchResponseCourse)}`);
             break;
-          case xplorDomain.scholarship:
+          case xplorDomain.SCHOLARSHIP:
             // Logic for SCHOLARSHIP_DOMAIN
             // Perform the search operation using the ScholarshipSearchService
 
@@ -97,9 +98,9 @@ export class GlobalActionService {
                 message,
               );
             // Log the search response for the scholarship domain
-            console.log(`Scholarship: ${searchResponseScholarship}`);
+            this.logger.log(`Scholarship: ${searchResponseScholarship}`);
             break;
-          case xplorDomain.retail:
+          case xplorDomain.RETAIL:
             const retailContext = {
               domain: null,
               bap_id: OndcContextConstants.bap_id,
@@ -117,9 +118,10 @@ export class GlobalActionService {
               await this.retailService.sendSearchPayload(
                 retailContext,
                 message,
-              );``
+              );
+            ``;
             // Log the search response for the retail domain
-            console.log(`Retail: ${JSON.stringify(searchResponseRetail)}`);
+            this.logger.log(`Retail: ${JSON.stringify(searchResponseRetail)}`);
             break;
           default:
             // Default case if the domain does not match any of the expected values
@@ -130,7 +132,7 @@ export class GlobalActionService {
     } catch (error) {
       // Catch any errors that occur during the search operations
       // Log the error for debugging purposes
-      console.error(error);
+      this.logger.error(error);
       // Rethrow the error to be handled by the caller
       throw error;
     }
@@ -140,29 +142,31 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           // Perform the search operation using the JobSearchService
           // const searchResponse =
           //   await this.jobSearchService.sendSearchPayload(contexts, message);
           // // Log the search response for the job domain
-          // console.log(`Job: ${searchResponse}`);
+          // this.logger.log(`Job: ${searchResponse}`);
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
 
           const selectResponseCourse =
             await this.courseSelectService.sendSelectPayload(request);
           // Log the search response for the course domain
-          console.log(`course-select: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-select: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =
             await this.scholarshipSelectService.sendSelectPayload(request);
           // Log the search response for the scholarship domain
-          console.log(`Scholarship: ${searchResponseScholarship}`);
+          this.logger.log(`Scholarship: ${searchResponseScholarship}`);
           break;
         default:
           // Default case if the domain does not match any of the expected values
@@ -173,7 +177,7 @@ export class GlobalActionService {
     } catch (error) {
       // Catch any errors that occur during the search operations
       // Log the error for debugging purposes
-      console.error(error);
+      this.logger.error(error);
       // Rethrow the error to be handled by the caller
       throw error;
     }
@@ -183,23 +187,25 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
           const selectResponseCourse =
             await this.courseInitService.sendInitPayload(request);
           // Log the search response for the course domain
-          console.log(`course-init: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-init: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =
             await this.scholarshipInitService.sendInitPayload(request);
           // Log the search response for the scholarship domain
-          console.log(`scholarship-init: ${searchResponseScholarship}`);
+          this.logger.log(`scholarship-init: ${searchResponseScholarship}`);
           break;
         default:
           // Default case if the domain does not match any of the expected values
@@ -210,7 +216,7 @@ export class GlobalActionService {
     } catch (error) {
       // Catch any errors that occur during the search operations
       // Log the error for debugging purposes
-      console.error(error);
+      this.logger.error(error);
       // Rethrow the error to be handled by the caller
       throw error;
     }
@@ -220,22 +226,24 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
           const selectResponseCourse =
             await this.courseConfirmService.sendConfirmPayload(request);
           // Log the search response for the course domain
-          console.log(`course-select: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-select: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =
             await this.scholarshipConfirmService.sendConfirmPayload(request);
-          console.log(`Scholarship: ${searchResponseScholarship}`);
+          this.logger.log(`Scholarship: ${searchResponseScholarship}`);
           break;
         default:
           // Default case if the domain does not match any of the expected values
@@ -246,7 +254,7 @@ export class GlobalActionService {
     } catch (error) {
       // Catch any errors that occur during the search operations
       // Log the error for debugging purposes
-      console.error(error);
+      this.logger.error(error);
       // Rethrow the error to be handled by the caller
       throw error;
     }
@@ -256,23 +264,25 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
-        case xplorDomain.job:
+        case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
-        case xplorDomain.course:
+        case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
           const selectResponseCourse =
             await this.courseStatusService.sendStatusPayload(request);
           // Log the search response for the course domain
-          console.log(`course-status: ${JSON.stringify(selectResponseCourse)}`);
+          this.logger.log(
+            `course-status: ${JSON.stringify(selectResponseCourse)}`,
+          );
           break;
-        case xplorDomain.scholarship:
+        case xplorDomain.SCHOLARSHIP:
           // Logic for SCHOLARSHIP_DOMAIN
           // Perform the search operation using the ScholarshipSearchService
           const searchResponseScholarship =
             await this.scholarshipStatusService.sendStatusPayload(request);
           // Log the search response for the scholarship domain
-          console.log(`scholarship-status: ${searchResponseScholarship}`);
+          this.logger.log(`scholarship-status: ${searchResponseScholarship}`);
           break;
         default:
           // Default case if the domain does not match any of the expected values
@@ -283,7 +293,7 @@ export class GlobalActionService {
     } catch (error) {
       // Catch any errors that occur during the search operations
       // Log the error for debugging purposes
-      console.error(error);
+      this.logger.error(error);
       // Rethrow the error to be handled by the caller
       throw error;
     }

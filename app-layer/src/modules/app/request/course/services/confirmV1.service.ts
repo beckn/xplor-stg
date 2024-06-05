@@ -1,21 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { SelectContext } from '../interface/context';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
 import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
-  Action,
   DomainsEnum,
-  Gateway,
   xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { ConfirmRequestDto } from 'src/modules/app/dto/confirm-request.dto';
+  Gateway,
+  Action,
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { ConfirmRequestDto } from '../../../dto/confirm-request.dto';
 import { ICourseConfirmMessage } from '../interface/request/confirm';
 
 @Injectable()
 export class CourseConfirmService {
+  private readonly logger = new Logger(CourseConfirmService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -30,7 +32,7 @@ export class CourseConfirmService {
           request?.context?.domain,
           'on_search',
         );
-      console.log('selectRequestDetails', selectRequestDetails);
+      this.logger.log('selectRequestDetails', selectRequestDetails);
       const context = selectRequestDetails?.context as unknown as SelectContext;
       const billing = selectRequestDetails?.message?.order?.billing;
       delete billing?.id;
@@ -42,7 +44,7 @@ export class CourseConfirmService {
         domain: DomainsEnum.COURSE_DOMAIN,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.course}`,
+          `/${xplorDomain.COURSE}`,
         message_id: request.context.message_id,
         transaction_id: request.context.transaction_id,
         version: OnestContextConstants.version,
@@ -115,16 +117,16 @@ export class CourseConfirmService {
   async sendConfirmPayload(request: ConfirmRequestDto) {
     try {
       const ConfirmPayload = await this.createPayload(request);
-      console.log('ConfirmPayload', ConfirmPayload);
+      this.logger.log('ConfirmPayload', ConfirmPayload);
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.confirm}`;
-      console.log('url', url);
+        `/${xplorDomain.COURSE}/${Action.confirm}`;
+      this.logger.log('url', url);
       const response = await this.httpService.post(url, ConfirmPayload);
-      console.log('confirmPayload', JSON.stringify(ConfirmPayload));
+      this.logger.log('confirmPayload', JSON.stringify(ConfirmPayload));
       return response;
     } catch (error) {
-      console.log(error?.message);
+      this.logger.error(error?.message);
       return error?.message;
     }
   }

@@ -1,21 +1,22 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import { SelectContext } from '../interface/context';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
 import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
   Gateway,
   xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { InitRequestDto } from 'src/modules/app/dto/init-request.dto';
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { InitRequestDto } from '../../../dto/init-request.dto';
 import { IMessageInit } from '../interface/request/init';
 
 @Injectable()
 export class CourseInitService {
+  private readonly logger = new Logger(CourseInitService.name);
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -99,16 +100,16 @@ export class CourseInitService {
     try {
       const initPayload = await this.createPayload(request);
       if (!initPayload) throw new NotFoundException('Context not found');
-      console.log('initCreatePayload', initPayload);
+      this.logger.log('initCreatePayload', initPayload);
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.init}`;
+        `/${xplorDomain.COURSE}/${Action.init}`;
 
       const response = await this.httpService.post(url, initPayload);
-      console.log('selectPayload', JSON.stringify(initPayload));
+      this.logger.log('selectPayload', JSON.stringify(initPayload));
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Logger } from '@nestjs/common';
 import { ScholarshipService } from './services/scholarship.serviceV1';
 import {
   ConfirmScholarshipDto,
@@ -12,6 +12,7 @@ import { SearchScholarshipDto } from './dto/search-scholarship.dto';
 
 @Controller({ version: '1', path: 'scholarship' })
 export class ScholarshipController {
+  private readonly logger = new Logger(ScholarshipController.name);
   constructor(private readonly scholarshipService: ScholarshipService) {}
 
   @Post('search')
@@ -25,8 +26,7 @@ export class ScholarshipController {
 
   @Post('select')
   select(@Body() selectScholarshipDto: SelectScholarshipDto) {
-    console.log('selectScholarshipDto', selectScholarshipDto);
-    console.log('selectScholarshipDto', selectScholarshipDto);
+    this.logger.log('selectScholarshipDto', selectScholarshipDto);
     return this.scholarshipService.select(selectScholarshipDto);
   }
 
@@ -37,35 +37,38 @@ export class ScholarshipController {
 
   @Post('init')
   init(@Body() initScholarshipDto: InitScholarshipDto) {
-    console.log('initScholarship', JSON.stringify(initScholarshipDto));
+    this.logger.log('initScholarship', JSON.stringify(initScholarshipDto));
     return this.scholarshipService.init(initScholarshipDto);
   }
   @Post('on_init')
   onInit(@Body() onInitScholarshipDto: InitScholarshipDto) {
-    console.log('on_initScholarship', JSON.stringify(onInitScholarshipDto));
+    this.logger.log('on_initScholarship', JSON.stringify(onInitScholarshipDto));
     return this.scholarshipService.onInit(onInitScholarshipDto);
   }
 
   @Post('status')
   status(@Body() statusScholarshipDto: StatusScholarshipDto) {
-    console.log('statusScholarshipDto', JSON.stringify(statusScholarshipDto));
+    this.logger.log(
+      'statusScholarshipDto',
+      JSON.stringify(statusScholarshipDto),
+    );
     return this.scholarshipService.status(statusScholarshipDto);
   }
 
   @Post('on_status')
   onStatus(@Body() onStatusScholarshipDto: OnStatusScholarshipDto) {
-    console.log(onStatusScholarshipDto);
+    this.logger.log(onStatusScholarshipDto);
     return this.scholarshipService.onStatus(onStatusScholarshipDto);
   }
 
   @Post('confirm')
   confirm(@Body() initCourseDto: ConfirmScholarshipDto) {
-    console.log(JSON.stringify(initCourseDto));
+    this.logger.log(JSON.stringify(initCourseDto));
     return this.scholarshipService.confirm(initCourseDto);
   }
   @Post('on_confirm')
   onconfirm(@Body() onConfirmScholarshipDto: OnConfirmScholarshipDto) {
-    console.log(onConfirmScholarshipDto);
+    this.logger.log(onConfirmScholarshipDto);
     return this.scholarshipService.onConfirm(onConfirmScholarshipDto);
   }
 }

@@ -1,19 +1,8 @@
-/* eslint-disable no-console */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
 import { searchSchema } from '../schema/search.schema';
 import { SearchScholarshipDto } from '../dto/search-scholarship.dto';
 import { AxiosService } from '../../../common/axios/axios.service';
-import { GrafanaLoggerService } from 'src/services/grafana/service/grafana.service';
-import validateJson from 'src/utils/validator';
-import { AckNackResponse } from 'src/utils/ack-nack';
-import {
-  ACK,
-  Action,
-  CONTEXT_ERROR,
-  ERROR_CODE_CONTEXT,
-  NACK,
-} from 'src/common/constants/action';
 import { ConfigService } from '@nestjs/config';
 import { onSearchSchema } from '../schema/onSearch.schema';
 import { selectSchema } from '../schema/select.schema';
@@ -33,15 +22,27 @@ import { confirmSchema } from '../schema/confirm.schema';
 import { onConfirmSchema } from '../schema/onConfirm.schema';
 import { onStatusSchema } from '../schema/onStatus.schema';
 import { statusSchema } from '../schema/status.schema';
+import { GrafanaLoggerService } from '../../../services/grafana/service/grafana.service';
 import {
-  scholarshipConfirmResponse,
+  NACK,
+  CONTEXT_ERROR,
+  ERROR_CODE_CONTEXT,
+  ACK,
+  Action,
+} from '../../../common/constants/action';
+import { AckNackResponse } from '../../../utils/ack-nack';
+import {
   scholarshipInitResponse,
   scholarshipSelectResponse,
+  scholarshipConfirmResponse,
   scholarshipStatusResponse,
-} from 'src/utils/mock-response';
+} from '../../../utils/mock-response';
+import validateJson from '../../../utils/validator';
 
 @Injectable()
 export class ScholarshipService {
+  private readonly logger = new Logger(ScholarshipService.name);
+
   constructor(
     private readonly axiosService: AxiosService,
     private readonly loggerService: GrafanaLoggerService,
@@ -49,11 +50,11 @@ export class ScholarshipService {
   ) {}
   async search(searchScholarshipDto: SearchScholarshipDto) {
     try {
-      console.log(
+      this.logger.log(
         JSON.stringify(searchScholarshipDto.message),
         'search_scholarship_dto',
       );
-      console.log(
+      this.logger.log(
         JSON.stringify(searchScholarshipDto.message),
         'search_scholarship_dto',
       );
@@ -61,7 +62,7 @@ export class ScholarshipService {
         context: searchScholarshipDto.context,
         message: searchScholarshipDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           'NACK',
@@ -83,14 +84,22 @@ export class ScholarshipService {
       context: searchScholarshipDto.context,
       message: searchScholarshipDto.message,
     };
-    console.log(searchScholarshipDto.gatewayUrl, 'gatewayUrl');
+    this.logger.log(searchScholarshipDto.gatewayUrl, 'gatewayUrl');
     const result = await this.axiosService.post(
       searchScholarshipDto.gatewayUrl + '/search',
       searchPayload,
     );
-    console.log(searchPayload, JSON.stringify(searchPayload), 'searchPayload');
-    console.log(result?.message, 'scholarshipGatewayResult',searchScholarshipDto.gatewayUrl + '/search');
-    console.log(result, 'scholarshipGatewayResult');
+    this.logger.log(
+      searchPayload,
+      JSON.stringify(searchPayload),
+      'searchPayload',
+    );
+    this.logger.log(
+      result?.message,
+      'scholarshipGatewayResult',
+      searchScholarshipDto.gatewayUrl + '/search',
+    );
+    this.logger.log(result, 'scholarshipGatewayResult');
     return result;
   }
 
@@ -131,7 +140,7 @@ export class ScholarshipService {
         context: selectScholarshipDto.context,
         message: selectScholarshipDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -164,9 +173,9 @@ export class ScholarshipService {
           ? selectScholarshipDto.gatewayUrl + `/${Action.select}`
           : selectPayload.context.bpp_uri + `${Action.select}`;
       const selectResponse = await this.axiosService.post(url, selectPayload);
-      console.log('selectRequest=======', selectResponse);
+      this.logger.log('selectRequest=======', selectResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockSelectResponse(
           selectPayload.context.transaction_id,
@@ -175,7 +184,7 @@ export class ScholarshipService {
       }
       return selectResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -186,7 +195,7 @@ export class ScholarshipService {
         context: initScholarshipDto.context,
         message: initScholarshipDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -209,12 +218,12 @@ export class ScholarshipService {
 
   async onInit(onInitScholarshipDto: OnInitScholarshipDto) {
     try {
-      console.log('onInitScholarshipDto', onInitScholarshipDto);
+      this.logger.log('onInitScholarshipDto', onInitScholarshipDto);
       const isValid = validateJson(onInitSchema, {
         context: onInitScholarshipDto.context,
         message: onInitScholarshipDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -247,11 +256,11 @@ export class ScholarshipService {
         env === 'development'
           ? initScholarshipDto.gatewayUrl + `/${Action.init}`
           : initPayload.context.bpp_uri + `${Action.init}`;
-      console.log(url);
+      this.logger.log(url);
       const initResponse = await this.axiosService.post(url, initPayload);
-      console.log('initRequest=======', initResponse);
+      this.logger.log('initRequest=======', initResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockInitResponse(
           initPayload.context.transaction_id,
@@ -260,7 +269,7 @@ export class ScholarshipService {
       }
       return initResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -302,7 +311,7 @@ export class ScholarshipService {
         context: confirmScholarshipDto.context,
         message: confirmScholarshipDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -313,7 +322,7 @@ export class ScholarshipService {
         throw new BadRequestException(message);
       } else {
         const message = new AckNackResponse('ACK');
-        console.log('confirmScholarshipDto', confirmScholarshipDto);
+        this.logger.log('confirmScholarshipDto', confirmScholarshipDto);
         await this.sendConfirmRequest(confirmScholarshipDto);
         return {
           message,
@@ -326,7 +335,7 @@ export class ScholarshipService {
 
   async onConfirm(onConfirmScholarshipDto: OnConfirmScholarshipDto) {
     try {
-      console.log(
+      this.logger.log(
         'onConfirmScholarshipDto',
         JSON.stringify(onConfirmScholarshipDto),
       );
@@ -334,7 +343,7 @@ export class ScholarshipService {
         context: onConfirmScholarshipDto.context,
         message: onConfirmScholarshipDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -364,16 +373,16 @@ export class ScholarshipService {
         context: confirmScholarshipDto.context,
         message: confirmScholarshipDto.message,
       };
-      console.log('confirmPayload', JSON.stringify(confirmPayload));
+      this.logger.log('confirmPayload', JSON.stringify(confirmPayload));
       const env = this.configService.get('NODE_ENV');
       const url =
         env === 'development'
           ? confirmScholarshipDto.gatewayUrl + `/${Action.confirm}`
           : confirmPayload.context.bpp_id + `${Action.confirm}`;
       const selectResponse = await this.axiosService.post(url, confirmPayload);
-      console.log('confirmRequest=======', selectResponse);
+      this.logger.log('confirmRequest=======', selectResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockConfirmResponse(
           confirmPayload.context.transaction_id,
@@ -382,7 +391,7 @@ export class ScholarshipService {
       }
       return selectResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -393,7 +402,7 @@ export class ScholarshipService {
         context: statusScholarshipDto.context,
         message: statusScholarshipDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -404,7 +413,7 @@ export class ScholarshipService {
         throw new BadRequestException(message);
       } else {
         const message = new AckNackResponse('ACK');
-        console.log('statusScholarshipDto', statusScholarshipDto);
+        this.logger.log('statusScholarshipDto', statusScholarshipDto);
         await this.sendStatusRequest(statusScholarshipDto);
         return {
           message,
@@ -417,12 +426,12 @@ export class ScholarshipService {
 
   async onStatus(onStatusScholarshipDto: OnStatusScholarshipDto) {
     try {
-      console.log('onStatusScholarshipDto', onStatusScholarshipDto);
+      this.logger.log('onStatusScholarshipDto', onStatusScholarshipDto);
       const isValid = validateJson(onStatusSchema, {
         context: onStatusScholarshipDto.context,
         message: onStatusScholarshipDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -437,7 +446,8 @@ export class ScholarshipService {
           this.configService.get('APP_SERVICE_URL') + `/${Action.on_status}`,
           onStatusScholarshipDto,
         );
-        return response;
+        this.logger.debug(response);
+        return message;
       }
     } catch (error) {
       throw error;
@@ -456,10 +466,10 @@ export class ScholarshipService {
           ? statusScholarshipDto.gatewayUrl + `/${Action.status}`
           : statusScholarshipDto.context.bpp_id + `${Action.status}`;
       const statusResponse = await this.axiosService.post(url, statusPayload);
-      console.log('statusResponse', statusResponse);
-      console.log('statusRequest=======', statusResponse);
+      this.logger.log('statusResponse', statusResponse);
+      this.logger.log('statusRequest=======', statusResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockStatusResponse(
           statusPayload.context.transaction_id,
@@ -468,7 +478,7 @@ export class ScholarshipService {
       }
       return statusResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -478,7 +488,7 @@ export class ScholarshipService {
       url,
       scholarshipInitResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 
   async mockSelectResponse(transaction_id: string, baseUrl: string) {
@@ -487,7 +497,7 @@ export class ScholarshipService {
       url,
       scholarshipSelectResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 
   async mockConfirmResponse(transaction_id: string, baseUrl) {
@@ -496,7 +506,7 @@ export class ScholarshipService {
       url,
       scholarshipConfirmResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 
   async mockStatusResponse(transaction_id: string, baseUrl) {
@@ -505,6 +515,6 @@ export class ScholarshipService {
       url,
       scholarshipStatusResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 }

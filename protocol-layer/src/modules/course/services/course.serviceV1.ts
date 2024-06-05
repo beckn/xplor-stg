@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { AxiosService } from '../.../../../../common/axios/axios.service';
 
 import { searchSchema } from '../schema/search.schema';
@@ -39,9 +39,11 @@ import {
   courseInitResponse,
   courseSelectResponse,
   courseStatusResponse,
-} from 'src/utils/mock-response';
+} from '../../../utils/mock-response';
 @Injectable()
 export class CourseService {
+  private readonly logger = new Logger(CourseService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly axiosService: AxiosService,
@@ -49,12 +51,12 @@ export class CourseService {
   ) {}
   search(searchCourseDto: SearchCourseDto) {
     try {
-      console.log('searchCourseDto', searchCourseDto);
+      this.logger.log('searchCourseDto', searchCourseDto);
       const isValid = validateJson(searchSchema, {
         context: searchCourseDto.context,
         message: searchCourseDto.message,
       });
-      console.log('searchCourseDto', searchCourseDto);
+      this.logger.log('searchCourseDto', searchCourseDto);
       if (!isValid) {
         const message = new AckNackResponse(
           'NACK',
@@ -73,12 +75,12 @@ export class CourseService {
 
   async onSearch(searchCourseDto: SearchCourseDto) {
     try {
-      console.log('courseOnSearchResponse', searchCourseDto);
+      this.logger.log('courseOnSearchResponse', searchCourseDto);
       const isValid = validateJson(onSearchSchema, {
         context: searchCourseDto.context,
         message: searchCourseDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -93,7 +95,7 @@ export class CourseService {
           this.configService.get('APP_SERVICE_URL') + `/${Action.on_search}`,
           searchCourseDto,
         );
-        console.log('response', response);
+        this.logger.log('response', response);
         return message;
       }
     } catch (error) {
@@ -106,7 +108,6 @@ export class CourseService {
       context: searchCourseDto.context,
       message: searchCourseDto.message,
     };
-    console.log();
     const result = await this.axiosService.post(
       searchCourseDto.gatewayUrl + '/search',
       searchPayload,
@@ -120,7 +121,7 @@ export class CourseService {
         context: selectCourseDto.context,
         message: selectCourseDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -142,12 +143,12 @@ export class CourseService {
   }
   async onSelect(onSelectCourseDto: OnSelectCourseDto) {
     try {
-      console.log('courseOnSearchResponse', onSelectCourseDto);
+      this.logger.log('courseOnSearchResponse', onSelectCourseDto);
       const isValid = validateJson(onSelectSchema, {
         context: onSelectCourseDto.context,
         message: onSelectCourseDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -162,7 +163,7 @@ export class CourseService {
           this.configService.get('APP_SERVICE_URL') + `/${Action.on_select}`,
           onSelectCourseDto,
         );
-        console.log('response', response);
+        this.logger.log('response', response);
         return message;
       }
     } catch (error) {
@@ -178,11 +179,11 @@ export class CourseService {
       };
 
       const url = selectCourseDto.context.bpp_uri + `/${Action.select}`;
-      console.log(url);
+      this.logger.log(url);
       const selectResponse = await this.axiosService.post(url, selectPayload);
-      console.log('selectRequest=======', selectResponse);
+      this.logger.log('selectRequest=======', selectResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockSelectResponse(
           selectPayload.context.transaction_id,
@@ -191,7 +192,7 @@ export class CourseService {
       }
       return selectResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -202,7 +203,7 @@ export class CourseService {
         context: initCourseDto.context,
         message: initCourseDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -213,7 +214,7 @@ export class CourseService {
         throw new BadRequestException(message);
       } else {
         const message = new AckNackResponse('ACK');
-        console.log('initCourseDto', initCourseDto);
+        this.logger.log('initCourseDto', initCourseDto);
         await this.sendInitRequest(initCourseDto);
         return {
           message,
@@ -226,12 +227,12 @@ export class CourseService {
 
   async onInit(onInitCourseDto: OnInitCourseDto) {
     try {
-      console.log('onInitCourseDto', onInitCourseDto);
+      this.logger.log('onInitCourseDto', onInitCourseDto);
       const isValid = validateJson(onInitSchema, {
         context: onInitCourseDto.context,
         message: onInitCourseDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -265,10 +266,10 @@ export class CourseService {
           ? initCourseDto.gatewayUrl + `/${Action.init}`
           : initPayload.context.bpp_id + `${Action.init}`;
       const initResponse = await this.axiosService.post(url, initPayload);
-      console.log('initResponse', initResponse);
-      console.log('initRequest=======', initResponse);
+      this.logger.log('initResponse', initResponse);
+      this.logger.log('initRequest=======', initResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockInitResponse(
           initPayload.context.transaction_id,
@@ -277,7 +278,7 @@ export class CourseService {
       }
       return initResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -288,7 +289,7 @@ export class CourseService {
         context: confirmCourseDto.context,
         message: confirmCourseDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -299,7 +300,7 @@ export class CourseService {
         throw new BadRequestException(message);
       } else {
         const message = new AckNackResponse('ACK');
-        console.log('confirmCourseDto', confirmCourseDto);
+        this.logger.log('confirmCourseDto', confirmCourseDto);
         await this.sendConfirmRequest(confirmCourseDto);
         return {
           message,
@@ -312,12 +313,12 @@ export class CourseService {
 
   async onConfirm(onConfirmCourseDto: OnConfirmCourseDto) {
     try {
-      console.log('onConfirmCourseDto', onConfirmCourseDto);
+      this.logger.log('onConfirmCourseDto', onConfirmCourseDto);
       const isValid = validateJson(onConfirmSchema, {
         context: onConfirmCourseDto.context,
         message: onConfirmCourseDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -345,16 +346,16 @@ export class CourseService {
         context: confirmCourseDto.context,
         message: confirmCourseDto.message,
       };
-      console.log('confirmPayload', JSON.stringify(confirmPayload));
+      this.logger.log('confirmPayload', JSON.stringify(confirmPayload));
       const env = this.configService.get('NODE_ENV');
       const url =
         env === 'development'
           ? confirmCourseDto.gatewayUrl + `/${Action.confirm}`
           : confirmPayload.context.bpp_id + `${Action.confirm}`;
       const selectResponse = await this.axiosService.post(url, confirmPayload);
-      console.log('confirmRequest=======', selectResponse);
+      this.logger.log('confirmRequest=======', selectResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockConfirmResponse(
           confirmPayload.context.transaction_id,
@@ -363,7 +364,7 @@ export class CourseService {
       }
       return selectResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }
@@ -374,7 +375,7 @@ export class CourseService {
         context: statusCourseDto.context,
         message: statusCourseDto.message,
       });
-      console.log('isValid', isValid);
+      this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
           'NACK',
@@ -385,7 +386,7 @@ export class CourseService {
         throw new BadRequestException(message);
       } else {
         const message = new AckNackResponse('ACK');
-        console.log('statusCourseDto', statusCourseDto);
+        this.logger.log('statusCourseDto', statusCourseDto);
         await this.sendStatusRequest(statusCourseDto);
         return {
           message,
@@ -402,7 +403,7 @@ export class CourseService {
       url,
       courseInitResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 
   async mockSelectResponse(transaction_id: string, baseUrl: string) {
@@ -411,7 +412,7 @@ export class CourseService {
       url,
       courseSelectResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 
   async mockConfirmResponse(transaction_id: string, baseUrl) {
@@ -420,7 +421,7 @@ export class CourseService {
       url,
       courseConfirmResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 
   async mockStatusResponse(transaction_id: string, baseUrl) {
@@ -429,17 +430,17 @@ export class CourseService {
       url,
       courseStatusResponse(transaction_id),
     );
-    console.log('mockRequest', mockRequest);
+    this.logger.log('mockRequest', mockRequest);
   }
 
   async onStatus(onStatusCourseDto: OnStatusCourseDto) {
     try {
-      console.log('onStatusCourseDto', onStatusCourseDto);
+      this.logger.log('onStatusCourseDto', onStatusCourseDto);
       const isValid = validateJson(onStatusSchema, {
         context: onStatusCourseDto.context,
         message: onStatusCourseDto.message,
       });
-      console.log(isValid);
+      this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
           NACK,
@@ -454,9 +455,11 @@ export class CourseService {
           this.configService.get('APP_SERVICE_URL') + `/${Action.on_status}`,
           onStatusCourseDto,
         );
-        return response;
+        this.logger.debug(response);
+        return message;
       }
     } catch (error) {
+      this.logger.error(error);
       throw error;
     }
   }
@@ -473,10 +476,10 @@ export class CourseService {
           ? statusCourseDto.gatewayUrl + `/${Action.status}`
           : statusCourseDto.context.bpp_id + `${Action.status}`;
       const statusResponse = await this.axiosService.post(url, statusPayload);
-      console.log('statusResponse', statusResponse);
-      console.log('statusRequest=======', statusResponse);
+      this.logger.log('statusResponse', statusResponse);
+      this.logger.log('statusRequest=======', statusResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      console.log('IS_NETWORK_MOCK', isNetworkMock);
+      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
       if (isNetworkMock) {
         this.mockStatusResponse(
           statusPayload.context.transaction_id,
@@ -485,7 +488,7 @@ export class CourseService {
       }
       return statusResponse;
     } catch (error) {
-      console.log('error===============', error);
+      this.logger.log('error===============', error);
       throw error?.response;
     }
   }

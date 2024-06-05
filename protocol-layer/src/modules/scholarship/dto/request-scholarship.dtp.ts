@@ -2,8 +2,8 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 import { IScholarshipSelect } from '../interface/request/select';
 import { ISelectContext } from '../interface/context';
 import { IScholarshipInitMessage } from '../interface/request/init';
-import { ICourseStatusMessage } from 'src/modules/course/interface/request/confirm';
 import { IScholarshipConfirmMessage } from '../interface/request/confirm';
+import { ICourseStatusMessage } from '../../course/interface/request/confirm';
 
 export class SelectScholarshipDto {
   // The context property must not be empty

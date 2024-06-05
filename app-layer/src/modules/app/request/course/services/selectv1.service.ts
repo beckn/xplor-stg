@@ -1,22 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { CourseSelectPayload } from '../entity/select.entity';
 import { SelectContext } from '../interface/context';
 import { ICourseSelect, IMessageSelect } from '../interface/request/select';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
-import { AxiosService } from 'src/common/axios/axios.service';
 import { ConfigService } from '@nestjs/config';
+import { AxiosService } from '../../../../../common/axios/axios.service';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
   Gateway,
   xplorDomain,
-} from 'src/common/constants/enums';
-import { DumpService } from 'src/modules/dump/service/dump.service';
-import { SelectRequestDto } from 'src/modules/app/dto/select-request.dto';
-
+} from '../../../../../common/constants/enums';
+import { DumpService } from '../../../../dump/service/dump.service';
+import { SelectRequestDto } from '../../../dto/select-request.dto';
 @Injectable()
 export class CourseSelectService {
+  private readonly logger = new Logger(CourseSelectService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -44,7 +45,7 @@ export class CourseSelectService {
           ? request.context.ttl
           : OnestContextConstants.ttl,
       };
-      console.log('contextPayload', contextPayload);
+      this.logger.log('contextPayload', contextPayload);
       itemsFromDb.context as unknown as SelectContext;
       const messagePayload: IMessageSelect = {
         order: {
@@ -74,13 +75,13 @@ export class CourseSelectService {
 
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.course}/${Action.select}`;
+        `/${xplorDomain.COURSE}/${Action.select}`;
 
       const response = await this.httpService.post(url, selectPayload);
-      console.log('selectPayload', JSON.stringify(selectPayload));
+      this.logger.log('selectPayload', JSON.stringify(selectPayload));
       return response;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

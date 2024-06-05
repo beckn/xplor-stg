@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Catalog, MessageResponse, Provider } from './interface/on-search';
 import {
@@ -20,6 +20,8 @@ import {
  */
 @Injectable()
 export class CourseResponseService {
+  private readonly logger = new Logger(CourseResponseService.name);
+
   constructor() {}
 
   /**
@@ -60,7 +62,7 @@ export class CourseResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -91,7 +93,7 @@ export class CourseResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -122,7 +124,7 @@ export class CourseResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -140,7 +142,7 @@ export class CourseResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }
@@ -169,7 +171,7 @@ export class CourseResponseService {
       };
       return resp;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error);
       return error?.message;
     }
   }

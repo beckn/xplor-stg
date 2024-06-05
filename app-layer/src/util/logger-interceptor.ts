@@ -86,7 +86,7 @@ export const defaultResponseHandler: ResponseHandler = (
       methodName: LoggerMessage.responseInterceptorName,
     });
   } catch (error) {
-    console.log('error', error);
+    logger.sendError(error);
   }
 };
 

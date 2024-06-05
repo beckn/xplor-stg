@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { ScholarshipSearchPayload } from '../entity/search.entity';
@@ -12,7 +12,7 @@ import {
   Gateway,
   xplorDomain,
 } from '../../../../../common/constants/enums';
-import { OnestContextConstants } from 'src/common/constants/context.constant';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 
 /**
  * Service for handling scholarship search operations.
@@ -20,6 +20,8 @@ import { OnestContextConstants } from 'src/common/constants/context.constant';
  */
 @Injectable()
 export class ScholarshipSearchService {
+  private readonly logger = new Logger(ScholarshipSearchService.name);
+
   constructor(
     private readonly configService: ConfigService,
     private readonly httpService: AxiosService,
@@ -39,7 +41,7 @@ export class ScholarshipSearchService {
         bap_id: OnestContextConstants.bap_id,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.scholarship}`,
+          `/${xplorDomain.SCHOLARSHIP}`,
         domain: DomainsEnum.SCHOLARSHIP_DOMAIN,
       };
       const message: Message = query;
@@ -68,11 +70,11 @@ export class ScholarshipSearchService {
       );
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.scholarship}/${Action.search}`;
+        `/${xplorDomain.SCHOLARSHIP}/${Action.search}`;
       const response = await this.httpService.post(url, searchPayload);
       return response;
     } catch (error) {
-      console.log(error?.message);
+      this.logger.error(error?.message);
       return error?.message;
     }
   }
