@@ -1,7 +1,7 @@
 import { func } from "joi";
 import * as _sodium from 'libsodium-wrappers';
 export async function getSignatureHeader(privateKey, publicKey, subscriberId, uniqueKeyId, requestBody) {
-    const digest = await generateBlakeDigest(requestBody);
+    const digest = await generateBlakeDigest(JSON.stringify(requestBody));
     const digestBase64 = _sodium.to_base64(digest, _sodium.base64_variants.ORIGINAL);
   
     const created = Math.floor(Date.now() / 1000);
@@ -10,7 +10,7 @@ export async function getSignatureHeader(privateKey, publicKey, subscriberId, un
     const signingString = `(created): ${created}\n(expires): ${expires}\ndigest: BLAKE-512=${digestBase64}`;
     privateKey = Buffer.from(privateKey, 'base64');
     publicKey = Buffer.from(publicKey, 'base64');
-    const signatureBase64 = signStringWithEd25519(signingString, privateKey);
+    const signatureBase64 = await signStringWithEd25519(signingString, privateKey);
     const authorizationHeader = `Signature keyId="${subscriberId}|${uniqueKeyId}|ed25519",algorithm="ed25519",created="${created}",expires="${expires}",headers="(created) (expires) digest",signature="${signatureBase64}"`;
     console.log('Authorization Header: ------\n', authorizationHeader);
     return authorizationHeader;
