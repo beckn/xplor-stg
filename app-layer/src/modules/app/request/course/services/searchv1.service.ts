@@ -40,7 +40,7 @@ export class CourseSearchService {
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
           `/${xplorDomain.COURSE}`,
-        domain: DomainsEnum.COURSE_DOMAIN,
+        domain: context?.domain===DomainsEnum.BELEM? DomainsEnum.BELEM: DomainsEnum.COURSE_DOMAIN,
       };
       const message: Message = query;
       const payload = new CourseSearchPayload(contextPayload, message);

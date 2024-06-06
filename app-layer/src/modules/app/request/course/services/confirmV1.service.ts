@@ -41,7 +41,7 @@ export class CourseConfirmService {
       const contextPayload: SelectContext = {
         ...context,
         action: Action.confirm,
-        domain: DomainsEnum.COURSE_DOMAIN,
+        domain: request?.context?.domain===DomainsEnum.BELEM? DomainsEnum.BELEM: DomainsEnum.COURSE_DOMAIN,
         bap_uri:
           this.configService.get('PROTOCOL_SERVICE_URL') +
           `/${xplorDomain.COURSE}`,

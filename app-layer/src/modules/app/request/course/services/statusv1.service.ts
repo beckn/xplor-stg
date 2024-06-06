@@ -37,7 +37,7 @@ export class CourseStatusService {
       const contextPayload: SelectContext = {
         ...context,
         action: Action.status,
-        domain: DomainsEnum.COURSE_DOMAIN,
+        domain: request?.context?.domain===DomainsEnum.BELEM? DomainsEnum.BELEM: DomainsEnum.COURSE_DOMAIN,
         transaction_id: request.context.transaction_id,
         message_id: request.context.message_id,
         version: OnestContextConstants.version,
