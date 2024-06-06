@@ -87,10 +87,9 @@ export class ScholarshipService {
       message: searchScholarshipDto.message,
     };
     this.logger.log(searchScholarshipDto.gatewayUrl, 'gatewayUrl');
-    const result = await this.axiosHeaderService.getAxiosInstance().post(
-      searchScholarshipDto.gatewayUrl + '/search',
-      searchPayload,
-    );
+    const result = await this.axiosHeaderService
+      .getAxiosInstance()
+      .post(searchScholarshipDto.gatewayUrl + '/search', searchPayload);
     this.logger.log(
       searchPayload,
       JSON.stringify(searchPayload),
@@ -169,7 +168,9 @@ export class ScholarshipService {
         env === 'development'
           ? selectScholarshipDto.gatewayUrl + `/${Action.select}`
           : selectPayload.context.bpp_uri + `${Action.select}`;
-      const selectResponse = await this.axiosHeaderService.getAxiosInstance().post(url, selectPayload);
+      const selectResponse = await this.axiosHeaderService
+        .getAxiosInstance()
+        .post(url, selectPayload);
       this.logger.log('selectRequest=======', selectResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
       this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
@@ -254,7 +255,9 @@ export class ScholarshipService {
           ? initScholarshipDto.gatewayUrl + `/${Action.init}`
           : initPayload.context.bpp_uri + `${Action.init}`;
       this.logger.log(url);
-      const initResponse = await this.axiosHeaderService.getAxiosInstance().post(url, initPayload);
+      const initResponse = await this.axiosHeaderService
+        .getAxiosInstance()
+        .post(url, initPayload);
       this.logger.log('initRequest=======', initResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
       this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
@@ -376,7 +379,9 @@ export class ScholarshipService {
         env === 'development'
           ? confirmScholarshipDto.gatewayUrl + `/${Action.confirm}`
           : confirmPayload.context.bpp_id + `${Action.confirm}`;
-      const selectResponse = await this.axiosHeaderService.getAxiosInstance().post(url, confirmPayload);
+      const selectResponse = await this.axiosHeaderService
+        .getAxiosInstance()
+        .post(url, confirmPayload);
       this.logger.log('confirmRequest=======', selectResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
       this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
@@ -462,7 +467,9 @@ export class ScholarshipService {
         env === 'development'
           ? statusScholarshipDto.gatewayUrl + `/${Action.status}`
           : statusScholarshipDto.context.bpp_id + `${Action.status}`;
-      const statusResponse = await this.axiosHeaderService.getAxiosInstance().post(url, statusPayload);
+      const statusResponse = await this.axiosHeaderService
+        .getAxiosInstance()
+        .post(url, statusPayload);
       this.logger.log('statusResponse', statusResponse);
       this.logger.log('statusRequest=======', statusResponse);
       const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');

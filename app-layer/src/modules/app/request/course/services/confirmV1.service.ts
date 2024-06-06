@@ -3,7 +3,10 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SelectContext } from '../interface/context';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import { OnestContextConstants } from '../../../../../common/constants/context.constant';
+import {
+  BelemContextConstants,
+  OnestContextConstants,
+} from '../../../../../common/constants/context.constant';
 import {
   DomainsEnum,
   xplorDomain,
@@ -12,7 +15,6 @@ import {
 } from '../../../../../common/constants/enums';
 import { DumpService } from '../../../../dump/service/dump.service';
 import { ConfirmRequestDto } from '../../../dto/confirm-request.dto';
-import { ICourseConfirmMessage } from '../interface/request/confirm';
 
 @Injectable()
 export class CourseConfirmService {
@@ -26,25 +28,36 @@ export class CourseConfirmService {
 
   async createPayload(request: ConfirmRequestDto) {
     try {
-      const selectRequestDetails =
-        await this.dbService.findByActiontransaction_id(
-          request?.context?.transaction_id,
+      this.logger.log(request?.message?.order, 'Item from request');
+      const getItemFromDumpDb =
+        await await this.dbService.findItemByprovider_id(
+          request?.message?.order?.provider_id,
+          request?.message?.order?.items_id,
           request?.context?.domain,
-          'on_search',
         );
-      this.logger.log('selectRequestDetails', selectRequestDetails);
-      const context = selectRequestDetails?.context as unknown as SelectContext;
-      const billing = selectRequestDetails?.message?.order?.billing;
+      this.logger.log(getItemFromDumpDb, 'Item from db');
+      if (!getItemFromDumpDb || !getItemFromDumpDb) return null;
+      const context = getItemFromDumpDb?.context as unknown as SelectContext;
+      const billing = request?.message?.order?.billing;
       delete billing?.id;
-      const fulfillments = selectRequestDetails?.message?.order?.fulfillment;
+      const fulfillments = request?.message?.order?.fulfillments;
       if (!context) throw new NotFoundException('Context not found');
       const contextPayload: SelectContext = {
         ...context,
         action: Action.confirm,
-        domain: request?.context?.domain===DomainsEnum.BELEM? DomainsEnum.BELEM: DomainsEnum.COURSE_DOMAIN,
+        domain:
+          request?.context?.domain === DomainsEnum.BELEM
+            ? DomainsEnum.BELEM
+            : DomainsEnum.COURSE_DOMAIN,
+        bap_id:
+          context?.domain === DomainsEnum.BELEM
+            ? BelemContextConstants.bap_id
+            : OnestContextConstants.bap_id,
         bap_uri:
-          this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.COURSE}`,
+          context?.domain === DomainsEnum.BELEM
+            ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+            : this.configService.get('PROTOCOL_SERVICE_URL') +
+              `/${xplorDomain.COURSE}`,
         message_id: request.context.message_id,
         transaction_id: request.context.transaction_id,
         version: OnestContextConstants.version,
@@ -53,33 +66,17 @@ export class CourseConfirmService {
           ? request.context.ttl
           : OnestContextConstants.ttl,
       };
-      const messagePayload: ICourseConfirmMessage = {
+      const messagePayload = {
         order: {
           provider: {
-            id: selectRequestDetails?.message?.order?.provider_id
-              ? selectRequestDetails?.message?.order?.provider_id
-              : request?.message?.order?.provider_id,
+            id: request?.message?.order?.provider_id,
           },
-          items: selectRequestDetails?.message?.order?.items_id[0]
-            ? [
-                { id: selectRequestDetails?.message?.order?.items_id[0] },
-                ...selectRequestDetails?.message?.order?.items_id
-                  .slice(1)
-                  .map((id) => ({ id })),
-              ]
-            : [
-                {
-                  id: 'd4975df5-b18c-4772-80ad-368669856d52',
-                },
-              ],
-          billing: billing
-            ? billing
-            : {
-                name: 'Jane Doe',
-                phone: '+91-9663088848',
-                email: 'jane.doe@example.com',
-                address: 'No 27, XYZ Lane, etc',
-              },
+          items: [
+            {
+              id: request?.message?.order?.items_id[0],
+            },
+          ],
+          billing: billing,
           fulfillments: fulfillments
             ? fulfillments
             : [

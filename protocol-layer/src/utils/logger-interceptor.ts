@@ -126,7 +126,7 @@ export const defaultErrorHandler: ErrorHandler = (
         message: `ERROR: ${request.method} ${request.url}`,
         error,
       },
-      stack: error.stack,
+      stack: error?.stack,
     };
     logger.sendError(messagePayload);
   }

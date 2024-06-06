@@ -50,7 +50,7 @@ export class GrafanaLoggerService {
       });
     } catch (error) {
       this.logger.error(error?.message);
-      this.logger.log(JSON.stringify(logger));
+      // this.logger.log(JSON.stringify(logger));
       return new BadGatewayException(error?.message);
     }
   }

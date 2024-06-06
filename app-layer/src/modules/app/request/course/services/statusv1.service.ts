@@ -26,18 +26,22 @@ export class CourseStatusService {
 
   async createPayload(request: StatusRequestDto) {
     try {
-      const initRequestDetails =
-        await this.dbService.findByActiontransaction_id(
-          request?.context?.transaction_id,
+      const getItemFromDumpDb =
+        await await this.dbService.findItemByprovider_id(
+          request?.message?.order?.provider_id,
+          request?.message?.order?.items_id,
           request?.context?.domain,
-          'on_init',
         );
-      if (!initRequestDetails) return null;
+      this.logger.log(getItemFromDumpDb, 'Item from db');
+      if (!getItemFromDumpDb || !getItemFromDumpDb) return null;
       const context = initRequestDetails?.context as unknown as SelectContext;
       const contextPayload: SelectContext = {
         ...context,
         action: Action.status,
-        domain: request?.context?.domain===DomainsEnum.BELEM? DomainsEnum.BELEM: DomainsEnum.COURSE_DOMAIN,
+        domain:
+          request?.context?.domain === DomainsEnum.BELEM
+            ? DomainsEnum.BELEM
+            : DomainsEnum.COURSE_DOMAIN,
         transaction_id: request.context.transaction_id,
         message_id: request.context.message_id,
         version: OnestContextConstants.version,

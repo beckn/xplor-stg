@@ -31,7 +31,6 @@ export class ScholarshipSelectService {
   async createPayload(request: SelectRequestDto) {
     try {
       const itemsFromDb = await this.dbService.findItemByprovider_id(
-        request?.context?.transaction_id,
         request?.message?.order?.provider_id,
         request?.message?.order?.items_id,
         request?.context?.domain,

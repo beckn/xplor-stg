@@ -5,7 +5,10 @@ import { SelectContext } from '../interface/context';
 import { ICourseSelect, IMessageSelect } from '../interface/request/select';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import { OnestContextConstants } from '../../../../../common/constants/context.constant';
+import {
+  BelemContextConstants,
+  OnestContextConstants,
+} from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
@@ -26,17 +29,30 @@ export class CourseSelectService {
 
   async createPayload(request: SelectRequestDto) {
     try {
+      this.logger.log(request, 'requestSelectPayload');
       const itemsFromDb = await this.dbService.findItemByprovider_id(
-        request?.context?.transaction_id,
         request?.message?.order?.provider_id,
         request?.message?.order?.items_id,
         request?.context?.domain,
       );
+      this.logger.log(itemsFromDb, 'Item from db');
       const context = itemsFromDb.context as unknown as SelectContext;
       const contextPayload: SelectContext = {
         ...context,
         action: Action.select,
-        domain: request?.context?.domain===DomainsEnum.BELEM? DomainsEnum.BELEM: DomainsEnum.COURSE_DOMAIN,
+        domain:
+          request?.context?.domain === DomainsEnum.BELEM
+            ? DomainsEnum.BELEM
+            : DomainsEnum.COURSE_DOMAIN,
+        bap_id:
+          context?.domain === DomainsEnum.BELEM
+            ? BelemContextConstants.bap_id
+            : OnestContextConstants.bap_id,
+        bap_uri:
+          context?.domain === DomainsEnum.BELEM
+            ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+            : this.configService.get('PROTOCOL_SERVICE_URL') +
+              `/${xplorDomain.COURSE}`,
         message_id: request.context.message_id,
         transaction_id: request.context.transaction_id,
         version: OnestContextConstants.version,
@@ -60,9 +76,13 @@ export class CourseSelectService {
       };
 
       const payload = new CourseSelectPayload(contextPayload, messagePayload);
+      this.logger.log(payload, 'Payload');
       return {
         ...payload,
-        gatewayUrl: Gateway.course,
+        gatewayUrl:
+          context?.domain === DomainsEnum.BELEM
+            ? Gateway.belem
+            : Gateway.course,
       };
     } catch (error) {
       return error?.message;

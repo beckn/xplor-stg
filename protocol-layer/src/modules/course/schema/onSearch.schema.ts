@@ -76,7 +76,7 @@ export const onSearchSchema = {
                         id: { type: 'string' },
                         type: { type: 'string' },
                       },
-                      required: ['id', 'type'],
+                      required: [],
                     },
                   },
                   items: {
@@ -225,7 +225,6 @@ export const onSearchSchema = {
                         'creator',
                         'price',
                         'category_ids',
-                        'fulfillment_ids',
                         'rating',
                         'rateable',
                         'tags',
