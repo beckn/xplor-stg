@@ -142,6 +142,16 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
+        case xplorDomain.BELEM:
+          // Logic for COURSE_DOMAIN
+
+          const selectResponseBELEMCourse =
+            await this.courseSelectService.sendSelectPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-select: ${JSON.stringify(selectResponseBELEMCourse)}`,
+          );
+          break;
         case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           // Perform the search operation using the JobSearchService
@@ -168,6 +178,7 @@ export class GlobalActionService {
           // Log the search response for the scholarship domain
           this.logger.log(`Scholarship: ${searchResponseScholarship}`);
           break;
+        
         default:
           // Default case if the domain does not match any of the expected values
           // No specific action is taken here, but you could add logic to handle unexpected domains
@@ -187,6 +198,16 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
+        case xplorDomain.BELEM:
+          // Logic for COURSE_DOMAIN
+
+          const initResponseBELEMCourse =
+            await this.courseInitService.sendInitPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-select: ${JSON.stringify(initResponseBELEMCourse)}`,
+          );
+          break;
         case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
@@ -226,6 +247,16 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
+        case xplorDomain.BELEM:
+          // Logic for COURSE_DOMAIN
+
+          const initResponseBELEMCourse =
+            await this.courseConfirmService.sendConfirmPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-select: ${JSON.stringify(initResponseBELEMCourse)}`,
+          );
+          break;
         case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;
@@ -264,6 +295,17 @@ export class GlobalActionService {
     try {
       // Switch statement to handle different domains
       switch (request?.context?.domain) {
+
+        case xplorDomain.BELEM:
+          // Logic for COURSE_DOMAIN
+
+          const initResponseBELEMCourse =
+            await this.courseStatusService.sendStatusPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-select: ${JSON.stringify(initResponseBELEMCourse)}`,
+          );
+          break;
         case xplorDomain.JOB:
           // Logic for JOB_DOMAIN
           break;

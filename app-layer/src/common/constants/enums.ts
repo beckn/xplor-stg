@@ -7,6 +7,7 @@ export enum DomainsEnum {
   COURSE_DOMAIN = 'onest:learning-experiences', // Domain for course-related services
   SCHOLARSHIP_DOMAIN = 'onest:financial-support', // Domain for scholarship-related services
   RETAIL_DOMAIN = 'ONDC:RET10', // Domain for retail-related services
+  BELEM=  'dsep-belem:courses', // Domain for belem course
 }
 
 /**
@@ -18,6 +19,7 @@ export enum xplorDomain {
   JOB = 'job', // Identifier for job domain
   SCHOLARSHIP = 'scholarship', // Identifier for scholarship domain
   RETAIL = 'retail', // Identifier for retail domain
+  BELEM=  'dsep-belem:courses', // Identifier for belem domain course
 }
 
 /**
