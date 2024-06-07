@@ -184,7 +184,7 @@ export class AppService {
             ? this.onestCreatePayload.createPayload(response.message)
             : {};
           break;
-        case DomainsEnum.COURSE_DOMAIN:
+          case DomainsEnum.COURSE_DOMAIN || DomainsEnum.BELEM:
           course = response.message
             ? this.onestCreateCoursePayload.createSelectPayload(
                 response.message,
@@ -277,12 +277,13 @@ export class AppService {
       let job: object, course: object, scholarship: object, retail: object;
       // Determine which type of payload to create based on the domain
       switch (response.context.domain) {
+     
         case DomainsEnum.JOB_DOMAIN:
           job = response.message
             ? this.onestCreatePayload.createPayload(response.message)
             : {};
           break;
-        case DomainsEnum.COURSE_DOMAIN:
+        case DomainsEnum.COURSE_DOMAIN || DomainsEnum.BELEM:
           course = response.message
             ? this.onestCreateCoursePayload.createInitPayload(response.message)
             : {};
@@ -397,7 +398,7 @@ export class AppService {
             ? this.onestCreatePayload.createPayload(response.message)
             : {};
           break;
-        case DomainsEnum.COURSE_DOMAIN:
+          case DomainsEnum.COURSE_DOMAIN || DomainsEnum.BELEM:
           course = response.message
             ? this.onestCreateCoursePayload.createStatusPayload(
                 response.message,
@@ -475,7 +476,7 @@ export class AppService {
             ? this.onestCreatePayload.createPayload(response.message)
             : {};
           break;
-        case DomainsEnum.COURSE_DOMAIN:
+          case DomainsEnum.COURSE_DOMAIN || DomainsEnum.BELEM:
           course = response.message
             ? this.onestCreateCoursePayload.createConfirmPayload(
                 response.message,
