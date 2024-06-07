@@ -26,27 +26,58 @@ export class CourseStatusService {
 
   async createPayload(request: StatusRequestDto) {
     try {
-      const getItemFromDumpDb =
-        await await this.dbService.findItemByprovider_id(
-          request?.message?.order?.provider_id,
-          request?.message?.order?.items_id,
-          request?.context?.domain,
-        );
-      this.logger.log(getItemFromDumpDb, 'Item from db');
-      if (!getItemFromDumpDb || !getItemFromDumpDb) return null;
-      const context = initRequestDetails?.context as unknown as SelectContext;
+      if (request.context.domain === DomainsEnum.BELEM) {
+        const getItemFromDumpDb: any = {};
+        // await await this.dbService.findItemByprovider_id(
+        //   request?.message?.order?.provider_id,
+        //   request?.message?.order?.items_id,
+        //   request?.context?.domain,
+        // );
+        this.logger.log(getItemFromDumpDb, 'Item from db');
+        if (!getItemFromDumpDb || !getItemFromDumpDb) return null;
+        const context = request?.context as unknown as SelectContext;
+        const contextPayload: SelectContext = {
+          ...context,
+          action: Action.status,
+          domain:
+            request?.context?.domain === DomainsEnum.BELEM
+              ? DomainsEnum.BELEM
+              : DomainsEnum.COURSE_DOMAIN,
+          transaction_id: request.context.transaction_id,
+          message_id: request.context.message_id,
+          version: OnestContextConstants.version,
+          bpp_id: getItemFromDumpDb?.context?.bpp_id,
+          bpp_uri: getItemFromDumpDb?.context?.bpp_uri,
+          timestamp: new Date().toISOString(),
+          ttl: request.context.ttl
+            ? request.context.ttl
+            : OnestContextConstants.ttl,
+        };
+        const messagePayload: IMessageStatus = {
+          order_id: request?.message?.order?.id,
+        };
+
+        const payload = {
+          context: contextPayload,
+          message: messagePayload,
+        };
+        return {
+          ...payload,
+          gatewayUrl: Gateway.course,
+        };
+      }
       const contextPayload: SelectContext = {
-        ...context,
+        bpp_id: 'infosys.springboard.io',
+        bpp_uri: 'https://infosys.springboard.io',
         action: Action.status,
-        domain:
-          request?.context?.domain === DomainsEnum.BELEM
-            ? DomainsEnum.BELEM
-            : DomainsEnum.COURSE_DOMAIN,
-        transaction_id: request.context.transaction_id,
+        domain: request?.context?.domain,
+        bap_id: OnestContextConstants.bap_id,
+        bap_uri:
+          this.configService.get('PROTOCOL_SERVICE_URL') +
+          `/${xplorDomain.COURSE}`,
         message_id: request.context.message_id,
+        transaction_id: request.context.transaction_id,
         version: OnestContextConstants.version,
-        bpp_id: initRequestDetails?.context?.bpp_id,
-        bpp_uri: initRequestDetails?.context?.bpp_uri,
         timestamp: new Date().toISOString(),
         ttl: request.context.ttl
           ? request.context.ttl

@@ -1,4 +1,3 @@
-
 import * as _sodium from 'libsodium-wrappers';
 export async function getSignatureHeader(
   privateKey,

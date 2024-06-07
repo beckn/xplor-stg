@@ -39,6 +39,8 @@ import {
   courseStatusResponse,
 } from '../../../utils/mock-response';
 import { HeaderInterceptorService } from '../../../common/network/header.interceptor';
+import { DomainsEnum } from 'src/common/constants/enums';
+import { confirmSchema } from '../schema/confirm.schema';
 @Injectable()
 export class CourseService {
   private readonly logger = new Logger(CourseService.name);
@@ -178,21 +180,24 @@ export class CourseService {
         message: selectCourseDto.message,
       };
 
-      const url = selectCourseDto.context.bpp_uri + `/${Action.select}`;
-      this.logger.log(url);
-      const selectResponse = await this.axiosHeaderService
-        .getAxiosInstance()
-        .post(url, selectPayload);
-      this.logger.log(selectResponse.statusText, 'selectRequest=======');
-      const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
-      // if (isNetworkMock) {
-      //   this.mockSelectResponse(
-      //     selectPayload.context.transaction_id,
-      //     selectPayload.context.bap_uri,
-      //   );
-      // }
-      return selectResponse;
+      if (selectCourseDto.context.domain === DomainsEnum.BELEM) {
+        const url = selectCourseDto.context.bpp_uri + `/${Action.select}`;
+        this.logger.log(url);
+        const selectResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, selectPayload);
+        this.logger.log(selectResponse.statusText, 'selectRequest=======');
+        return selectResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockSelectResponse(
+            selectPayload.context.transaction_id,
+            selectPayload.context.bap_uri,
+          );
+        }
+      }
     } catch (error) {
       this.logger.log('error===============', error);
       throw error;
@@ -262,20 +267,22 @@ export class CourseService {
         message: initCourseDto.message,
       };
 
-      const url = initPayload.context.bpp_uri + `/${Action.init}`;
-      const initResponse = await this.axiosHeaderService
-        .getAxiosInstance()
-        .post(url, initPayload);
-
-      const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
-      // if (isNetworkMock) {
-      //   this.mockInitResponse(
-      //     initPayload.context.transaction_id,
-      //     initPayload.context.bap_uri,
-      //   );
-      // }
-      return initResponse;
+      if (initCourseDto.context.domain === DomainsEnum.BELEM) {
+        const url = initPayload.context.bpp_uri + `/${Action.init}`;
+        const initResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, initPayload);
+        return initResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockInitResponse(
+            initPayload.context.transaction_id,
+            initPayload.context.bap_uri,
+          );
+        }
+      }
     } catch (error) {
       this.logger.log('error===============', error);
       throw error;
@@ -284,11 +291,11 @@ export class CourseService {
 
   async confirm(confirmCourseDto: ConfirmCourseDto) {
     try {
-      // const isValid = validateJson(confirmSchema, {
-      //   context: confirmCourseDto.context,
-      //   message: confirmCourseDto.message,
-      // });
-      const isValid = true;
+      const isValid = validateJson(confirmSchema, {
+        context: confirmCourseDto.context,
+        message: confirmCourseDto.message,
+      });
+      // const isValid = true;
       this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
@@ -346,22 +353,25 @@ export class CourseService {
         context: confirmCourseDto.context,
         message: confirmCourseDto.message,
       };
-      this.logger.log(confirmPayload, 'ConfirmPayload');
-      const url = confirmPayload.context.bpp_uri + `/${Action.confirm}`;
-      console.log(url, 'url');
-      await this.axiosHeaderService
-        .getAxiosInstance()
-        .post(url, confirmPayload);
-      // this.logger.log('confirmRequest=======', selectResponse);
-      const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
-      // if (isNetworkMock) {
-      //   this.mockConfirmResponse(
-      //     confirmPayload.context.transaction_id,
-      //     confirmPayload.context.bap_uri,
-      //   );
-      // }
-      // return selectResponse;
+      if (confirmPayload.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(confirmPayload, 'ConfirmPayload');
+        const url = confirmPayload.context.bpp_uri + `/${Action.confirm}`;
+        console.log(url, 'url');
+        const selectResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, confirmPayload);
+        // this.logger.log('confirmRequest=======', selectResponse);
+        return selectResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockConfirmResponse(
+            confirmPayload.context.transaction_id,
+            confirmPayload.context.bap_uri,
+          );
+        }
+      }
     } catch (error) {
       this.logger.log(error, 'error response');
       throw error?.response;
@@ -468,26 +478,24 @@ export class CourseService {
         context: statusCourseDto.context,
         message: statusCourseDto.message,
       };
-
-      const env = this.configService.get('NODE_ENV');
-      const url =
-        env === 'development'
-          ? statusCourseDto.gatewayUrl + `/${Action.status}`
-          : statusCourseDto.context.bpp_id + `${Action.status}`;
-      const statusResponse = await this.axiosHeaderService
-        .getAxiosInstance()
-        .post(url, statusPayload);
-      this.logger.log('statusResponse', statusResponse);
-      this.logger.log('statusRequest=======', statusResponse);
-      const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
-      this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
-      if (isNetworkMock) {
-        this.mockStatusResponse(
-          statusPayload.context.transaction_id,
-          statusPayload.context.bap_uri,
-        );
+      if (statusCourseDto.context.domain === DomainsEnum.BELEM) {
+        const url = statusCourseDto.context.bpp_uri + `/${Action.status}`;
+        const statusResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, statusPayload);
+        // this.logger.log('statusResponse', statusResponse);
+        // this.logger.log('statusRequest=======', statusResponse);
+        return statusResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockStatusResponse(
+            statusPayload.context.transaction_id,
+            statusPayload.context.bap_uri,
+          );
+        }
       }
-      return statusResponse;
     } catch (error) {
       this.logger.log('error===============', error);
       throw error?.response;
