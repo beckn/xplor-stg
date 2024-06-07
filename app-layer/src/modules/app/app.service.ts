@@ -184,20 +184,20 @@ export class AppService {
             ? this.onestCreatePayload.createPayload(response.message)
             : {};
           break;
-          case DomainsEnum.COURSE_DOMAIN:
+        case DomainsEnum.COURSE_DOMAIN:
           course = response.message
             ? this.onestCreateCoursePayload.createSelectPayload(
                 response.message,
               )
             : {};
           break;
-          case DomainsEnum.BELEM:
-            course = response.message
-              ? this.onestCreateCoursePayload.createSelectPayload(
-                  response.message,
-                )
-              : {};
-            break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createSelectPayload(
+                response.message,
+              )
+            : {};
+          break;
         case DomainsEnum.SCHOLARSHIP_DOMAIN:
           scholarship = response.message
             ? this.onestCreateScholarshipPayload.createSelectPayload(
@@ -284,7 +284,6 @@ export class AppService {
       let job: object, course: object, scholarship: object, retail: object;
       // Determine which type of payload to create based on the domain
       switch (response.context.domain) {
-     
         case DomainsEnum.JOB_DOMAIN:
           job = response.message
             ? this.onestCreatePayload.createPayload(response.message)
@@ -295,11 +294,11 @@ export class AppService {
             ? this.onestCreateCoursePayload.createInitPayload(response.message)
             : {};
           break;
-          case DomainsEnum.BELEM:
-            course = response.message
-              ? this.onestCreateCoursePayload.createInitPayload(response.message)
-              : {};
-            break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createInitPayload(response.message)
+            : {};
+          break;
         case DomainsEnum.SCHOLARSHIP_DOMAIN:
           scholarship = response.message
             ? this.onestCreateScholarshipPayload.createInitPayload(
@@ -410,20 +409,20 @@ export class AppService {
             ? this.onestCreatePayload.createPayload(response.message)
             : {};
           break;
-          case DomainsEnum.COURSE_DOMAIN:
+        case DomainsEnum.COURSE_DOMAIN:
           course = response.message
             ? this.onestCreateCoursePayload.createStatusPayload(
                 response.message,
               )
             : {};
           break;
-          case DomainsEnum.BELEM:
-            course = response.message
-              ? this.onestCreateCoursePayload.createStatusPayload(
-                  response.message,
-                )
-              : {};
-            break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createStatusPayload(
+                response.message,
+              )
+            : {};
+          break;
         case DomainsEnum.SCHOLARSHIP_DOMAIN:
           scholarship = response.message
             ? this.onestCreateScholarshipPayload.createStatusPayload(
@@ -495,20 +494,20 @@ export class AppService {
             ? this.onestCreatePayload.createPayload(response.message)
             : {};
           break;
-          case DomainsEnum.COURSE_DOMAIN:
+        case DomainsEnum.COURSE_DOMAIN:
           course = response.message
             ? this.onestCreateCoursePayload.createConfirmPayload(
                 response.message,
               )
             : {};
           break;
-          case DomainsEnum.BELEM:
-            course = response.message
-              ? this.onestCreateCoursePayload.createConfirmPayload(
-                  response.message,
-                )
-              : {};
-            break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createConfirmPayload(
+                response.message,
+              )
+            : {};
+          break;
         case DomainsEnum.SCHOLARSHIP_DOMAIN:
           scholarship = response.message
             ? this.onestCreateScholarshipPayload.createConfirmPayload(
