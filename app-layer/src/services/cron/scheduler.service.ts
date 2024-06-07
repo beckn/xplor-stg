@@ -24,7 +24,7 @@ export class SchedulerService {
       const url = this.configService.get('APP_SERVICE_URL') + '/search';
 
       const payload = {
-        domain: ['course'],
+        domain: ['scholarship', 'course', 'dsep-belem:courses'],
         context: {
           transaction_id: uuidv4(),
           message_id: uuidv4(),
