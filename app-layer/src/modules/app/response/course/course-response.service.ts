@@ -67,24 +67,33 @@ export class CourseResponseService {
     }
   }
 
-  createSelectPayload(response: ICourseSelectResponseMessage) {
+  createSelectPayload(response: ICourseSelectResponseMessage|any) {
     try {
-      const order: ICourseSelectResponseMessageOrder = {
+      const order: ICourseSelectResponseMessageOrder|any = {
         provider: {
           id: response?.order?.provider?.id,
         },
-        items: response?.order?.items?.map((item) => {
+        items: response?.order?.provider?.items?response?.order?.provider?.items?.map((item) => {
+          return {
+            id: item?.id,
+          };
+        }):response?.order?.items?.map((item) => {
           return {
             id: item?.id,
           };
         }),
-        fulfillments: response?.order?.fulfillments.map((fulfillment) => {
+        fulfillments: response?.order?.provider?.fulfillments?response?.order?.provider?.fulfillments?.map((fulfillment) => {
+          return {
+            id: fulfillment?.id,
+            agent: fulfillment?.agent,
+          };
+        }):response?.order?.fulfillments?.map((fulfillment) => {
           return {
             id: fulfillment?.id,
             agent: fulfillment?.agent,
           };
         }),
-        quote: response?.order?.quote,
+        quote: response?.order?.provider?.quote?response?.order?.provider?.quote:response?.order?.quote,
       };
       const resp: ICourseSelectMessage = {
         message: {
@@ -98,24 +107,34 @@ export class CourseResponseService {
     }
   }
 
-  createInitPayload(response: ICourseInitMessage) {
+  createInitPayload(response: ICourseInitMessage|any) {
     try {
       const order = {
-        platform_provider: {
+        provider: {
           id: response?.order?.provider?.id,
         },
-        items: response?.order?.items?.map((item) => {
+        items: response?.order?.provider?.items?response?.order?.provider?.items?.map((item) => {
+          return {
+            id: item?.id,
+          };
+        }):response?.order?.items?.map((item) => {
           return {
             id: item?.id,
           };
         }),
-        fulfillment: response?.order?.fulfillments[0]?.id
-          ? {
-              id: response?.order?.fulfillments[0]?.id,
-            }
-          : response?.order?.fulfillments,
-        quote: response?.order?.quote,
-        payments: response?.order?.payments,
+        fulfillments: response?.order?.provider?.fulfillments?response?.order?.provider?.fulfillments?.map((fulfillment) => {
+          return {
+            id: fulfillment?.id,
+            agent: fulfillment?.agent,
+          };
+        }):response?.order?.fulfillments?.map((fulfillment) => {
+          return {
+            id: fulfillment?.id,
+            agent: fulfillment?.agent,
+          };
+        }),
+        quote: response?.order?.provider?.quote?response?.order?.provider?.quote:response?.order?.quote,
+        payments: response?.order?.provider?.payments ?response?.order?.provider?.payments:response?.order?.payments,
       };
       const resp = {
         message: {
@@ -147,22 +166,35 @@ export class CourseResponseService {
     }
   }
 
-  createConfirmPayload(response: ICourseConfirmResponseMessage) {
+  createConfirmPayload(response: ICourseConfirmResponseMessage |any) {
     try {
-      const order: ICourseConfirmResponseMessageOrder = {
+      const order: ICourseConfirmResponseMessageOrder|any = {
         id: response?.order?.id,
         provider: {
           id: response?.order?.provider?.id,
         },
-        items: response?.order?.items?.map((item) => {
+        items: response?.order?.provider?.items?response?.order?.provider?.items?.map((item) => {
+          return {
+            id: item?.id,
+          };
+        }):response?.order?.items?.map((item) => {
           return {
             id: item?.id,
           };
         }),
-        fulfillments: response?.order?.fulfillments,
-        quote: response?.order?.quote,
-        billing: response?.order?.billing,
-        payments: response?.order?.payments,
+        fulfillments: response?.order?.provider?.fulfillments?response?.order?.provider?.fulfillments?.map((fulfillment) => {
+          return {
+            id: fulfillment?.id,
+            agent: fulfillment?.agent,
+          };
+        }):response?.order?.fulfillments?.map((fulfillment) => {
+          return {
+            id: fulfillment?.id,
+            agent: fulfillment?.agent,
+          };
+        }),
+        quote: response?.order?.provider?.quote?response?.order?.provider?.quote:response?.order?.quote,
+        payments: response?.order?.provider?.payments ?response?.order?.provider?.payments:response?.order?.payments,
       };
       const resp: ICourseConfirmResponse = {
         message: {
