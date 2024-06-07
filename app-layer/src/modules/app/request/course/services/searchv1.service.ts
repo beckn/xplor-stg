@@ -5,7 +5,10 @@ import { Context } from '../interface/context';
 import { ICourseSearch, Message } from '../interface/request/search';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import { OnestContextConstants } from '../../../../../common/constants/context.constant';
+import {
+  BelemContextConstants,
+  OnestContextConstants,
+} from '../../../../../common/constants/context.constant';
 import {
   xplorDomain,
   DomainsEnum,
@@ -36,17 +39,29 @@ export class CourseSearchService {
     try {
       const contextPayload: Context = {
         ...context,
-        bap_id: OnestContextConstants.bap_id,
+        bap_id:
+          context?.domain === DomainsEnum.BELEM
+            ? BelemContextConstants.bap_id
+            : OnestContextConstants.bap_id,
         bap_uri:
-          this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.COURSE}`,
-        domain: DomainsEnum.COURSE_DOMAIN,
+          context?.domain === DomainsEnum.BELEM
+            ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+            : this.configService.get('PROTOCOL_SERVICE_URL') +
+              `/${xplorDomain.COURSE}`,
+        domain:
+          context?.domain === DomainsEnum.BELEM
+            ? DomainsEnum.BELEM
+            : DomainsEnum.COURSE_DOMAIN,
       };
       const message: Message = query;
       const payload = new CourseSearchPayload(contextPayload, message);
+      console.log('payload==============', payload);
       return {
         ...payload,
-        gatewayUrl: Gateway.course,
+        gatewayUrl:
+          context?.domain === DomainsEnum.BELEM
+            ? Gateway.belem
+            : Gateway.course,
       };
     } catch (error) {
       return error?.message;

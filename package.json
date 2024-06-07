@@ -30,14 +30,17 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^7.3.1",
     "ajv": "^8.13.0",
+    "blakejs": "^1.2.1",
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "helmet": "^7.1.0",
     "joi": "^17.13.1",
+    "libsodium-wrappers": "^0.7.13",
     "mongoose": "^8.3.5",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.2.0"
+    "rxjs": "^7.2.0",
+    "tweetnacl-util": "^0.15.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

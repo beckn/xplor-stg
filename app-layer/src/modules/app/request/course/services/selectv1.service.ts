@@ -5,7 +5,10 @@ import { SelectContext } from '../interface/context';
 import { ICourseSelect, IMessageSelect } from '../interface/request/select';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import { OnestContextConstants } from '../../../../../common/constants/context.constant';
+import {
+  BelemContextConstants,
+  OnestContextConstants,
+} from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
@@ -26,44 +29,109 @@ export class CourseSelectService {
 
   async createPayload(request: SelectRequestDto) {
     try {
-      const itemsFromDb = await this.dbService.findItemByprovider_id(
-        request?.context?.transaction_id,
-        request?.message?.order?.provider_id,
-        request?.message?.order?.items_id,
-        request?.context?.domain,
-      );
-      const context = itemsFromDb.context as unknown as SelectContext;
-      const contextPayload: SelectContext = {
-        ...context,
-        action: Action.select,
-        domain: DomainsEnum.COURSE_DOMAIN,
-        message_id: request.context.message_id,
-        transaction_id: request.context.transaction_id,
-        version: OnestContextConstants.version,
-        timestamp: new Date().toISOString(),
-        ttl: request.context.ttl
-          ? request.context.ttl
-          : OnestContextConstants.ttl,
-      };
-      this.logger.log('contextPayload', contextPayload);
-      itemsFromDb.context as unknown as SelectContext;
-      const messagePayload: IMessageSelect = {
-        order: {
-          provider: {
-            id: request.message.order.provider_id,
+      if (request?.context?.domain === DomainsEnum.BELEM) {
+        this.logger.log(request, 'requestSelectPayload');
+        const itemsFromDb = await this.dbService.findItemByprovider_id(
+          request?.message?.order?.provider_id,
+          request?.message?.order?.items_id,
+          request?.context?.domain,
+        );
+        this.logger.log(itemsFromDb, 'Item from db');
+        const context = itemsFromDb.context as unknown as SelectContext;
+        const contextPayload: SelectContext = {
+          ...context,
+          action: Action.select,
+          domain:
+            request?.context?.domain === DomainsEnum.BELEM
+              ? DomainsEnum.BELEM
+              : DomainsEnum.COURSE_DOMAIN,
+          bap_id:
+            context?.domain === DomainsEnum.BELEM
+              ? BelemContextConstants.bap_id
+              : OnestContextConstants.bap_id,
+          bap_uri:
+            context?.domain === DomainsEnum.BELEM
+              ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+              : this.configService.get('PROTOCOL_SERVICE_URL') +
+                `/${xplorDomain.COURSE}`,
+          message_id: request.context.message_id,
+          transaction_id: request.context.transaction_id,
+          version: OnestContextConstants.version,
+          timestamp: new Date().toISOString(),
+          ttl: request.context.ttl
+            ? request.context.ttl
+            : OnestContextConstants.ttl,
+        };
+        this.logger.log('contextPayload', contextPayload);
+        itemsFromDb.context as unknown as SelectContext;
+        const messagePayload: IMessageSelect = {
+          order: {
+            provider: {
+              id: request.message.order.provider_id,
+            },
+            items: [
+              { id: request.message.order.items_id[0] },
+              ...request.message.order.items_id.slice(1).map((id) => ({ id })),
+            ],
           },
-          items: [
-            { id: request.message.order.items_id[0] },
-            ...request.message.order.items_id.slice(1).map((id) => ({ id })),
-          ],
-        },
-      };
+        };
 
-      const payload = new CourseSelectPayload(contextPayload, messagePayload);
-      return {
-        ...payload,
-        gatewayUrl: Gateway.course,
-      };
+        const payload = new CourseSelectPayload(contextPayload, messagePayload);
+        this.logger.log(payload, 'Payload');
+        return {
+          ...payload,
+          gatewayUrl:
+            context?.domain === DomainsEnum.BELEM
+              ? Gateway.belem
+              : Gateway.course,
+        };
+      } else {
+        // this.logger.log(request, 'requestSelectPayload');
+        // const itemsFromDb = await this.dbService.findItemByprovider_id(
+        //   request?.message?.order?.provider_id,
+        //   request?.message?.order?.items_id,
+        //   request?.context?.domain,
+        // );
+        // this.logger.log(itemsFromDb, 'Item from db');
+        // const context = itemsFromDb.context as unknown as SelectContext;
+        const contextPayload: SelectContext = {
+          bpp_id: 'infosys.springboard.io',
+          bpp_uri: 'https://infosys.springboard.io',
+          action: Action.select,
+          domain: request?.context?.domain,
+          bap_id: OnestContextConstants.bap_id,
+          bap_uri:
+            this.configService.get('PROTOCOL_SERVICE_URL') +
+            `/${xplorDomain.COURSE}`,
+          message_id: request.context.message_id,
+          transaction_id: request.context.transaction_id,
+          version: OnestContextConstants.version,
+          timestamp: new Date().toISOString(),
+          ttl: request.context.ttl
+            ? request.context.ttl
+            : OnestContextConstants.ttl,
+        };
+        this.logger.log('contextPayload', contextPayload);
+        // itemsFromDb.context as unknown as SelectContext;
+        const messagePayload: IMessageSelect = {
+          order: {
+            provider: {
+              id: request.message.order.provider_id,
+            },
+            items: [
+              { id: request.message.order.items_id[0] },
+              ...request.message.order.items_id.slice(1).map((id) => ({ id })),
+            ],
+          },
+        };
+
+        const payload = new CourseSelectPayload(contextPayload, messagePayload);
+        this.logger.log(payload, 'Payload');
+        return {
+          ...payload,
+          gatewayUrl: Gateway.course,
+        };
+      }
     } catch (error) {
       return error?.message;
     }

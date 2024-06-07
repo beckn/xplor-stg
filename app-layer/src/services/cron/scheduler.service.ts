@@ -24,14 +24,20 @@ export class SchedulerService {
       const url = this.configService.get('APP_SERVICE_URL') + '/search';
 
       const payload = {
-        domain: ['scholarship', 'course'],
+        domain: ['scholarship', 'course', 'dsep-belem:courses'],
         context: {
           transaction_id: uuidv4(),
           message_id: uuidv4(),
           bap_uri: '',
         },
         message: {
-          searchQuery: '',
+          intent: {
+            item: {
+              descriptor: {
+                name: '',
+              },
+            },
+          },
         },
       };
 

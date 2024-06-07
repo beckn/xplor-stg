@@ -88,16 +88,6 @@ export class AppService {
         JSON.stringify(response),
         '=============================',
       );
-      // const domain =
-      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
-      //     ? 'course'
-      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
-      //     ? 'job'
-      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
-      //     ? 'scholarship'
-      //     : 'retail';
-
-      // Dump the response into database
       const providerId = response?.message?.catalog?.providers[0]?.id;
       const updateData = {
         context: response?.context,
@@ -107,7 +97,12 @@ export class AppService {
         message: response?.message,
       };
 
-      await this.dumpService.upsertDump(providerId, updateData);
+      this.logger.log('updateData++++++++', updateData);
+      const dBResponse = await this.dumpService.upsertDump(
+        providerId,
+        updateData,
+      );
+      this.logger.log('DB data++++++++', dBResponse);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);

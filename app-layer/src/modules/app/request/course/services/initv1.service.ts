@@ -3,7 +3,10 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SelectContext } from '../interface/context';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import { OnestContextConstants } from '../../../../../common/constants/context.constant';
+import {
+  BelemContextConstants,
+  OnestContextConstants,
+} from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
@@ -25,72 +28,153 @@ export class CourseInitService {
 
   async createPayload(request: InitRequestDto) {
     try {
-      const selectRequestDetails =
-        await this.dbService.findByActiontransaction_id(
-          request?.context?.transaction_id,
-          request?.context?.domain,
-          'on_select',
-        );
-
-      const onSearchResponseDetails = await this.dbService.findByprovider_id(
-        request?.context?.transaction_id,
-        request?.message?.order?.provider_id,
-        request?.context?.domain,
-      );
-      if (!selectRequestDetails || !onSearchResponseDetails) return null;
-      const context = selectRequestDetails?.context as unknown as SelectContext;
-      const contextPayload: SelectContext = {
-        ...context,
-        action: Action.init,
-        domain: DomainsEnum.COURSE_DOMAIN,
-        transaction_id: request.context.transaction_id,
-        message_id: request.context.message_id,
-        version: OnestContextConstants.version,
-        bpp_id: onSearchResponseDetails?.context?.bpp_id,
-        bpp_uri: onSearchResponseDetails?.context?.bpp_uri,
-        timestamp: new Date().toISOString(),
-        ttl: request.context.ttl
-          ? request.context.ttl
-          : OnestContextConstants.ttl,
-      };
-      const messagePayload: IMessageInit = {
-        order: {
-          provider: {
-            id: request.message.order.provider_id,
-          },
-          items: [...request.message.order.items_id.map((id) => ({ id: id }))],
-          billing: request.message.order.billing,
-          fulfillments: [
-            {
-              customer: {
-                person: {
-                  name: request.message.order.fulfillment[0].customer.person
-                    .name,
-                  age: request.message.order.fulfillment[0].customer.person.age,
-                  gender:
-                    request.message.order.fulfillment[0].customer.person.gender,
-                  tags: [],
-                },
-                contact: {
-                  phone:
-                    request.message.order.fulfillment[0].customer.contact.phone,
-                  email:
-                    request.message.order.fulfillment[0].customer.contact.email,
+      if (request.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(request?.message?.order, 'Item from request');
+        const getItemFromDumpDb =
+          await await this.dbService.findItemByprovider_id(
+            request?.message?.order?.provider_id,
+            request?.message?.order?.items_id,
+            request?.context?.domain,
+          );
+        this.logger.log(getItemFromDumpDb, 'Item from db');
+        if (!getItemFromDumpDb || !getItemFromDumpDb) return null;
+        const context = getItemFromDumpDb?.context as unknown as SelectContext;
+        const contextPayload: SelectContext = {
+          ...context,
+          action: Action.init,
+          domain:
+            request?.context?.domain === DomainsEnum.BELEM
+              ? DomainsEnum.BELEM
+              : DomainsEnum.COURSE_DOMAIN,
+          transaction_id: request.context.transaction_id,
+          message_id: request.context.message_id,
+          bap_id:
+            context?.domain === DomainsEnum.BELEM
+              ? BelemContextConstants.bap_id
+              : OnestContextConstants.bap_id,
+          bap_uri:
+            context?.domain === DomainsEnum.BELEM
+              ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+              : this.configService.get('PROTOCOL_SERVICE_URL') +
+                `/${xplorDomain.COURSE}`,
+          version: OnestContextConstants.version,
+          bpp_id: getItemFromDumpDb?.context?.bpp_id,
+          bpp_uri: getItemFromDumpDb?.context?.bpp_uri,
+          timestamp: new Date().toISOString(),
+          ttl: request.context.ttl
+            ? request.context.ttl
+            : OnestContextConstants.ttl,
+        };
+        const messagePayload: IMessageInit = {
+          order: {
+            provider: {
+              id: request.message.order.provider_id,
+            },
+            items: [
+              ...request.message.order.items_id.map((id) => ({ id: id })),
+            ],
+            billing: request.message.order.billing,
+            fulfillments: [
+              {
+                customer: {
+                  person: {
+                    name: request.message.order.fulfillment[0].customer.person
+                      .name,
+                    age: request.message.order.fulfillment[0].customer.person
+                      .age,
+                    gender:
+                      request.message.order.fulfillment[0].customer.person
+                        .gender,
+                    tags: [],
+                  },
+                  contact: {
+                    phone:
+                      request.message.order.fulfillment[0].customer.contact
+                        .phone,
+                    email:
+                      request.message.order.fulfillment[0].customer.contact
+                        .email,
+                  },
                 },
               },
-            },
-          ],
-        },
-      };
+            ],
+          },
+        };
 
-      const payload = {
-        context: contextPayload,
-        message: messagePayload,
-      };
-      return {
-        ...payload,
-        gatewayUrl: Gateway.course,
-      };
+        const payload = {
+          context: contextPayload,
+          message: messagePayload,
+        };
+        return {
+          ...payload,
+          gatewayUrl: Gateway.course,
+        };
+      } else {
+        this.logger.log(request?.message?.order, 'Item from request');
+
+        const contextPayload: SelectContext = {
+          bpp_id: 'infosys.springboard.io',
+          bpp_uri: 'https://infosys.springboard.io',
+          action: Action.init,
+          domain: request?.context?.domain,
+          bap_id: OnestContextConstants.bap_id,
+          bap_uri:
+            this.configService.get('PROTOCOL_SERVICE_URL') +
+            `/${xplorDomain.COURSE}`,
+          message_id: request.context.message_id,
+          transaction_id: request.context.transaction_id,
+          version: OnestContextConstants.version,
+          timestamp: new Date().toISOString(),
+          ttl: request.context.ttl
+            ? request.context.ttl
+            : OnestContextConstants.ttl,
+        };
+
+        const messagePayload: IMessageInit = {
+          order: {
+            provider: {
+              id: request.message.order.provider_id,
+            },
+            items: [
+              ...request.message.order.items_id.map((id) => ({ id: id })),
+            ],
+            billing: request.message.order.billing,
+            fulfillments: [
+              {
+                customer: {
+                  person: {
+                    name: request.message.order.fulfillment[0].customer.person
+                      .name,
+                    age: request.message.order.fulfillment[0].customer.person
+                      .age,
+                    gender:
+                      request.message.order.fulfillment[0].customer.person
+                        .gender,
+                    tags: [],
+                  },
+                  contact: {
+                    phone:
+                      request.message.order.fulfillment[0].customer.contact
+                        .phone,
+                    email:
+                      request.message.order.fulfillment[0].customer.contact
+                        .email,
+                  },
+                },
+              },
+            ],
+          },
+        };
+
+        const payload = {
+          context: contextPayload,
+          message: messagePayload,
+        };
+        return {
+          ...payload,
+          gatewayUrl: Gateway.course,
+        };
+      }
     } catch (error) {
       return error?.message;
     }

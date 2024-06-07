@@ -13,14 +13,14 @@ deploy:dev:
     - mv /home/ubuntu/script/.env $Path && cd $Path
     - |
       sshpass -p $Xplor_Password ssh $Xplor_Username@$Xplor_IP "
-        if [[ -d STG-nest-backend ]]; then
-          cd /home/ubuntu/STG-nest-backend
+        if [[ -d ./Belem/STG-nest-backend ]]; then
+          cd /home/ubuntu/Belem/STG-nest-backend
           docker-compose down
-          cd /home/ubuntu/ && sudo rm -rf STG-nest-backend
+          cd && sudo rm -rf Belem
         fi "
 
-    - sshpass -p $Xplor_Password ssh $Xplor_Username@$Xplor_IP  "git clone -b feat/develop https://user:'$GITLAB_ACCESS_TOKEN'@gitlab.thewitslab.com/wil-workspace/xplor/STG-nest-backend.git"
-    - sshpass -p $Xplor_Password scp .env $Xplor_Username@$Xplor_IP:/home/ubuntu/STG-nest-backend
+    - sshpass -p $Xplor_Password ssh $Xplor_Username@$Xplor_IP  "mkdir Belem && cd Belem && git clone -b feat/belem https://user:'$GITLAB_ACCESS_TOKEN'@gitlab.thewitslab.com/wil-workspace/xplor/STG-nest-backend.git"
+    - sshpass -p $Xplor_Password scp .env $Xplor_Username@$Xplor_IP:/home/ubuntu/Belem/STG-nest-backend
     - sshpass -p $Xplor_Password ssh -tt $Xplor_Username@$Xplor_IP  "
-        cd /home/ubuntu/STG-nest-backend && docker-compose up -d --build "
-    - echo "https://xplor-stg-nest-dev.thewitslab.com"
+        cd /home/ubuntu/Belem/STG-nest-backend && docker-compose up -d --build "
+    - echo "https://xplor-belem-stg-nest-dev.thewitslab.com"

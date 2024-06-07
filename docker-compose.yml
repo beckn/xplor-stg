@@ -52,12 +52,16 @@ services:
       - ONDC_SUBSCRIBER_ID=${ONDC_SUBSCRIBER_ID}
       - ONDC_SUBSCRIBER_UNIQUE_KEY_ID=${ONDC_SUBSCRIBER_UNIQUE_KEY_ID}
       - IS_NETWORK_MOCK=${IS_NETWORK_MOCK}
+      - BELEM_PRIVATE_KEY=${BELEM_PRIVATE_KEY}
+      - BELEM_PUBLIC_KEY=${BELEM_PUBLIC_KEY}
+      - BELEM_SUBSCRIBER_ID=${BELEM_SUBSCRIBER_ID}
+      - BELEM_UNIQUE_KEY=${BELEM_UNIQUE_KEY}
   xplor_stg_nginx:
     image: nginx:alpine
     container_name: xplor_stg_nginx
     restart: always
     ports:
-      - "1105:8080"
+      - "1107:8080"
     depends_on:
       - onboarding_service
     volumes:
