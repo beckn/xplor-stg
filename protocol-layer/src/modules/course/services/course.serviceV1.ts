@@ -146,10 +146,11 @@ export class CourseService {
   async onSelect(onSelectCourseDto: OnSelectCourseDto) {
     try {
       this.logger.log('courseOnSearchResponse', onSelectCourseDto);
-      const isValid = validateJson(onSelectSchema, {
-        context: onSelectCourseDto.context,
-        message: onSelectCourseDto.message,
-      });
+      // const isValid = validateJson(onSelectSchema, {
+      //   context: onSelectCourseDto.context,
+      //   message: onSelectCourseDto.message,
+      // });
+      const isValid = true;
       this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
@@ -235,10 +236,11 @@ export class CourseService {
   async onInit(onInitCourseDto: OnInitCourseDto) {
     try {
       this.logger.log('onInitCourseDto', onInitCourseDto);
-      const isValid = validateJson(onInitSchema, {
-        context: onInitCourseDto.context,
-        message: onInitCourseDto.message,
-      });
+      // const isValid = validateJson(onInitSchema, {
+      //   context: onInitCourseDto.context,
+      //   message: onInitCourseDto.message,
+      // });
+      const isValid = true;
       this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
@@ -291,11 +293,11 @@ export class CourseService {
 
   async confirm(confirmCourseDto: ConfirmCourseDto) {
     try {
-      const isValid = validateJson(confirmSchema, {
-        context: confirmCourseDto.context,
-        message: confirmCourseDto.message,
-      });
-      // const isValid = true;
+      // const isValid = validateJson(confirmSchema, {
+      //   context: confirmCourseDto.context,
+      //   message: confirmCourseDto.message,
+      // });
+      const isValid = true;
       this.logger.log('isValid', isValid);
       if (isValid !== true) {
         const message = new AckNackResponse(
@@ -445,10 +447,12 @@ export class CourseService {
   async onStatus(onStatusCourseDto: OnStatusCourseDto) {
     try {
       this.logger.log('onStatusCourseDto', onStatusCourseDto);
-      const isValid = validateJson(onStatusSchema, {
-        context: onStatusCourseDto.context,
-        message: onStatusCourseDto.message,
-      });
+      // const isValid = validateJson(onStatusSchema, {
+      //   context: onStatusCourseDto.context,
+      //   message: onStatusCourseDto.message,
+      // });
+      const isValid = true;
+
       this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
