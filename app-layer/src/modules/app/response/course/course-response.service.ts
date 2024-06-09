@@ -167,6 +167,12 @@ export class CourseResponseService {
       const order = {
         id: response?.order?.id,
         status: response?.order?.fulfillments[0]?.state.descriptor.code,
+        provider: response?.order?.provider,
+        items: response?.order?.items,
+        fulfillments: response?.order?.fulfillments,
+        quote: response?.order?.quote,
+        billing: response?.order?.billing,
+        payments: response?.order?.payments,
       };
       const resp = {
         message: {
@@ -203,12 +209,20 @@ export class CourseResponseService {
               return {
                 id: fulfillment?.id,
                 agent: fulfillment?.agent,
+                stops: fulfillment?.stops,
+                customer: fulfillment?.customer,
+                state: fulfillment?.state,
+                tags: fulfillment?.tags,
               };
             })
           : response?.order?.fulfillments?.map((fulfillment) => {
               return {
                 id: fulfillment?.id,
                 agent: fulfillment?.agent,
+                stops: fulfillment?.stops,
+                customer: fulfillment?.customer,
+                state: fulfillment?.state,
+                tags: fulfillment?.tags,
               };
             }),
         quote: response?.order?.provider?.quote

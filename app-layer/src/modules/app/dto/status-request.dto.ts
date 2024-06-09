@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsNotEmpty,
   IsObject,
   IsString,
@@ -30,6 +31,14 @@ class OrderItem {
   @IsNotEmpty({ message: 'Order id is required' })
   @IsString({ message: 'Order id must be a string' })
   id: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  items_id: string[];
+
+  @IsNotEmpty({ message: 'Provider id is required' })
+  @IsString({ message: 'Provider id must be a string' })
+  provider_id: string;
 }
 
 class MessageDto {
