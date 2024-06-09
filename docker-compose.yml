@@ -61,7 +61,7 @@ services:
     container_name: xplor_stg_nginx
     restart: always
     ports:
-      - "1107:8080"
+      - "1105:8080"
     depends_on:
       - onboarding_service
     volumes:

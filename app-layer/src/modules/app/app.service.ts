@@ -97,12 +97,12 @@ export class AppService {
         message: response?.message,
       };
 
-      console.log('updateData++++++++', updateData);
+      this.logger.log('updateData++++++++', updateData);
       const dBResponse = await this.dumpService.upsertDump(
         providerId,
         updateData,
       );
-      console.log('DB data++++++++', dBResponse);
+      this.logger.log('DB data++++++++', dBResponse);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);
