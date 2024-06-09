@@ -3,7 +3,10 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SelectContext } from '../interface/context';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import { OnestContextConstants } from '../../../../../common/constants/context.constant';
+import {
+  BelemContextConstants,
+  OnestContextConstants,
+} from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
@@ -27,15 +30,16 @@ export class CourseStatusService {
   async createPayload(request: StatusRequestDto) {
     try {
       if (request.context.domain === DomainsEnum.BELEM) {
-        const getItemFromDumpDb: any = {};
-        // await await this.dbService.findItemByprovider_id(
-        //   request?.message?.order?.provider_id,
-        //   request?.message?.order?.items_id,
-        //   request?.context?.domain,
-        // );
+        this.logger.log('request', request);
+
+        const getItemFromDumpDb = await this.dbService.findItemByprovider_id(
+          request?.message?.order?.provider_id,
+          request?.message?.order?.items_id,
+          request?.context?.domain,
+        );
         this.logger.log(getItemFromDumpDb, 'Item from db');
         if (!getItemFromDumpDb || !getItemFromDumpDb) return null;
-        const context = request?.context as unknown as SelectContext;
+        const context = getItemFromDumpDb.context as unknown as SelectContext;
         const contextPayload: SelectContext = {
           ...context,
           action: Action.status,
@@ -43,11 +47,48 @@ export class CourseStatusService {
             request?.context?.domain === DomainsEnum.BELEM
               ? DomainsEnum.BELEM
               : DomainsEnum.COURSE_DOMAIN,
-          transaction_id: request.context.transaction_id,
+          bap_id:
+            context?.domain === DomainsEnum.BELEM
+              ? BelemContextConstants.bap_id
+              : OnestContextConstants.bap_id,
+          bap_uri:
+            context?.domain === DomainsEnum.BELEM
+              ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+              : this.configService.get('PROTOCOL_SERVICE_URL') +
+                `/${xplorDomain.COURSE}`,
           message_id: request.context.message_id,
+          transaction_id: request.context.transaction_id,
           version: OnestContextConstants.version,
-          bpp_id: getItemFromDumpDb?.context?.bpp_id,
-          bpp_uri: getItemFromDumpDb?.context?.bpp_uri,
+          timestamp: new Date().toISOString(),
+          ttl: request.context.ttl
+            ? request.context.ttl
+            : OnestContextConstants.ttl,
+        };
+        const messagePayload: IMessageStatus = {
+          order_id: request?.message?.order?.id,
+        };
+
+        const payload = {
+          context: contextPayload,
+          message: messagePayload,
+        };
+        return {
+          ...payload,
+          gatewayUrl: Gateway.course,
+        };
+      } else {
+        const contextPayload: SelectContext = {
+          bpp_id: 'infosys.springboard.io',
+          bpp_uri: 'https://infosys.springboard.io',
+          action: Action.status,
+          domain: request?.context?.domain,
+          bap_id: OnestContextConstants.bap_id,
+          bap_uri:
+            this.configService.get('PROTOCOL_SERVICE_URL') +
+            `/${xplorDomain.COURSE}`,
+          message_id: request.context.message_id,
+          transaction_id: request.context.transaction_id,
+          version: OnestContextConstants.version,
           timestamp: new Date().toISOString(),
           ttl: request.context.ttl
             ? request.context.ttl
@@ -66,35 +107,6 @@ export class CourseStatusService {
           gatewayUrl: Gateway.course,
         };
       }
-      const contextPayload: SelectContext = {
-        bpp_id: 'infosys.springboard.io',
-        bpp_uri: 'https://infosys.springboard.io',
-        action: Action.status,
-        domain: request?.context?.domain,
-        bap_id: OnestContextConstants.bap_id,
-        bap_uri:
-          this.configService.get('PROTOCOL_SERVICE_URL') +
-          `/${xplorDomain.COURSE}`,
-        message_id: request.context.message_id,
-        transaction_id: request.context.transaction_id,
-        version: OnestContextConstants.version,
-        timestamp: new Date().toISOString(),
-        ttl: request.context.ttl
-          ? request.context.ttl
-          : OnestContextConstants.ttl,
-      };
-      const messagePayload: IMessageStatus = {
-        order_id: request?.message?.order?.id,
-      };
-
-      const payload = {
-        context: contextPayload,
-        message: messagePayload,
-      };
-      return {
-        ...payload,
-        gatewayUrl: Gateway.course,
-      };
     } catch (error) {
       return error?.message;
     }
