@@ -17,6 +17,7 @@ import { CourseResponseService } from './response/course/course-response.service
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
+import { SearchQueryDto } from './dto/search-query.dto';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
@@ -582,9 +583,10 @@ export class AppService {
 
   // }
 
-  async getSearchData() {
+  async getSearchData(searchQueryDto: SearchQueryDto) {
     try {
-      const payload = await this.dumpService.findAll();
+      const totalCount = await this.dumpService.findCount();
+      const payload = await this.dumpService.findWithPagination(searchQueryDto);
       // this.logger.log(payload);
       const transformedPayload = await Promise.all(
         payload.map(async (data) => {
@@ -599,7 +601,7 @@ export class AppService {
         }),
       );
       this.logger.log(transformedPayload);
-      return transformedPayload;
+      return { transformedPayload, totalCount };
     } catch (error) {
       this.logger.error(error);
     }

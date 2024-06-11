@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Query } from '@nestjs/common';
 
 import { AppService } from './app.service';
 import { SearchRequestDto } from './dto/search-request.dto';
@@ -7,6 +7,7 @@ import { SelectRequestDto } from './dto/select-request.dto';
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
+import { SearchQueryDto } from './dto/search-query.dto';
 
 /**
  * Controller for handling various requests in the application.
@@ -99,7 +100,7 @@ export class AppController {
   // }
 
   @Get('search')
-  getSearchData() {
-    return this.appService.getSearchData();
+  getSearchData(@Query() searchQueryDto: SearchQueryDto) {
+    return this.appService.getSearchData(searchQueryDto);
   }
 }
