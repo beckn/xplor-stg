@@ -13,6 +13,8 @@ import {
   ICourseConfirmResponseMessage,
   ICourseConfirmResponseMessageOrder,
 } from './interface/on-confirm';
+import { ICourseRatingMessage } from '../job/interface/on-rating';
+import { ICourseTrackingMessage } from '../job/interface/on-tracking';
 
 /**
  * Service for handling job response operations.
@@ -235,6 +237,45 @@ export class CourseResponseService {
       const resp: ICourseConfirmResponse = {
         message: {
           order: order,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createTrackingPayload(response: ICourseTrackingMessage) {
+    try {
+      const tracking = {
+        id: response?.tracking?.id,
+        url: response?.tracking?.url,
+        status: response?.tracking?.status,
+      };
+      const resp = {
+        message: {
+          tracking: tracking,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+  createRatingPayload(response: ICourseRatingMessage) {
+    try {
+      const feedback_form = {
+        form: {
+          url: response?.feedback_form?.form?.url,
+          mime_type: response?.feedback_form?.form?.mime_type,
+        },
+        required: response?.feedback_form?.required,
+      };
+      const resp = {
+        message: {
+          feedback_form: feedback_form,
         },
       };
       return resp;

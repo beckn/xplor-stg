@@ -93,6 +93,26 @@ export class AppController {
     return this.appService.onConfirm(confirmRequest);
   }
 
+  @Post('track')
+  track(@Body() statusRequest: StatusRequestDto) {
+    return this.appService.status(statusRequest);
+  }
+
+  @Post('on_track')
+  onTrack(@Body() onStatusRequest: OndcContext | OnestContext | any) {
+    return this.appService.onStatus(onStatusRequest);
+  }
+
+  @Post('rating')
+  rating(@Body() statusRequest: StatusRequestDto) {
+    return this.appService.status(statusRequest);
+  }
+
+  @Post('on_rating')
+  onRating(@Body() onStatusRequest: OndcContext | OnestContext | any) {
+    return this.appService.onStatus(onStatusRequest);
+  }
+
   // @Get('subscribe')
   // subscribe() {
   //   return this.appService.subscribe();

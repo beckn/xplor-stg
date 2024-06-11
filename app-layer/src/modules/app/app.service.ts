@@ -17,6 +17,8 @@ import { CourseResponseService } from './response/course/course-response.service
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
+import { RatingRequestDto } from './dto/rating-request.dto';
+import { TrackingRequestDto } from './dto/tracking-request.dto';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
@@ -546,6 +548,222 @@ export class AppService {
       // Send the search request and log the response
       const resp = await this.httpService.post(url, payload);
       this.logger.log('resp', resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async tracking(statusRequest: TrackingRequestDto) {
+    try {
+      this.globalActionService.globalTracking(statusRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.statusSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onTracking(response: any) {
+    try {
+      this.logger.log(
+        ' Tracking response ==================',
+        JSON.stringify(response),
+        '=============================',
+      );
+      await this.sendTracking(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendTracking(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createRatingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createRatingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        //   retail = response.message
+        //     ? this.ondcCreatePayload.createPayload(response.message)
+        //     : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('statusPayload', payload);
+
+      // Construct the URL for the search request
+      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_rating';
+      // Send the search request and log the response
+      this.logger.log('resp Url to status', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to status', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async rating(statusRequest: RatingRequestDto) {
+    try {
+      this.globalActionService.globalRating(statusRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.statusSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onRating(response: any) {
+    try {
+      this.logger.log(
+        ' Rating response ==================',
+        JSON.stringify(response),
+        '=============================',
+      );
+      await this.sendRating(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendRating(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createRatingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createRatingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        // retail = response.message
+        //   ? this.ondcCreatePayload.createPayload(response.message)
+        //   : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('statusPayload', payload);
+
+      // Construct the URL for the search request
+      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_rating';
+      // Send the search request and log the response
+      this.logger.log('resp Url to status', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to status', url, resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);

@@ -24,6 +24,10 @@ import { ScholarshipInitService } from '../../modules/app/request/scholarship/se
 import { ScholarshipSearchService } from '../../modules/app/request/scholarship/services/searchv1.service';
 import { ScholarshipSelectService } from '../../modules/app/request/scholarship/services/selectv1.service';
 import { ScholarshipStatusService } from '../../modules/app/request/scholarship/services/statusv1.service';
+import { RatingRequestDto } from 'src/modules/app/dto/rating-request.dto';
+import { TrackingRequestDto } from 'src/modules/app/dto/tracking-request.dto';
+import { CourseRatingService } from 'src/modules/app/request/course/services/rating.service';
+import { CourseTrackingService } from 'src/modules/app/request/course/services/tracking.service';
 
 @Injectable()
 export class GlobalActionService {
@@ -35,6 +39,9 @@ export class GlobalActionService {
     private readonly courseInitService: CourseInitService,
     private readonly courseConfirmService: CourseConfirmService,
     private readonly courseStatusService: CourseStatusService,
+    private readonly courseTrackingService: CourseTrackingService,
+    private readonly courseRatingService: CourseRatingService,
+
     private readonly scholarshipConfirmService: ScholarshipConfirmService,
     private readonly scholarshipInitService: ScholarshipInitService,
     private readonly scholarshipService: ScholarshipSearchService,
@@ -343,6 +350,84 @@ export class GlobalActionService {
           this.logger.log(`scholarship-status: ${searchResponseScholarship}`);
           break;
         default:
+          // Default case if the domain does not match any of the expected values
+          // No specific action is taken here, but you could add logic to handle unexpected domains
+
+          break;
+      }
+    } catch (error) {
+      // Catch any errors that occur during the search operations
+      // Log the error for debugging purposes
+      this.logger.error(error);
+      // Rethrow the error to be handled by the caller
+      throw error;
+    }
+  }
+
+  async globalTracking(request: TrackingRequestDto) {
+    try {
+      // Switch statement to handle different domains
+      switch (request?.context?.domain) {
+        case xplorDomain.BELEM:
+          // Logic for COURSE_DOMAIN
+
+          const initResponseBELEMCourse =
+            await this.courseStatusService.sendStatusPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-select: ${JSON.stringify(initResponseBELEMCourse)}`,
+          );
+          break;
+
+        case xplorDomain.COURSE:
+          // Logic for COURSE_DOMAIN
+          const selectResponseCourse =
+            await this.courseTrackingService.sendTrackingPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-status: ${JSON.stringify(selectResponseCourse)}`,
+          );
+          break;
+
+          // Default case if the domain does not match any of the expected values
+          // No specific action is taken here, but you could add logic to handle unexpected domains
+
+          break;
+      }
+    } catch (error) {
+      // Catch any errors that occur during the search operations
+      // Log the error for debugging purposes
+      this.logger.error(error);
+      // Rethrow the error to be handled by the caller
+      throw error;
+    }
+  }
+
+  async globalRating(request: RatingRequestDto) {
+    try {
+      // Switch statement to handle different domains
+      switch (request?.context?.domain) {
+        case xplorDomain.BELEM:
+          // Logic for COURSE_DOMAIN
+
+          const initResponseBELEMCourse =
+            await this.courseRatingService.sendRatingPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-select: ${JSON.stringify(initResponseBELEMCourse)}`,
+          );
+          break;
+
+        case xplorDomain.COURSE:
+          // Logic for COURSE_DOMAIN
+          const selectResponseCourse =
+            await this.courseStatusService.sendStatusPayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-status: ${JSON.stringify(selectResponseCourse)}`,
+          );
+          break;
+
           // Default case if the domain does not match any of the expected values
           // No specific action is taken here, but you could add logic to handle unexpected domains
 
