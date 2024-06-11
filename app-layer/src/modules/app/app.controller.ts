@@ -7,6 +7,8 @@ import { SelectRequestDto } from './dto/select-request.dto';
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
+import { TrackingRequestDto } from './dto/tracking-request.dto';
+import { RatingRequestDto } from './dto/rating-request.dto';
 
 /**
  * Controller for handling various requests in the application.
@@ -94,23 +96,23 @@ export class AppController {
   }
 
   @Post('track')
-  track(@Body() statusRequest: StatusRequestDto) {
-    return this.appService.status(statusRequest);
+  track(@Body() statusRequest: TrackingRequestDto) {
+    return this.appService.tracking(statusRequest);
   }
 
   @Post('on_track')
   onTrack(@Body() onStatusRequest: OndcContext | OnestContext | any) {
-    return this.appService.onStatus(onStatusRequest);
+    return this.appService.onTracking(onStatusRequest);
   }
 
   @Post('rating')
-  rating(@Body() statusRequest: StatusRequestDto) {
-    return this.appService.status(statusRequest);
+  rating(@Body() statusRequest: RatingRequestDto) {
+    return this.appService.rating(statusRequest);
   }
 
   @Post('on_rating')
   onRating(@Body() onStatusRequest: OndcContext | OnestContext | any) {
-    return this.appService.onStatus(onStatusRequest);
+    return this.appService.onRating(onStatusRequest);
   }
 
   // @Get('subscribe')

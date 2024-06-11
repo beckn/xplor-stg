@@ -578,11 +578,7 @@ export class AppService {
 
   async onTracking(response: any) {
     try {
-      this.logger.log(
-        ' Tracking response ==================',
-        JSON.stringify(response),
-        '=============================',
-      );
+      this.logger.log('Tracking', response);
       await this.sendTracking(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
@@ -648,14 +644,15 @@ export class AppService {
         },
       };
 
-      this.logger.log('statusPayload', payload);
+      this.logger.log('trackingPayload', payload);
 
       // Construct the URL for the search request
-      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_rating';
+      const url =
+        this.configService.get('CORE_SERVICE_URL') + '/stg/on_tracking';
       // Send the search request and log the response
-      this.logger.log('resp Url to status', url);
+      this.logger.log('resp Url to tracking', url);
       const resp = await this.httpService.post(url, payload);
-      this.logger.log('resp Url to status', url, resp);
+      this.logger.log('resp Url to tracking', url, resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);
@@ -686,11 +683,7 @@ export class AppService {
 
   async onRating(response: any) {
     try {
-      this.logger.log(
-        ' Rating response ==================',
-        JSON.stringify(response),
-        '=============================',
-      );
+      this.logger.log(' Rating response:::', response);
       await this.sendRating(response);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
@@ -756,14 +749,14 @@ export class AppService {
         },
       };
 
-      this.logger.log('statusPayload', payload);
+      this.logger.log('RatingPayload', payload);
 
       // Construct the URL for the search request
       const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_rating';
       // Send the search request and log the response
-      this.logger.log('resp Url to status', url);
+      this.logger.log('resp Url to rating', url);
       const resp = await this.httpService.post(url, payload);
-      this.logger.log('resp Url to status', url, resp);
+      this.logger.log('resp Url to rating', url, resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);

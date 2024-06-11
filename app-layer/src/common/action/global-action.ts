@@ -372,7 +372,7 @@ export class GlobalActionService {
           // Logic for COURSE_DOMAIN
 
           const initResponseBELEMCourse =
-            await this.courseStatusService.sendStatusPayload(request);
+            await this.courseTrackingService.sendTrackingPayload(request);
           // Log the search response for the course domain
           this.logger.log(
             `course-select: ${JSON.stringify(initResponseBELEMCourse)}`,

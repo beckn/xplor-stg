@@ -1,4 +1,7 @@
-// Define an enumeration for different types of actions that can be performed
+/**
+ * Enum representing different actions that can be performed within the application.
+ * Each action corresponds to a specific operation or event that the application can handle.
+ */
 export enum Action {
   search = 'search', // Trigger a search operation
   on_search = 'on_search', // Handle the result of a search operation
@@ -10,6 +13,10 @@ export enum Action {
   on_confirm = 'on_confirm', // Handle the confirmation of an action or process
   status = 'status', // Check the status of a process or component
   on_status = 'on_status', // Handle the status update of a process or component
+  tracking = 'track', // Trigger a tracking operation
+  on_tracking = 'on_track', // Handle the result of a tracking operation
+  rating = 'rating', // Trigger a rating operation
+  on_rating = 'on_rating', // Handle the result of a rating operation
 }
 
 // Define constants for response codes

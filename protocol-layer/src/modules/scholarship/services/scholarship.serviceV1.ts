@@ -168,7 +168,7 @@ export class ScholarshipService {
         env === 'development'
           ? selectScholarshipDto.gatewayUrl + `/${Action.select}`
           : selectPayload.context.bpp_uri + `${Action.select}`;
-      const selectResponse =  this.axiosHeaderService
+      const selectResponse = this.axiosHeaderService
         .getAxiosInstance()
         .post(url, selectPayload);
       this.logger.log('selectRequest=======', selectResponse);
@@ -255,7 +255,7 @@ export class ScholarshipService {
           ? initScholarshipDto.gatewayUrl + `/${Action.init}`
           : initPayload.context.bpp_uri + `${Action.init}`;
       this.logger.log(url);
-      const initResponse =  this.axiosHeaderService
+      const initResponse = this.axiosHeaderService
         .getAxiosInstance()
         .post(url, initPayload);
       this.logger.log('initRequest=======', initResponse);
@@ -379,7 +379,7 @@ export class ScholarshipService {
         env === 'development'
           ? confirmScholarshipDto.gatewayUrl + `/${Action.confirm}`
           : confirmPayload.context.bpp_id + `${Action.confirm}`;
-      const selectResponse =  this.axiosHeaderService
+      const selectResponse = this.axiosHeaderService
         .getAxiosInstance()
         .post(url, confirmPayload);
       this.logger.log('confirmRequest=======', selectResponse);
@@ -467,7 +467,7 @@ export class ScholarshipService {
         env === 'development'
           ? statusScholarshipDto.gatewayUrl + `/${Action.status}`
           : statusScholarshipDto.context.bpp_id + `${Action.status}`;
-      const statusResponse =  this.axiosHeaderService
+      const statusResponse = this.axiosHeaderService
         .getAxiosInstance()
         .post(url, statusPayload);
       this.logger.log('statusResponse', statusResponse);

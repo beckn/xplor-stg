@@ -8,6 +8,8 @@ import {
   ICourseConfirmMessage,
   ICourseStatusMessage,
 } from '../interface/request/confirm';
+import { ICourseTrackMessage } from '../interface/request/tracking';
+import { ICourseRatingMessage } from '../interface/request/rating';
 
 // Define a Data Transfer Object (DTO) for search course payloads
 export class SearchCourseDto {
@@ -119,6 +121,53 @@ export class StatusCourseDto {
 }
 
 export class OnStatusCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: any;
+}
+
+export class TrackingCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: ICourseTrackMessage;
+
+  // The gatewayUrl property is optional and must be a string if provided
+  @IsOptional()
+  gatewayUrl: string;
+}
+export class OnTrackingCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: any;
+}
+
+export class RatingCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: ICourseRatingMessage;
+
+  // The gatewayUrl property is optional and must be a string if provided
+  @IsOptional()
+  gatewayUrl: string;
+}
+
+export class OnRatingCourseDto {
   // The context property must not be empty
   @IsNotEmpty()
   context: ISelectContext;

@@ -5,11 +5,15 @@ import {
   InitCourseDto,
   OnConfirmCourseDto,
   OnInitCourseDto,
+  OnRatingCourseDto,
   OnSelectCourseDto,
   OnStatusCourseDto,
+  OnTrackingCourseDto,
+  RatingCourseDto,
   SearchCourseDto,
   SelectCourseDto,
   StatusCourseDto,
+  TrackingCourseDto,
 } from './dto/request-course.dto';
 
 @Controller({ version: '1', path: 'course' })
@@ -72,5 +76,25 @@ export class CourseController {
   onStatus(@Body() onStatusCourseDto: OnStatusCourseDto) {
     this.logger.log(onStatusCourseDto);
     return this.courseService.onStatus(onStatusCourseDto);
+  }
+
+  @Post('track')
+  track(@Body() trackRequest: TrackingCourseDto) {
+    return this.courseService.tracking(trackRequest);
+  }
+
+  @Post('on_track')
+  onTrack(@Body() ontrackRequest: OnTrackingCourseDto) {
+    return this.courseService.onTracking(ontrackRequest);
+  }
+
+  @Post('rating')
+  rating(@Body() ratingRequest: RatingCourseDto) {
+    return this.courseService.rating(ratingRequest);
+  }
+
+  @Post('on_rating')
+  onRating(@Body() onRatingRequest: OnRatingCourseDto) {
+    return this.courseService.onRating(onRatingRequest);
   }
 }
