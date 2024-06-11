@@ -1,7 +1,8 @@
 version: "3"
+
 services:
   onboarding_service:
-    container_name: xplor-onboarding-stg-service
+    container_name: belem-xplor-onboarding-stg-service
     build: ./onboarding
     # ports:
     #   - 5006:5006
@@ -12,8 +13,9 @@ services:
       - GRAFANA_SERVICE_URL=${GRAFANA_SERVICE_URL}
       - MONGODB_URL=${MONGODB_URL}
       - ONBOARDING_LAYER_PORT=${ONBOARDING_LAYER_PORT}
+
   app_service:
-    container_name: xplor-app-stg-service
+    container_name: belem-xplor-app-stg-service
     build: ./app-layer
     # ports:
     #   - 1105:3000
@@ -34,7 +36,7 @@ services:
       - IS_NETWORK_MOCK=${IS_NETWORK_MOCK}
 
   protocol_service:
-    container_name: xplor-protocol-stg-service
+    container_name: belem-xplor-protocol-stg-service
     build: ./protocol-layer
     # ports:
     #   - 5005:5005
@@ -56,12 +58,13 @@ services:
       - BELEM_PUBLIC_KEY=${BELEM_PUBLIC_KEY}
       - BELEM_SUBSCRIBER_ID=${BELEM_SUBSCRIBER_ID}
       - BELEM_UNIQUE_KEY=${BELEM_UNIQUE_KEY}
+
   xplor_stg_nginx:
     image: nginx:alpine
-    container_name: xplor_stg_nginx
+    container_name: belem-xplor-stg-nginx
     restart: always
     ports:
-      - "1107:8080"
+      - "1105:8080"
     depends_on:
       - onboarding_service
     volumes:
