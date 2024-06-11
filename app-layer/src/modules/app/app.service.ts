@@ -855,14 +855,14 @@ export class AppService {
         },
       };
 
-      this.logger.log('RatingPayload', payload);
+      this.logger.log('OnCancelPayload', payload);
 
       // Construct the URL for the search request
-      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_rating';
+      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_cancel';
       // Send the search request and log the response
-      this.logger.log('resp Url to rating', url);
+      this.logger.log('resp Url to cancel', url);
       const resp = await this.httpService.post(url, payload);
-      this.logger.log('resp Url to rating', url, resp);
+      this.logger.log('resp Url to cancel', url, resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);
