@@ -1,8 +1,10 @@
 import { Controller, Post, Body, Logger } from '@nestjs/common';
 import { CourseService } from './services/course.serviceV1';
 import {
+  CancelCourseDto,
   ConfirmCourseDto,
   InitCourseDto,
+  OnCancelCourseDto,
   OnConfirmCourseDto,
   OnInitCourseDto,
   OnRatingCourseDto,
@@ -96,5 +98,15 @@ export class CourseController {
   @Post('on_rating')
   onRating(@Body() onRatingRequest: OnRatingCourseDto) {
     return this.courseService.onRating(onRatingRequest);
+  }
+
+  @Post('cancel')
+  cancel(@Body() cancelRequest: CancelCourseDto) {
+    return this.courseService.cancel(cancelRequest);
+  }
+
+  @Post('on_cancel')
+  onCancel(@Body() onCancelRequest: OnCancelCourseDto) {
+    return this.courseService.onCancel(onCancelRequest);
   }
 }

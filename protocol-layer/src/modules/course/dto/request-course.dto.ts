@@ -10,6 +10,7 @@ import {
 } from '../interface/request/confirm';
 import { ICourseTrackMessage } from '../interface/request/tracking';
 import { ICourseRatingMessage } from '../interface/request/rating';
+import { ICourseCancelMessage } from '../interface/request/cancel';
 
 // Define a Data Transfer Object (DTO) for search course payloads
 export class SearchCourseDto {
@@ -168,6 +169,30 @@ export class RatingCourseDto {
 }
 
 export class OnRatingCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: any;
+}
+
+export class CancelCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: ICourseCancelMessage;
+
+  // The gatewayUrl property is optional and must be a string if provided
+  @IsOptional()
+  gatewayUrl: string;
+}
+
+export class OnCancelCourseDto {
   // The context property must not be empty
   @IsNotEmpty()
   context: ISelectContext;
