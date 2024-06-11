@@ -585,7 +585,7 @@ export class AppService {
 
   async getSearchData(searchQueryDto: SearchQueryDto) {
     try {
-      const totalCount = await this.dumpService.findCount();
+      // const totalCount = await this.dumpService.findCount();
       const payload = await this.dumpService.findWithPagination(searchQueryDto);
       // this.logger.log(payload);
       const transformedPayload = await Promise.all(
@@ -601,7 +601,7 @@ export class AppService {
         }),
       );
       this.logger.log(transformedPayload);
-      return { transformedPayload, totalCount };
+      return transformedPayload;
     } catch (error) {
       this.logger.error(error);
     }
