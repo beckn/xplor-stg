@@ -21,6 +21,7 @@ import { ScholarshipSelectService } from '../modules/app/request/scholarship/ser
 import { ScholarshipStatusService } from '../modules/app/request/scholarship/services/statusv1.service';
 import { CourseTrackingService } from 'src/modules/app/request/course/services/tracking.service';
 import { CourseRatingService } from 'src/modules/app/request/course/services/rating.service';
+import { CourseCancelService } from 'src/modules/app/request/course/services/cancel.service';
 
 /**
  * Decorates the CommonModule class with @Global() to make it a global module.
@@ -51,6 +52,7 @@ import { CourseRatingService } from 'src/modules/app/request/course/services/rat
     ScholarshipConfirmService, // Service for scholarship Confirm operations
     CourseTrackingService, // Service for course tracking operations
     CourseRatingService, // Service for course rating operations
+    CourseCancelService, // Service for course cancel operations
   ],
   exports: [
     AxiosService, // Exporting AxiosService for use in other modules
@@ -70,6 +72,7 @@ import { CourseRatingService } from 'src/modules/app/request/course/services/rat
     ScholarshipConfirmService, // Service for scholarship Confirm operations
     CourseTrackingService, // Service for course tracking operations
     CourseRatingService, // Service for course rating operations
+    CourseCancelService, // Service for course cancel operations
   ],
 })
 // Define the CommonModule class.

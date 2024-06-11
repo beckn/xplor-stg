@@ -19,6 +19,7 @@ import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
 import { RatingRequestDto } from './dto/rating-request.dto';
 import { TrackingRequestDto } from './dto/tracking-request.dto';
+import { CancelRequestDto } from './dto/cancel-request.dto';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
@@ -766,7 +767,112 @@ export class AppService {
     }
   }
 
-  //comment down it for future use.
+
+  async cancel(cancelRequest: CancelRequestDto) {
+    try {
+      this.globalActionService.globalCancel(cancelRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.statusSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onCancel(response: any) {
+    try {
+      this.logger.log(' Cancel response:::', response);
+      await this.sendCancel(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendCancel(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createCancelPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createCancelPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        // retail = response.message
+        //   ? this.ondcCreatePayload.createPayload(response.message)
+        //   : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('RatingPayload', payload);
+
+      // Construct the URL for the search request
+      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_rating';
+      // Send the search request and log the response
+      this.logger.log('resp Url to rating', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to rating', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+ 
 
   // async subscribe() {
   //   try {

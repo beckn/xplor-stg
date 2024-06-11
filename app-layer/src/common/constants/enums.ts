@@ -41,6 +41,8 @@ export enum Action {
   on_tracking = 'on_track', // Handle the result of a tracking operation
   rating = 'rating', // Trigger a rating operation
   on_rating = 'on_rating', // Handle the result of a rating operation
+  cancel = 'cancel', // Trigger a cancel operation
+  on_cancel = 'on_cancel', // Handle the result of a cancel operation
 }
 
 /**

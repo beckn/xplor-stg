@@ -9,6 +9,7 @@ import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
 import { TrackingRequestDto } from './dto/tracking-request.dto';
 import { RatingRequestDto } from './dto/rating-request.dto';
+import { CancelRequestDto } from './dto/cancel-request.dto';
 
 /**
  * Controller for handling various requests in the application.
@@ -113,6 +114,16 @@ export class AppController {
   @Post('on_rating')
   onRating(@Body() onStatusRequest: OndcContext | OnestContext | any) {
     return this.appService.onRating(onStatusRequest);
+  }
+
+  @Post('cancel')
+  cancel(@Body() CancelRequest: CancelRequestDto) {
+    return this.appService.cancel(CancelRequest);
+  }
+
+  @Post('on_cancel')
+  onCancel(@Body() onCancelRequest: OndcContext | OnestContext | any) {
+    return this.appService.onCancel(onCancelRequest);
   }
 
   // @Get('subscribe')

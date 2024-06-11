@@ -15,6 +15,7 @@ import {
 } from './interface/on-confirm';
 import { ICourseRatingMessage } from '../job/interface/on-rating';
 import { ICourseTrackingMessage } from '../job/interface/on-tracking';
+import { ICourseCancelMessage } from '../job/interface/on-cancel';
 
 /**
  * Service for handling job response operations.
@@ -276,6 +277,31 @@ export class CourseResponseService {
       const resp = {
         message: {
           feedback_form: feedback_form,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createCancelPayload(response: ICourseCancelMessage) {
+   
+    try {
+      const order = {
+        id: response?.order?.id,
+        status: response?.order?.fulfillments[0]?.state.descriptor.code,
+        provider: response?.order?.provider,
+        items: response?.order?.items,
+        fulfillments: response?.order?.fulfillments,
+        quote: response?.order?.quote,
+        billing: response?.order?.billing,
+        payments: response?.order?.payments,
+      };
+      const resp = {
+        message: {
+          order: order,
         },
       };
       return resp;
