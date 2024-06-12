@@ -1,6 +1,6 @@
 import { contextSchema } from './context.schema';
 
-export const onUpdateSchema = {
+export const onCancelSchema = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   type: 'object',
   properties: {

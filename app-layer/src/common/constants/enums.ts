@@ -37,6 +37,16 @@ export enum Action {
   on_confirm = 'on_confirm', // Handle the confirmation of an action or process
   status = 'status', // Check the status of a process or component
   on_status = 'on_status', // Handle the status update of a process or component
+  tracking = 'track', // Trigger a tracking operation
+  on_tracking = 'on_track', // Handle the result of a tracking operation
+  rating = 'rating', // Trigger a rating operation
+  on_rating = 'on_rating', // Handle the result of a rating operation
+  cancel = 'cancel', // Trigger a cancel operation
+  on_cancel = 'on_cancel', // Handle the result of a cancel operation
+  update = 'update', // Trigger an update operation
+  on_update = 'on_update', // Handle the result of an update operation
+  support = 'support', // Trigger a support operation
+  on_support = 'on_support', // Handle the result of a support operation
 }
 
 /**

@@ -4,15 +4,23 @@ import { AxiosService } from '../.../../../../common/axios/axios.service';
 
 import { searchSchema } from '../schema/search.schema';
 import {
+  CancelCourseDto,
   ConfirmCourseDto,
   InitCourseDto,
+  OnCancelCourseDto,
   OnConfirmCourseDto,
   OnInitCourseDto,
+  OnRatingCourseDto,
   OnSelectCourseDto,
   OnStatusCourseDto,
+  OnTrackingCourseDto,
+  RatingCourseDto,
   SearchCourseDto,
   SelectCourseDto,
   StatusCourseDto,
+  SupportCourseDto,
+  TrackingCourseDto,
+  UpdateCourseDto,
 } from '../dto/request-course.dto';
 
 import validateJson from '../.../../../../utils/validator';
@@ -26,12 +34,9 @@ import {
   NACK,
 } from '../.../../../../common/constants/action';
 import { selectSchema } from '../schema/select.schema';
-import { onSelectSchema } from '../schema/onSelect.schema';
-import { onInitSchema } from '../schema/onInit.schema';
 import { initSchema } from '../schema/init.schema';
 import { onConfirmSchema } from '../schema/onConfirm.schema';
 import { statusSchema } from '../schema/status.schema';
-import { onStatusSchema } from '../schema/onStatus.schema';
 import {
   courseConfirmResponse,
   courseInitResponse,
@@ -40,7 +45,15 @@ import {
 } from '../../../utils/mock-response';
 import { HeaderInterceptorService } from '../../../common/network/header.interceptor';
 import { DomainsEnum } from 'src/common/constants/enums';
-import { confirmSchema } from '../schema/confirm.schema';
+import { onTrackingSchema } from '../schema/onTracking.schema';
+import { trackingSchema } from '../schema/tracking.schema';
+import { ratingSchema } from '../schema/rating.schema';
+import { onRatingSchema } from '../schema/onRating.schema';
+import { cancelSchema } from '../schema/cancel.schema';
+import { onCancelSchema } from '../schema/onCancel.schema';
+import { updateSchema } from '../schema/update.schema';
+import { supportSchema } from '../schema/support.schema';
+// import { onUpdateSchema } from '../schema/onUpdate.schema';
 @Injectable()
 export class CourseService {
   private readonly logger = new Logger(CourseService.name);
@@ -402,6 +415,443 @@ export class CourseService {
         return {
           message,
         };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async tracking(trackingCourseDto: TrackingCourseDto) {
+    try {
+      const isValid = validateJson(trackingSchema, {
+        context: trackingCourseDto.context,
+        message: trackingCourseDto.message,
+      });
+      this.logger.log('isValid', isValid);
+      if (isValid !== true) {
+        const message = new AckNackResponse(
+          'NACK',
+          'CONTEXT_ERROR',
+          '625519',
+          isValid as unknown as string,
+        );
+        throw new BadRequestException(message);
+      } else {
+        const message = new AckNackResponse('ACK');
+        this.logger.log('trackingCourseDto', trackingCourseDto);
+        await this.sendTrackingRequest(trackingCourseDto);
+        return {
+          message,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async sendTrackingRequest(trackingCourseDto: TrackingCourseDto) {
+    try {
+      const trackingPayload = {
+        context: trackingCourseDto.context,
+        message: trackingCourseDto.message,
+      };
+      if (trackingPayload.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(trackingPayload, 'trackingPayload');
+        const url = trackingPayload.context.bpp_uri + `/${Action.tracking}`;
+        const selectResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, trackingPayload);
+        // this.logger.log('trackingRequest=======', selectResponse);
+        return selectResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockConfirmResponse(
+            trackingPayload.context.transaction_id,
+            trackingPayload.context.bap_uri,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.log('error response', error);
+      throw error;
+    }
+  }
+
+  async onTracking(onConfirmCourseDto: OnTrackingCourseDto) {
+    try {
+      this.logger.log('onConfirmCourseDto', onConfirmCourseDto);
+      const isValid = validateJson(onTrackingSchema, {
+        context: onConfirmCourseDto.context,
+        message: onConfirmCourseDto.message,
+      });
+      this.logger.log(isValid);
+      if (!isValid) {
+        const message = new AckNackResponse(
+          NACK,
+          CONTEXT_ERROR,
+          ERROR_CODE_CONTEXT,
+          isValid as unknown as string,
+        );
+        return message;
+      } else {
+        const message = new AckNackResponse(ACK);
+        await this.axiosService.post(
+          this.configService.get('APP_SERVICE_URL') + `/${Action.on_tracking}`,
+          onConfirmCourseDto,
+        );
+        return message;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async rating(ratingCourseDto: RatingCourseDto) {
+    try {
+      const isValid = validateJson(ratingSchema, {
+        context: ratingCourseDto.context,
+        message: ratingCourseDto.message,
+      });
+      this.logger.log('isValid', isValid);
+      if (isValid !== true) {
+        const message = new AckNackResponse(
+          'NACK',
+          'CONTEXT_ERROR',
+          '625519',
+          isValid as unknown as string,
+        );
+        throw new BadRequestException(message);
+      } else {
+        const message = new AckNackResponse('ACK');
+        this.logger.log('ratingCourseDto', ratingCourseDto);
+        await this.sendRatingRequest(ratingCourseDto);
+        return {
+          message,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async sendRatingRequest(ratingCourseDto: RatingCourseDto) {
+    try {
+      const ratingPayload = {
+        context: ratingCourseDto.context,
+        message: ratingCourseDto.message,
+      };
+      if (ratingPayload.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(ratingPayload, 'ratingPayload');
+        const url = ratingPayload.context.bpp_uri + `/${Action.rating}`;
+        const selectResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, ratingPayload);
+        this.logger.log('ratingRequest=======', selectResponse);
+        return selectResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockConfirmResponse(
+            ratingPayload.context.transaction_id,
+            ratingPayload.context.bap_uri,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.log('error response', error);
+      throw error;
+    }
+  }
+
+  async onRating(onRatingCourseDto: OnRatingCourseDto) {
+    try {
+      this.logger.log('onRatingCourseDto', onRatingCourseDto);
+      const isValid = validateJson(onRatingSchema, {
+        context: onRatingCourseDto.context,
+        message: onRatingCourseDto.message,
+      });
+      this.logger.log(isValid);
+      if (!isValid) {
+        const message = new AckNackResponse(
+          NACK,
+          CONTEXT_ERROR,
+          ERROR_CODE_CONTEXT,
+          isValid as unknown as string,
+        );
+        return message;
+      } else {
+        const message = new AckNackResponse(ACK);
+        await this.axiosService.post(
+          this.configService.get('APP_SERVICE_URL') + `/${Action.on_rating}`,
+          onRatingCourseDto,
+        );
+        return message;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async cancel(cancelCourseDto: CancelCourseDto) {
+    try {
+      const isValid = validateJson(cancelSchema, {
+        context: cancelCourseDto.context,
+        message: cancelCourseDto.message,
+      });
+      this.logger.log('isValid', isValid);
+      if (isValid !== true) {
+        const message = new AckNackResponse(
+          'NACK',
+          'CONTEXT_ERROR',
+          '625519',
+          isValid as unknown as string,
+        );
+        throw new BadRequestException(message);
+      } else {
+        const message = new AckNackResponse('ACK');
+        this.logger.log('cancelCourseDto', cancelCourseDto);
+        await this.sendCancelRequest(cancelCourseDto);
+        return {
+          message,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async sendCancelRequest(cancelCourseDto: CancelCourseDto) {
+    try {
+      const cancelPayload = {
+        context: cancelCourseDto.context,
+        message: cancelCourseDto.message,
+      };
+      if (cancelCourseDto.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(cancelCourseDto, 'cancelCourseDto');
+        const url = cancelPayload.context.bpp_uri + `/${Action.cancel}`;
+        const selectResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, cancelCourseDto);
+        this.logger.log('cancelRequest=======', selectResponse);
+        return selectResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockConfirmResponse(
+            cancelPayload.context.transaction_id,
+            cancelPayload.context.bap_uri,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.log('error response', error);
+      throw error;
+    }
+  }
+
+  async onCancel(onCancelCourseDto: OnCancelCourseDto) {
+    try {
+      this.logger.log('onCancelCourseDto', onCancelCourseDto);
+      const isValid = validateJson(onCancelSchema, {
+        context: onCancelCourseDto.context,
+        message: onCancelCourseDto.message,
+      });
+      this.logger.log(isValid);
+      if (!isValid) {
+        const message = new AckNackResponse(
+          NACK,
+          CONTEXT_ERROR,
+          ERROR_CODE_CONTEXT,
+          isValid as unknown as string,
+        );
+        return message;
+      } else {
+        const message = new AckNackResponse(ACK);
+        await this.axiosService.post(
+          this.configService.get('APP_SERVICE_URL') + `/${Action.on_cancel}`,
+          onCancelCourseDto,
+        );
+        return message;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(updateCourseDto: UpdateCourseDto) {
+    try {
+      this.logger.log('updateCourseDto', updateCourseDto);
+      const isValid = validateJson(updateSchema, {
+        context: updateCourseDto.context,
+        message: updateCourseDto.message,
+      });
+      this.logger.log('isValid', isValid);
+      if (isValid !== true) {
+        const message = new AckNackResponse(
+          'NACK',
+          'CONTEXT_ERROR',
+          '625519',
+          isValid as unknown as string,
+        );
+        throw new BadRequestException(message);
+      } else {
+        const message = new AckNackResponse('ACK');
+        this.logger.log('updateCourseDto', updateCourseDto);
+        await this.sendUpdateRequest(updateCourseDto);
+        return {
+          message,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async sendUpdateRequest(updateCourseDto: UpdateCourseDto) {
+    try {
+      const updatePayload = {
+        context: updateCourseDto.context,
+        message: updateCourseDto.message,
+      };
+      if (updateCourseDto.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(updateCourseDto, 'updateCourseDto');
+        const url = updatePayload.context.bpp_uri + `/${Action.update}`;
+        const updateResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, updateCourseDto);
+        return updateResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockConfirmResponse(
+            updatePayload.context.transaction_id,
+            updatePayload.context.bap_uri,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.log('error response', error);
+      throw error;
+    }
+  }
+
+  async onUpdate(onUpdateCourseDto: UpdateCourseDto) {
+    try {
+      this.logger.log('onUpdateCourseDto', onUpdateCourseDto);
+      // const isValid = validateJson(onUpdateSchema, {
+      //   context: onUpdateCourseDto.context,
+      //   message: onUpdateCourseDto.message,
+      // });
+      const isValid = true;
+      this.logger.log(isValid);
+      if (!isValid) {
+        const message = new AckNackResponse(
+          NACK,
+          CONTEXT_ERROR,
+          ERROR_CODE_CONTEXT,
+          isValid as unknown as string,
+        );
+        return message;
+      } else {
+        const message = new AckNackResponse(ACK);
+        await this.axiosService.post(
+          this.configService.get('APP_SERVICE_URL') + `/${Action.on_update}`,
+          onUpdateCourseDto,
+        );
+        return message;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async support(supportCourseDto: SupportCourseDto) {
+    try {
+      this.logger.log('supportCourseDto', supportCourseDto);
+      const isValid = validateJson(supportSchema, {
+        context: supportCourseDto.context,
+        message: supportCourseDto.message,
+      });
+      this.logger.log('isValid', isValid);
+      if (isValid !== true) {
+        const message = new AckNackResponse(
+          'NACK',
+          'CONTEXT_ERROR',
+          '625519',
+          isValid as unknown as string,
+        );
+        throw new BadRequestException(message);
+      } else {
+        const message = new AckNackResponse('ACK');
+        this.logger.log('supportCourseDto', supportCourseDto);
+        await this.sendSupportRequest(supportCourseDto);
+        return {
+          message,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async sendSupportRequest(supportCourseDto: SupportCourseDto) {
+    try {
+      const supportPayload = {
+        context: supportCourseDto.context,
+        message: supportCourseDto.message,
+      };
+      if (supportCourseDto.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(supportCourseDto, 'supportCourseDto');
+        const url = supportPayload.context.bpp_uri + `/${Action.support}`;
+        const updateResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, supportCourseDto);
+        return updateResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockConfirmResponse(
+            supportPayload.context.transaction_id,
+            supportPayload.context.bap_uri,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.log('error response', error);
+      throw error;
+    }
+  }
+
+  async onSupport(onSupportCourseDto: UpdateCourseDto) {
+    try {
+      this.logger.log('onSupportCourseDto', onSupportCourseDto);
+      // const isValid = validateJson(onUpdateSchema, {
+      //   context: onUpdateCourseDto.context,
+      //   message: onUpdateCourseDto.message,
+      // });
+      const isValid = true;
+      this.logger.log(isValid);
+      if (!isValid) {
+        const message = new AckNackResponse(
+          NACK,
+          CONTEXT_ERROR,
+          ERROR_CODE_CONTEXT,
+          isValid as unknown as string,
+        );
+        return message;
+      } else {
+        const message = new AckNackResponse(ACK);
+        await this.axiosService.post(
+          this.configService.get('APP_SERVICE_URL') + `/${Action.on_support}`,
+          onSupportCourseDto,
+        );
+        return message;
       }
     } catch (error) {
       throw error;

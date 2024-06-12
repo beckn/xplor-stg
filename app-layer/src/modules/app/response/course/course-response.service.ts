@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-
 import { Catalog, MessageResponse, Provider } from './interface/on-search';
 import {
   ICourseSelectMessage,
@@ -13,6 +12,11 @@ import {
   ICourseConfirmResponseMessage,
   ICourseConfirmResponseMessageOrder,
 } from './interface/on-confirm';
+import { ICourseRatingMessage } from '../job/interface/on-rating';
+import { ICourseTrackingMessage } from '../job/interface/on-tracking';
+import { ICourseCancelMessage } from '../job/interface/on-cancel';
+import { ICourseUpdateMessage } from '../job/interface/on-update';
+import { ICourseSupportMessage, ISupport } from './interface/on-support';
 
 /**
  * Service for handling job response operations.
@@ -235,6 +239,116 @@ export class CourseResponseService {
       const resp: ICourseConfirmResponse = {
         message: {
           order: order,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createTrackingPayload(response: ICourseTrackingMessage) {
+    try {
+      const tracking = {
+        id: response?.tracking?.id,
+        url: response?.tracking?.url,
+        status: response?.tracking?.status,
+      };
+      const resp = {
+        message: {
+          tracking: tracking,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+  createRatingPayload(response: ICourseRatingMessage) {
+    try {
+      const feedback_form = {
+        form: {
+          url: response?.feedback_form?.form?.url,
+          mime_type: response?.feedback_form?.form?.mime_type,
+        },
+        required: response?.feedback_form?.required,
+      };
+      const resp = {
+        message: {
+          feedback_form: feedback_form,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createCancelPayload(response: ICourseCancelMessage) {
+    try {
+      const order = {
+        id: response?.order?.id,
+        status: response?.order?.fulfillments[0]?.state.descriptor.code,
+        provider: response?.order?.provider,
+        items: response?.order?.items,
+        fulfillments: response?.order?.fulfillments,
+        quote: response?.order?.quote,
+        billing: response?.order?.billing,
+        payments: response?.order?.payments,
+      };
+      const resp = {
+        message: {
+          order: order,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createUpdatePayload(response: ICourseUpdateMessage) {
+    try {
+      const order = {
+        id: response?.order?.id,
+        status: response?.order?.fulfillments[0]?.state.descriptor.code,
+        provider: response?.order?.provider,
+        items: response?.order?.items,
+        fulfillments: response?.order?.fulfillments,
+        quote: response?.order?.quote,
+        billing: response?.order?.billing,
+        payments: response?.order?.payments,
+      };
+      const resp = {
+        message: {
+          order: order,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createSupportPayload(response: ICourseSupportMessage) {
+    try {
+      const support: ISupport = {
+        ref_id: response.support.ref_id,
+        docs: response.support.docs,
+        callback_phone: response.support.callback_phone,
+        email: response.support.email,
+        order_id: response.support.order_id,
+        phone: response.support.phone,
+        url: response.support.url,
+      };
+      const resp = {
+        message: {
+          support,
         },
       };
       return resp;

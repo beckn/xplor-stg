@@ -12,7 +12,7 @@ export const OnestContextConstants = {
    * It is crucial for routing and accessing the application's resources.
    */
   bap_uri: 'https://xplor-stg-nest-dev.thewitslab.com/protocol/v1',
-  // bap_uri: 'https://7899-115-245-207-90.ngrok-free.app/protocol/v1',
+  // bap_uri: 'https://4d9e-115-245-207-90.ngrok-free.app/protocol/v1',
 
   version: '1.1.0',
   ttl: 'PT1M',
@@ -54,7 +54,7 @@ export const BelemContextConstants = {
    * This URI is used as the starting point for constructing URLs for specific API endpoints.
    * It is crucial for routing and accessing the application's resources.
    */
-  // bap_uri: 'https://5385-115-245-207-90.ngrok-free.app/protocol/v1',
+  // bap_uri: 'https://4d9e-115-245-207-90.ngrok-free.app/protocol/v1',
   bap_uri: 'https://xplor-stg-nest-dev.thewitslab.com/protocol/v1',
 
   version: '1.1.0',

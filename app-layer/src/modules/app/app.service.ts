@@ -17,6 +17,11 @@ import { CourseResponseService } from './response/course/course-response.service
 import { InitRequestDto } from './dto/init-request.dto';
 import { ConfirmRequestDto } from './dto/confirm-request.dto';
 import { StatusRequestDto } from './dto/status-request.dto';
+import { RatingRequestDto } from './dto/rating-request.dto';
+import { TrackingRequestDto } from './dto/tracking-request.dto';
+import { CancelRequestDto } from './dto/cancel-request.dto';
+import { UpdateRequestDto } from './dto/update-request.dto';
+import { SupportRequestDto } from './dto/support-request.dto';
 import { SearchQueryDto } from './dto/search-query.dto';
 
 // Decorator to mark this class as a provider that can be injected into other classes
@@ -556,7 +561,527 @@ export class AppService {
     }
   }
 
-  //comment down it for future use.
+  async tracking(statusRequest: TrackingRequestDto) {
+    try {
+      this.globalActionService.globalTracking(statusRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.trackSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onTracking(response: any) {
+    try {
+      this.logger.log('Tracking', response);
+      await this.sendTracking(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendTracking(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createTrackingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createTrackingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        //   retail = response.message
+        //     ? this.ondcCreatePayload.createPayload(response.message)
+        //     : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('trackingPayload', payload);
+
+      // Construct the URL for the search request
+      const url =
+        this.configService.get('CORE_SERVICE_URL') + '/stg/on_tracking';
+      // Send the search request and log the response
+      this.logger.log('resp Url to tracking', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to tracking', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async rating(statusRequest: RatingRequestDto) {
+    try {
+      this.globalActionService.globalRating(statusRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.ratingSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onRating(response: any) {
+    try {
+      this.logger.log(' Rating response:::', response);
+      await this.sendRating(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendRating(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createRatingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createRatingPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        // retail = response.message
+        //   ? this.ondcCreatePayload.createPayload(response.message)
+        //   : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('RatingPayload', payload);
+
+      // Construct the URL for the search request
+      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_rating';
+      // Send the search request and log the response
+      this.logger.log('resp Url to rating', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to rating', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async cancel(cancelRequest: CancelRequestDto) {
+    try {
+      this.globalActionService.globalCancel(cancelRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.cancelSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onCancel(response: any) {
+    try {
+      this.logger.log(' Cancel response:::', response);
+      await this.sendCancel(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendCancel(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createCancelPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createCancelPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        // retail = response.message
+        //   ? this.ondcCreatePayload.createPayload(response.message)
+        //   : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('OnCancelPayload', payload);
+
+      // Construct the URL for the search request
+      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_cancel';
+      // Send the search request and log the response
+      this.logger.log('resp Url to cancel', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to cancel', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async update(updateRequest: UpdateRequestDto) {
+    try {
+      this.globalActionService.globalUpdate(updateRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.updateSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onUpdate(response: any) {
+    try {
+      this.logger.log(' Update response:::', response);
+      await this.sendUpdate(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendUpdate(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createUpdatePayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createUpdatePayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        // retail = response.message
+        //   ? this.ondcCreatePayload.createPayload(response.message)
+        //   : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('OnUpdatePayload', payload);
+
+      // Construct the URL for the search request
+      const url = this.configService.get('CORE_SERVICE_URL') + '/stg/on_update';
+      // Send the search request and log the response
+      this.logger.log('resp Url to update', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to update', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async support(supportRequest: SupportRequestDto) {
+    try {
+      this.globalActionService.globalSupport(supportRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.supportSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onSupport(response: any) {
+    try {
+      this.logger.log(' support response:::', response);
+      await this.sendSupport(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendSupport(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createSupportPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createSupportPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        // retail = response.message
+        //   ? this.ondcCreatePayload.createPayload(response.message)
+        //   : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('SupportPayload', payload);
+
+      // Construct the URL for the search request
+      const url =
+        this.configService.get('CORE_SERVICE_URL') + '/stg/on_support';
+      // Send the search request and log the response
+      this.logger.log('resp Url to support', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to support', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
 
   // async subscribe() {
   //   try {

@@ -19,6 +19,11 @@ import { ScholarshipConfirmService } from '../modules/app/request/scholarship/se
 import { ScholarshipInitService } from '../modules/app/request/scholarship/services/initv1.service';
 import { ScholarshipSelectService } from '../modules/app/request/scholarship/services/selectv1.service';
 import { ScholarshipStatusService } from '../modules/app/request/scholarship/services/statusv1.service';
+import { CourseTrackingService } from 'src/modules/app/request/course/services/tracking.service';
+import { CourseRatingService } from 'src/modules/app/request/course/services/rating.service';
+import { CourseCancelService } from 'src/modules/app/request/course/services/cancel.service';
+import { CourseUpdateService } from 'src/modules/app/request/course/services/update.service';
+import { CourseSupportService } from 'src/modules/app/request/course/services/supportV1.service';
 
 /**
  * Decorates the CommonModule class with @Global() to make it a global module.
@@ -47,6 +52,11 @@ import { ScholarshipStatusService } from '../modules/app/request/scholarship/ser
     ScholarshipStatusService, // Service for scholarship status operations
     CourseStatusService, // Service for course status operations
     ScholarshipConfirmService, // Service for scholarship Confirm operations
+    CourseTrackingService, // Service for course tracking operations
+    CourseRatingService, // Service for course rating operations
+    CourseCancelService, // Service for course cancel operations
+    CourseUpdateService, // Service for course update operations
+    CourseSupportService, // Service for course support operations
   ],
   exports: [
     AxiosService, // Exporting AxiosService for use in other modules
@@ -64,6 +74,11 @@ import { ScholarshipStatusService } from '../modules/app/request/scholarship/ser
     ScholarshipStatusService, // Service for scholarship status operations
     CourseStatusService, // Service for course status operations
     ScholarshipConfirmService, // Service for scholarship Confirm operations
+    CourseTrackingService, // Service for course tracking operations
+    CourseRatingService, // Service for course rating operations
+    CourseCancelService, // Service for course cancel operations
+    CourseUpdateService, // Service for course update operations
+    CourseSupportService, // Service for course support operations
   ],
 })
 // Define the CommonModule class.
