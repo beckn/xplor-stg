@@ -199,6 +199,6 @@ interface Provider {
   categories: Category[];
 }
 
-export interface ICourseCancelMessage {
+export interface ICourseUpdateMessage {
   order: Order;
 }

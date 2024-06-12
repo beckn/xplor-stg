@@ -43,6 +43,8 @@ export enum Action {
   on_rating = 'on_rating', // Handle the result of a rating operation
   cancel = 'cancel', // Trigger a cancel operation
   on_cancel = 'on_cancel', // Handle the result of a cancel operation
+  update = 'update', // Trigger an update operation
+  on_update = 'on_update', // Handle the result of an update operation
 }
 
 /**

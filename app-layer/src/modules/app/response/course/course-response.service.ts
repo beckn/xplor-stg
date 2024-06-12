@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-
 import { Catalog, MessageResponse, Provider } from './interface/on-search';
 import {
   ICourseSelectMessage,
@@ -16,6 +15,7 @@ import {
 import { ICourseRatingMessage } from '../job/interface/on-rating';
 import { ICourseTrackingMessage } from '../job/interface/on-tracking';
 import { ICourseCancelMessage } from '../job/interface/on-cancel';
+import { ICourseUpdateMessage } from '../job/interface/on-update';
 
 /**
  * Service for handling job response operations.
@@ -287,7 +287,30 @@ export class CourseResponseService {
   }
 
   createCancelPayload(response: ICourseCancelMessage) {
-   
+    try {
+      const order = {
+        id: response?.order?.id,
+        status: response?.order?.fulfillments[0]?.state.descriptor.code,
+        provider: response?.order?.provider,
+        items: response?.order?.items,
+        fulfillments: response?.order?.fulfillments,
+        quote: response?.order?.quote,
+        billing: response?.order?.billing,
+        payments: response?.order?.payments,
+      };
+      const resp = {
+        message: {
+          order: order,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createUpdatePayload(response: ICourseUpdateMessage) {
     try {
       const order = {
         id: response?.order?.id,

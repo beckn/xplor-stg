@@ -30,7 +30,7 @@ export class ContextDto {
 class OrderItem {
   @IsNotEmpty({ message: 'Order id is required' })
   @IsString({ message: 'Order id must be a string' })
-  order_id: string;
+  id: string;
 
   @IsArray()
   @IsString({ each: true })
@@ -40,13 +40,9 @@ class OrderItem {
   @IsString({ message: 'Provider id must be a string' })
   provider_id: string;
 
-  @IsNotEmpty({ message: 'Cancel reason is required' })
-  @IsString({ message: 'Cancel reason must be a string' })
-  cancellation_reason_id: string;
-
-  @IsNotEmpty({ message: 'Short description id is required' })
-  @IsString({ message: 'Short description must be a string' })
-  short_desc: string;
+  @IsNotEmpty({ message: 'Name is required' })
+  @IsString({ message: 'Name id must be a string' })
+  name: string;
 }
 
 class MessageDto {
@@ -58,7 +54,7 @@ class MessageDto {
  * Data Transfer Object (DTO) for a search request.
  * Validates the search request information required for an init operation.
  */
-export class CancelRequestDto {
+export class UpdateRequestDto {
   @IsNotEmpty({ message: 'Context is required' })
   @IsObject({ message: 'Context must be a object' })
   @ValidateNested()

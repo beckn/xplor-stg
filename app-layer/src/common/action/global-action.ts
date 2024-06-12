@@ -30,6 +30,8 @@ import { CourseRatingService } from 'src/modules/app/request/course/services/rat
 import { CourseTrackingService } from 'src/modules/app/request/course/services/tracking.service';
 import { CancelRequestDto } from 'src/modules/app/dto/cancel-request.dto';
 import { CourseCancelService } from 'src/modules/app/request/course/services/cancel.service';
+import { UpdateRequestDto } from 'src/modules/app/dto/update-request.dto';
+import { CourseUpdateService } from 'src/modules/app/request/course/services/update.service';
 
 @Injectable()
 export class GlobalActionService {
@@ -44,6 +46,7 @@ export class GlobalActionService {
     private readonly courseTrackingService: CourseTrackingService,
     private readonly courseRatingService: CourseRatingService,
     private readonly courseCancelService: CourseCancelService,
+    private readonly courseUpdateService: CourseUpdateService,
 
     private readonly scholarshipConfirmService: ScholarshipConfirmService,
     private readonly scholarshipInitService: ScholarshipInitService,
@@ -445,7 +448,6 @@ export class GlobalActionService {
     }
   }
 
-
   async globalCancel(request: CancelRequestDto) {
     try {
       // Switch statement to handle different domains
@@ -464,7 +466,47 @@ export class GlobalActionService {
         case xplorDomain.COURSE:
           // Logic for COURSE_DOMAIN
           const selectResponseCourse =
-          await this.courseCancelService.sendCancelPayload(request);
+            await this.courseCancelService.sendCancelPayload(request);
+
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-status: ${JSON.stringify(selectResponseCourse)}`,
+          );
+          break;
+
+          // Default case if the domain does not match any of the expected values
+          // No specific action is taken here, but you could add logic to handle unexpected domains
+
+          break;
+      }
+    } catch (error) {
+      // Catch any errors that occur during the search operations
+      // Log the error for debugging purposes
+      this.logger.error(error);
+      // Rethrow the error to be handled by the caller
+      throw error;
+    }
+  }
+
+  async globalUpdate(request: UpdateRequestDto) {
+    try {
+      // Switch statement to handle different domains
+      switch (request?.context?.domain) {
+        case xplorDomain.BELEM:
+          // Logic for COURSE_DOMAIN
+
+          const initResponseBELEMCourse =
+            await this.courseUpdateService.sendUpdatePayload(request);
+          // Log the search response for the course domain
+          this.logger.log(
+            `course-select: ${JSON.stringify(initResponseBELEMCourse)}`,
+          );
+          break;
+
+        case xplorDomain.COURSE:
+          // Logic for COURSE_DOMAIN
+          const selectResponseCourse =
+            await this.courseUpdateService.sendUpdatePayload(request);
 
           // Log the search response for the course domain
           this.logger.log(

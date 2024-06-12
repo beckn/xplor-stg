@@ -10,6 +10,7 @@ import { StatusRequestDto } from './dto/status-request.dto';
 import { TrackingRequestDto } from './dto/tracking-request.dto';
 import { RatingRequestDto } from './dto/rating-request.dto';
 import { CancelRequestDto } from './dto/cancel-request.dto';
+import { UpdateRequestDto } from './dto/update-request.dto';
 
 /**
  * Controller for handling various requests in the application.
@@ -117,13 +118,23 @@ export class AppController {
   }
 
   @Post('cancel')
-  cancel(@Body() CancelRequest: CancelRequestDto) {
-    return this.appService.cancel(CancelRequest);
+  cancel(@Body() cancelRequest: CancelRequestDto) {
+    return this.appService.cancel(cancelRequest);
   }
 
   @Post('on_cancel')
   onCancel(@Body() onCancelRequest: OndcContext | OnestContext | any) {
     return this.appService.onCancel(onCancelRequest);
+  }
+
+  @Post('update')
+  update(@Body() updateRequest: UpdateRequestDto) {
+    return this.appService.update(updateRequest);
+  }
+
+  @Post('on_update')
+  onUpdate(@Body() onUpdateRequest: OndcContext | OnestContext | any) {
+    return this.appService.onUpdate(onUpdateRequest);
   }
 
   // @Get('subscribe')
