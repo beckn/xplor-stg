@@ -143,7 +143,9 @@ export class CourseUpdateService {
       if (!UpdatePayload) throw new NotFoundException('Context not found');
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.COURSE}/${Action.update}`;
+          `/${xplorDomain.COURSE}/${Action.update}`;
+        
+        this.logger.log("Update Payload",UpdatePayload)
 
       const response = await this.httpService.post(url, UpdatePayload);
       this.logger.log('UpdatePayload', JSON.stringify(UpdatePayload));

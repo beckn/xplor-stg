@@ -201,3 +201,13 @@ export class OnCancelCourseDto {
   @IsNotEmpty()
   message: any;
 }
+
+export class UpdateCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: any;
+}

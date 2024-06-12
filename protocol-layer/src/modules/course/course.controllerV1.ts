@@ -16,6 +16,7 @@ import {
   SelectCourseDto,
   StatusCourseDto,
   TrackingCourseDto,
+  UpdateCourseDto,
 } from './dto/request-course.dto';
 
 @Controller({ version: '1', path: 'course' })
@@ -108,5 +109,15 @@ export class CourseController {
   @Post('on_cancel')
   onCancel(@Body() onCancelRequest: OnCancelCourseDto) {
     return this.courseService.onCancel(onCancelRequest);
+  }
+
+  @Post('update')
+  update(@Body() updateRequest: UpdateCourseDto) {
+    return this.courseService.update(updateRequest);
+  }
+
+  @Post('on_update')
+  onUpdate(@Body() onUpdateRequest: UpdateCourseDto) {
+    return this.courseService.onUpdate(onUpdateRequest);
   }
 }

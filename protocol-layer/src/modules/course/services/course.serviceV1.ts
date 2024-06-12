@@ -19,6 +19,7 @@ import {
   SelectCourseDto,
   StatusCourseDto,
   TrackingCourseDto,
+  UpdateCourseDto,
 } from '../dto/request-course.dto';
 
 import validateJson from '../.../../../../utils/validator';
@@ -49,6 +50,8 @@ import { ratingSchema } from '../schema/rating.schema';
 import { onRatingSchema } from '../schema/onRating.schema';
 import { cancelSchema } from '../schema/cancel.schema';
 import { onCancelSchema } from '../schema/onCancel.schema';
+import { updateSchema } from '../schema/update.schema';
+// import { onUpdateSchema } from '../schema/onUpdate.schema';
 @Injectable()
 export class CourseService {
   private readonly logger = new Logger(CourseService.name);
@@ -669,6 +672,94 @@ export class CourseService {
         await this.axiosService.post(
           this.configService.get('APP_SERVICE_URL') + `/${Action.on_cancel}`,
           onCancelCourseDto,
+        );
+        return message;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(updateCourseDto: UpdateCourseDto) {
+    try {
+      this.logger.log('updateCourseDto', updateCourseDto);
+      const isValid = validateJson(updateSchema, {
+        context: updateCourseDto.context,
+        message: updateCourseDto.message,
+      });
+      this.logger.log('isValid', isValid);
+      if (isValid !== true) {
+        const message = new AckNackResponse(
+          'NACK',
+          'CONTEXT_ERROR',
+          '625519',
+          isValid as unknown as string,
+        );
+        throw new BadRequestException(message);
+      } else {
+        const message = new AckNackResponse('ACK');
+        this.logger.log('updateCourseDto', updateCourseDto);
+        await this.sendUpdateRequest(updateCourseDto);
+        return {
+          message,
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async sendUpdateRequest(updateCourseDto: UpdateCourseDto) {
+    try {
+      const updatePayload = {
+        context: updateCourseDto.context,
+        message: updateCourseDto.message,
+      };
+      if (updateCourseDto.context.domain === DomainsEnum.BELEM) {
+        this.logger.log(updateCourseDto, 'updateCourseDto');
+        const url = updatePayload.context.bpp_uri + `/${Action.update}`;
+        const updateResponse = await this.axiosHeaderService
+          .getAxiosInstance()
+          .post(url, updateCourseDto);
+        return updateResponse;
+      } else {
+        const isNetworkMock = this.configService.get('IS_NETWORK_MOCK');
+        this.logger.log('IS_NETWORK_MOCK', isNetworkMock);
+        if (isNetworkMock) {
+          this.mockConfirmResponse(
+            updatePayload.context.transaction_id,
+            updatePayload.context.bap_uri,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.log('error response', error);
+      throw error;
+    }
+  }
+
+  async onUpdate(onUpdateCourseDto: UpdateCourseDto) {
+    try {
+      this.logger.log('onUpdateCourseDto', onUpdateCourseDto);
+      // const isValid = validateJson(onUpdateSchema, {
+      //   context: onUpdateCourseDto.context,
+      //   message: onUpdateCourseDto.message,
+      // });
+      const isValid = true;
+      this.logger.log(isValid);
+      if (!isValid) {
+        const message = new AckNackResponse(
+          NACK,
+          CONTEXT_ERROR,
+          ERROR_CODE_CONTEXT,
+          isValid as unknown as string,
+        );
+        return message;
+      } else {
+        const message = new AckNackResponse(ACK);
+        await this.axiosService.post(
+          this.configService.get('APP_SERVICE_URL') + `/${Action.on_update}`,
+          onUpdateCourseDto,
         );
         return message;
       }

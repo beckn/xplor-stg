@@ -19,6 +19,8 @@ export enum Action {
   on_rating = 'on_rating', // Handle the result of a rating operation
   cancel = 'cancel', // Cancel an action or process
   on_cancel = 'on_cancel', // Handle the cancellation of an action or process
+  update = 'update', // Update a process or component
+  on_update = 'on_update', // Handle the updating of an action or process
 }
 
 // Define constants for response codes
