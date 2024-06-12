@@ -4,6 +4,7 @@ import { Dump, DumpDocument } from '../schema/dump.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { OnestContextConstants } from '../../../common/constants/context.constant';
+import { SearchQueryDto } from '../../../modules/app/dto/search-query.dto';
 
 @Injectable()
 export class DumpService {
@@ -16,7 +17,18 @@ export class DumpService {
     return await this.dumpModel.find();
   }
 
-  async findBytransaction_id(
+  async findWithPagination(searchQueryDto: SearchQueryDto): Promise<Dump[]> {
+    return await this.dumpModel
+      .find()
+      .skip(Number(searchQueryDto.pageNumber))
+      .limit(Number(searchQueryDto.pageSize));
+  }
+
+  async findCount() {
+    return await this.dumpModel.countDocuments();
+  }
+
+  async findBytransaection_id(
     transaction_id: string,
     domain: string,
   ): Promise<Dump> {

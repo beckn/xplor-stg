@@ -22,6 +22,7 @@ import { TrackingRequestDto } from './dto/tracking-request.dto';
 import { CancelRequestDto } from './dto/cancel-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
 import { SupportRequestDto } from './dto/support-request.dto';
+import { SearchQueryDto } from './dto/search-query.dto';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
@@ -1107,9 +1108,10 @@ export class AppService {
 
   // }
 
-  async getSearchData() {
+  async getSearchData(searchQueryDto: SearchQueryDto) {
     try {
-      const payload = await this.dumpService.findAll();
+      // const totalCount = await this.dumpService.findCount();
+      const payload = await this.dumpService.findWithPagination(searchQueryDto);
       // this.logger.log(payload);
       const transformedPayload = await Promise.all(
         payload.map(async (data) => {
