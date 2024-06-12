@@ -45,6 +45,8 @@ export enum Action {
   on_cancel = 'on_cancel', // Handle the result of a cancel operation
   update = 'update', // Trigger an update operation
   on_update = 'on_update', // Handle the result of an update operation
+  support = 'support', // Trigger a support operation
+  on_support = 'on_support', // Handle the result of a support operation
 }
 
 /**

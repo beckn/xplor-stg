@@ -14,12 +14,12 @@ import {
   xplorDomain,
 } from '../../../../../common/constants/enums';
 import { DumpService } from '../../../../dump/service/dump.service';
-import { UpdateRequestDto } from '../../../dto/update-request.dto';
-import { IMessageUpdate } from '../interface/request/update';
+import { IMessageSupport } from '../interface/request/support';
+import { SupportRequestDto } from 'src/modules/app/dto/support-request.dto';
 
 @Injectable()
-export class CourseUpdateService {
-  private readonly logger = new Logger(CourseUpdateService.name);
+export class CourseSupportService {
+  private readonly logger = new Logger(CourseSupportService.name);
 
   constructor(
     private readonly configService: ConfigService,
@@ -27,10 +27,10 @@ export class CourseUpdateService {
     private readonly dbService: DumpService,
   ) {}
 
-  async createPayload(request: UpdateRequestDto) {
+  async createPayload(request: SupportRequestDto) {
     try {
       if (request.context.domain === DomainsEnum.BELEM) {
-        this.logger.log('request', request);
+        this.logger.log('Support request', request);
 
         const getItemFromDumpDb = await this.dbService.findItemByprovider_id(
           request?.message?.order?.provider_id,
@@ -42,7 +42,7 @@ export class CourseUpdateService {
         const context = getItemFromDumpDb.context as unknown as SelectContext;
         const contextPayload: SelectContext = {
           ...context,
-          action: Action.update,
+          action: Action.tracking,
           domain:
             request?.context?.domain === DomainsEnum.BELEM
               ? DomainsEnum.BELEM
@@ -64,19 +64,9 @@ export class CourseUpdateService {
             ? request.context.ttl
             : OnestContextConstants.ttl,
         };
-        const messagePayload: IMessageUpdate = {
-          update_target: 'order.fulfillments[0].customer.person.name',
-          order: {
-            fulfillments: [
-              {
-                customer: {
-                  person: {
-                    name: request?.message?.order?.name,
-                  },
-                },
-              },
-            ],
-            id: request?.message?.order?.id,
+        const messagePayload: IMessageSupport = {
+          support: {
+            order_id: request?.message?.order?.id,
           },
         };
 
@@ -92,7 +82,7 @@ export class CourseUpdateService {
         const contextPayload: SelectContext = {
           bpp_id: 'infosys.springboard.io',
           bpp_uri: 'https://infosys.springboard.io',
-          action: Action.update,
+          action: Action.support,
           domain: request?.context?.domain,
           bap_id: OnestContextConstants.bap_id,
           bap_uri:
@@ -106,19 +96,9 @@ export class CourseUpdateService {
             ? request.context.ttl
             : OnestContextConstants.ttl,
         };
-        const messagePayload: IMessageUpdate = {
-          update_target: 'order.fulfillments[0].customer.person.name',
-          order: {
-            fulfillments: [
-              {
-                customer: {
-                  person: {
-                    name: request?.message?.order?.name,
-                  },
-                },
-              },
-            ],
-            id: request?.message?.order?.id,
+        const messagePayload: IMessageSupport = {
+          support: {
+            order_id: request?.message?.order?.id,
           },
         };
 
@@ -126,7 +106,6 @@ export class CourseUpdateService {
           context: contextPayload,
           message: messagePayload,
         };
-        this.logger.log('updatePayload', payload);
         return {
           ...payload,
           gatewayUrl: Gateway.course,
@@ -136,19 +115,16 @@ export class CourseUpdateService {
       return error?.message;
     }
   }
-  async sendUpdatePayload(request: UpdateRequestDto) {
+  async sendSupportPayload(request: SupportRequestDto) {
     try {
-      const UpdatePayload = await this.createPayload(request);
-
-      if (!UpdatePayload) throw new NotFoundException('Context not found');
+      const SupportPayload = await this.createPayload(request);
+      if (!SupportPayload) throw new NotFoundException('Context not found');
       const url =
         this.configService.get('PROTOCOL_SERVICE_URL') +
-        `/${xplorDomain.COURSE}/${Action.update}`;
+        `/${xplorDomain.COURSE}/${Action.support}`;
 
-      this.logger.log('Update Payload', UpdatePayload);
-
-      const response = await this.httpService.post(url, UpdatePayload);
-      this.logger.log('UpdatePayload', JSON.stringify(UpdatePayload));
+      const response = await this.httpService.post(url, SupportPayload);
+      this.logger.log('SupportPayload', JSON.stringify(SupportPayload));
       return response;
     } catch (error) {
       this.logger.error(error);

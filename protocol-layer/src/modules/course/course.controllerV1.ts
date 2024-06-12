@@ -10,11 +10,13 @@ import {
   OnRatingCourseDto,
   OnSelectCourseDto,
   OnStatusCourseDto,
+  OnSupportCourseDto,
   OnTrackingCourseDto,
   RatingCourseDto,
   SearchCourseDto,
   SelectCourseDto,
   StatusCourseDto,
+  SupportCourseDto,
   TrackingCourseDto,
   UpdateCourseDto,
 } from './dto/request-course.dto';
@@ -119,5 +121,15 @@ export class CourseController {
   @Post('on_update')
   onUpdate(@Body() onUpdateRequest: UpdateCourseDto) {
     return this.courseService.onUpdate(onUpdateRequest);
+  }
+
+  @Post('support')
+  support(@Body() supportRequest: SupportCourseDto) {
+    return this.courseService.support(supportRequest);
+  }
+
+  @Post('on_support')
+  onSupport(@Body() onSupportRequest: OnSupportCourseDto) {
+    return this.courseService.onSupport(onSupportRequest);
   }
 }

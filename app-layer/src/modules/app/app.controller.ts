@@ -11,6 +11,7 @@ import { TrackingRequestDto } from './dto/tracking-request.dto';
 import { RatingRequestDto } from './dto/rating-request.dto';
 import { CancelRequestDto } from './dto/cancel-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
+import { SupportRequestDto } from './dto/support-request.dto';
 
 /**
  * Controller for handling various requests in the application.
@@ -135,6 +136,16 @@ export class AppController {
   @Post('on_update')
   onUpdate(@Body() onUpdateRequest: OndcContext | OnestContext | any) {
     return this.appService.onUpdate(onUpdateRequest);
+  }
+
+  @Post('support')
+  support(@Body() supportRequest: SupportRequestDto) {
+    return this.appService.support(supportRequest);
+  }
+
+  @Post('on_support')
+  onSupport(@Body() onSupportRequest: OndcContext | OnestContext | any) {
+    return this.appService.support(onSupportRequest);
   }
 
   // @Get('subscribe')

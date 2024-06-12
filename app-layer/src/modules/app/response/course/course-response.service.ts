@@ -16,6 +16,7 @@ import { ICourseRatingMessage } from '../job/interface/on-rating';
 import { ICourseTrackingMessage } from '../job/interface/on-tracking';
 import { ICourseCancelMessage } from '../job/interface/on-cancel';
 import { ICourseUpdateMessage } from '../job/interface/on-update';
+import { ICourseSupportMessage, ISupport } from './interface/on-support';
 
 /**
  * Service for handling job response operations.
@@ -325,6 +326,29 @@ export class CourseResponseService {
       const resp = {
         message: {
           order: order,
+        },
+      };
+      return resp;
+    } catch (error) {
+      this.logger.error(error);
+      return error?.message;
+    }
+  }
+
+  createSupportPayload(response: ICourseSupportMessage) {
+    try {
+      const support: ISupport = {
+        ref_id: response.support.ref_id,
+        docs: response.support.docs,
+        callback_phone: response.support.callback_phone,
+        email: response.support.email,
+        order_id: response.support.order_id,
+        phone: response.support.phone,
+        url: response.support.url,
+      };
+      const resp = {
+        message: {
+          support,
         },
       };
       return resp;

@@ -21,6 +21,8 @@ export enum Action {
   on_cancel = 'on_cancel', // Handle the cancellation of an action or process
   update = 'update', // Update a process or component
   on_update = 'on_update', // Handle the updating of an action or process
+  support = 'support', // Trigger a support operation
+  on_support = 'on_support', // Handle the result of a support operation
 }
 
 // Define constants for response codes

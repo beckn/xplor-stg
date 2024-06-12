@@ -24,4 +24,9 @@ export const coreResponseMessage = {
   initSuccessResponse: 'Init event subscribed', // Message indicating successful subscription to an init event
   confirmSuccessResponse: 'Confirm event subscribed',
   statusSuccessResponse: 'Status event subscribed', // Message indicating successful subscription to an init event
+  trackSuccessResponse: 'Track event subscribed', // Message indicating successful subscription to an init event
+  ratingSuccessResponse: 'Rating event subscribed', // Message indicating successful subscription to an init event
+  cancelSuccessResponse: 'Cancel event subscribed', // Message indicating successful subscription to an init event
+  updateSuccessResponse: 'Update event subscribed', // Message indicating successful subscription to an init event
+  supportSuccessResponse: 'Support event subscribed', // Message indicating successful subscription to an init event
 };

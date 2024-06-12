@@ -21,6 +21,7 @@ import { RatingRequestDto } from './dto/rating-request.dto';
 import { TrackingRequestDto } from './dto/tracking-request.dto';
 import { CancelRequestDto } from './dto/cancel-request.dto';
 import { UpdateRequestDto } from './dto/update-request.dto';
+import { SupportRequestDto } from './dto/support-request.dto';
 
 // Decorator to mark this class as a provider that can be injected into other classes
 @Injectable()
@@ -565,7 +566,7 @@ export class AppService {
       // Return a success response
       return getResponse(
         true,
-        coreResponseMessage.statusSuccessResponse,
+        coreResponseMessage.trackSuccessResponse,
         null,
         null,
       );
@@ -604,14 +605,14 @@ export class AppService {
         //   break;
         case DomainsEnum.COURSE_DOMAIN:
           course = response.message
-            ? this.onestCreateCoursePayload.createRatingPayload(
+            ? this.onestCreateCoursePayload.createTrackingPayload(
                 response.message,
               )
             : {};
           break;
         case DomainsEnum.BELEM:
           course = response.message
-            ? this.onestCreateCoursePayload.createRatingPayload(
+            ? this.onestCreateCoursePayload.createTrackingPayload(
                 response.message,
               )
             : {};
@@ -670,7 +671,7 @@ export class AppService {
       // Return a success response
       return getResponse(
         true,
-        coreResponseMessage.statusSuccessResponse,
+        coreResponseMessage.ratingSuccessResponse,
         null,
         null,
       );
@@ -774,7 +775,7 @@ export class AppService {
       // Return a success response
       return getResponse(
         true,
-        coreResponseMessage.statusSuccessResponse,
+        coreResponseMessage.cancelSuccessResponse,
         null,
         null,
       );
@@ -878,7 +879,7 @@ export class AppService {
       // Return a success response
       return getResponse(
         true,
-        coreResponseMessage.statusSuccessResponse,
+        coreResponseMessage.updateSuccessResponse,
         null,
         null,
       );
@@ -967,6 +968,111 @@ export class AppService {
       this.logger.log('resp Url to update', url);
       const resp = await this.httpService.post(url, payload);
       this.logger.log('resp Url to update', url, resp);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error);
+      return new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async support(supportRequest: SupportRequestDto) {
+    try {
+      this.globalActionService.globalSupport(supportRequest);
+      // Return a success response
+      return getResponse(
+        true,
+        coreResponseMessage.supportSuccessResponse,
+        null,
+        null,
+      );
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.log(JSON.stringify(error?.response));
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async onSupport(response: any) {
+    try {
+      this.logger.log(' support response:::', response);
+      await this.sendSupport(response);
+    } catch (error) {
+      // Log the error and throw a BadGatewayException with a formatted error response
+      this.logger.error(error?.response);
+      throw new BadGatewayException(
+        getResponse(false, error?.message, null, error?.response?.data),
+      );
+    }
+  }
+
+  async sendSupport(response: any) {
+    try {
+      // Initialize variables for job, course, and scholarship payloads
+      let job: object, course: object, scholarship: object, retail: object;
+      // Determine which type of payload to create based on the domain
+      switch (response.context.domain) {
+        // case DomainsEnum.JOB_DOMAIN:
+        //   job = response.message
+        //     ? this.onestCreatePayload.createPayload(response.message)
+        //     : {};
+        //   break;
+        case DomainsEnum.COURSE_DOMAIN:
+          course = response.message
+            ? this.onestCreateCoursePayload.createSupportPayload(
+                response.message,
+              )
+            : {};
+          break;
+        case DomainsEnum.BELEM:
+          course = response.message
+            ? this.onestCreateCoursePayload.createSupportPayload(
+                response.message,
+              )
+            : {};
+          break;
+        // case DomainsEnum.SCHOLARSHIP_DOMAIN:
+        //   scholarship = response.message
+        //     ? this.onestCreateScholarshipPayload.createStatusPayload(
+        //         response.message,
+        //       )
+        //     : {};
+        // case DomainsEnum.RETAIL_DOMAIN:
+        // retail = response.message
+        //   ? this.ondcCreatePayload.createPayload(response.message)
+        //   : {};
+        // break;
+        default:
+          break;
+      }
+      // Construct the payload for the search request
+      const payload = {
+        context: response.context,
+        data: {
+          job: job != null ? { context: response.context, ...job } : {},
+          course:
+            course != null ? { context: response.context, ...course } : {},
+          scholarship:
+            scholarship != null
+              ? { context: response.context, ...scholarship }
+              : {},
+          retail:
+            retail != null ? { context: response.context, ...retail } : {},
+        },
+      };
+
+      this.logger.log('SupportPayload', payload);
+
+      // Construct the URL for the search request
+      const url =
+        this.configService.get('CORE_SERVICE_URL') + '/stg/on_support';
+      // Send the search request and log the response
+      this.logger.log('resp Url to support', url);
+      const resp = await this.httpService.post(url, payload);
+      this.logger.log('resp Url to support', url, resp);
     } catch (error) {
       // Log the error and throw a BadGatewayException with a formatted error response
       this.logger.error(error);

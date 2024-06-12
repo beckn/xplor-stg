@@ -11,6 +11,8 @@ import {
 import { ICourseTrackMessage } from '../interface/request/tracking';
 import { ICourseRatingMessage } from '../interface/request/rating';
 import { ICourseCancelMessage } from '../interface/request/cancel';
+import { ICourseUpdateMessage } from '../interface/request/update';
+import { ICourseSupportMessage } from '../interface/request/support';
 
 // Define a Data Transfer Object (DTO) for search course payloads
 export class SearchCourseDto {
@@ -203,6 +205,36 @@ export class OnCancelCourseDto {
 }
 
 export class UpdateCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: ICourseUpdateMessage;
+}
+
+export class OnUpdateCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: any;
+}
+
+export class SupportCourseDto {
+  // The context property must not be empty
+  @IsNotEmpty()
+  context: ISelectContext;
+
+  // The message property must not be empty
+  @IsNotEmpty()
+  message: ICourseSupportMessage;
+}
+
+export class OnSupportCourseDto {
   // The context property must not be empty
   @IsNotEmpty()
   context: ISelectContext;
