@@ -24,16 +24,16 @@ import { ScholarshipInitService } from '../../modules/app/request/scholarship/se
 import { ScholarshipSearchService } from '../../modules/app/request/scholarship/services/searchv1.service';
 import { ScholarshipSelectService } from '../../modules/app/request/scholarship/services/selectv1.service';
 import { ScholarshipStatusService } from '../../modules/app/request/scholarship/services/statusv1.service';
-import { RatingRequestDto } from 'src/modules/app/dto/rating-request.dto';
-import { TrackingRequestDto } from 'src/modules/app/dto/tracking-request.dto';
-import { CourseRatingService } from 'src/modules/app/request/course/services/rating.service';
-import { CourseTrackingService } from 'src/modules/app/request/course/services/tracking.service';
-import { CancelRequestDto } from 'src/modules/app/dto/cancel-request.dto';
-import { CourseCancelService } from 'src/modules/app/request/course/services/cancel.service';
-import { UpdateRequestDto } from 'src/modules/app/dto/update-request.dto';
-import { CourseUpdateService } from 'src/modules/app/request/course/services/update.service';
-import { SupportRequestDto } from 'src/modules/app/dto/support-request.dto';
-import { CourseSupportService } from 'src/modules/app/request/course/services/supportV1.service';
+import { RatingRequestDto } from '../../modules/app/dto/rating-request.dto';
+import { TrackingRequestDto } from '../../modules/app/dto/tracking-request.dto';
+import { CourseRatingService } from '../../modules/app/request/course/services/rating.service';
+import { CourseTrackingService } from '../../modules/app/request/course/services/tracking.service';
+import { CancelRequestDto } from '../../modules/app/dto/cancel-request.dto';
+import { CourseCancelService } from '../../modules/app/request/course/services/cancel.service';
+import { UpdateRequestDto } from '../../modules/app/dto/update-request.dto';
+import { CourseUpdateService } from '../../modules/app/request/course/services/update.service';
+import { SupportRequestDto } from '../../modules/app/dto/support-request.dto';
+import { CourseSupportService } from '../../modules/app/request/course/services/supportV1.service';
 
 @Injectable()
 export class GlobalActionService {

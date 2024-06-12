@@ -94,6 +94,16 @@ export class AppService {
         JSON.stringify(response),
         '=============================',
       );
+      // const domain =
+      //   response?.context?.domain === DomainsEnum.COURSE_DOMAIN
+      //     ? 'course'
+      //     : response?.context?.domain === DomainsEnum.JOB_DOMAIN
+      //     ? 'job'
+      //     : response?.context?.domain === DomainsEnum.SCHOLARSHIP_DOMAIN
+      //     ? 'scholarship'
+      //     : 'retail';
+
+      // Dump the response into database
       const providerId = response?.message?.catalog?.providers[0]?.id;
       const updateData = {
         context: response?.context,
@@ -1082,6 +1092,7 @@ export class AppService {
       );
     }
   }
+  //comment down it for future use.
 
   // async subscribe() {
   //   try {

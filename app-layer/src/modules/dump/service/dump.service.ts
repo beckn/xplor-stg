@@ -59,49 +59,6 @@ export class DumpService {
     id: string[],
     domain: string,
   ): Promise<Dump | any> {
-    // return {
-    //   context: {
-    //     bap_id: OnestContextConstants.bap_id,
-    //     bap_uri: OnestContextConstants.bap_uri + `/${domain}`,
-    //     bpp_id: 'infosys.springboard.io',
-    //     bpp_uri: 'https://infosys.springboard.io',
-    //   },
-    //   fulfillments: [
-    //     {
-    //       id: '{{$randomUUID}}',
-    //       customer: {
-    //         person: {
-    //           name: 'Jane Doe',
-    //           age: '13',
-    //           gender: 'female',
-    //           tags: [
-    //             {
-    //               descriptor: {
-    //                 code: 'professional-details',
-    //                 name: 'Professional Details',
-    //               },
-    //               list: [
-    //                 {
-    //                   descriptor: {
-    //                     code: 'profession',
-    //                     name: 'profession',
-    //                   },
-    //                   value: 'student',
-    //                 },
-    //               ],
-    //               display: true,
-    //             },
-    //           ],
-    //         },
-    //         contact: {
-    //           phone: '+91-9663088848',
-    //           email: 'jane.doe@example.com',
-    //         },
-    //       },
-    //     },
-    //   ],
-    // };
-
     console.log('provider_id', provider_id, id, domain);
     return await this.dumpModel
       .findOne({

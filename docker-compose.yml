@@ -2,6 +2,10 @@ version: "3"
 
 services:
   onboarding_service:
+    logging:
+      driver: "file-log-driver"
+      options:
+        fpath: "/docker/onboarding_service.log"
     container_name: xplor-onboarding-stg-service
     build: ./onboarding
     # ports:
@@ -15,6 +19,10 @@ services:
       - ONBOARDING_LAYER_PORT=${ONBOARDING_LAYER_PORT}
 
   app_service:
+    logging:
+      driver: "file-log-driver"
+      options:
+        fpath: "/docker/app_service.log"
     container_name: xplor-app-stg-service
     build: ./app-layer
     # ports:
@@ -36,6 +44,10 @@ services:
       - IS_NETWORK_MOCK=${IS_NETWORK_MOCK}
 
   protocol_service:
+    logging:
+      driver: "file-log-driver"
+      options:
+        fpath: "/docker/protocol_service.log"
     container_name: xplor-protocol-stg-service
     build: ./protocol-layer
     # ports:
@@ -60,6 +72,10 @@ services:
       - BELEM_UNIQUE_KEY=${BELEM_UNIQUE_KEY}
 
   xplor_stg_nginx:
+    logging:
+      driver: "file-log-driver"
+      options:
+        fpath: "/docker/xplor_stg_nginx.log"
     image: nginx:alpine
     container_name: xplor-stg-nginx
     restart: always
