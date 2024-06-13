@@ -1,5 +1,7 @@
 /node_modules
 /build
 /dist
-
+/coverage
 *.env
+/log
+/api_json_errors.conf
