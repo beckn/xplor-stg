@@ -42,6 +42,10 @@ services:
       - APP_SERVICE_URL=${APP_SERVICE_URL}
       - CORE_SERVICE_URL=${CORE_SERVICE_URL}
       - IS_NETWORK_MOCK=${IS_NETWORK_MOCK}
+      - IL_SERVICE_URL=${IL_SERVICE_URL}
+      - BELEM_BAP_ID=${BELEM_BAP_ID}
+      - BELEM_BAP_URI=${BELEM_BAP_URI}
+      - BELEM_GATEWAY_URL=${BELEM_GATEWAY_URL}
 
   protocol_service:
     logging:
