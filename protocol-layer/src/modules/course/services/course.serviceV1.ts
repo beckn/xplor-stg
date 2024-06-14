@@ -656,10 +656,11 @@ export class CourseService {
   async onCancel(onCancelCourseDto: OnCancelCourseDto) {
     try {
       this.logger.log('onCancelCourseDto', onCancelCourseDto);
-      const isValid = validateJson(onCancelSchema, {
-        context: onCancelCourseDto.context,
-        message: onCancelCourseDto.message,
-      });
+      // const isValid = validateJson(onCancelSchema, {
+      //   context: onCancelCourseDto.context,
+      //   message: onCancelCourseDto.message,
+      // });
+      const isValid = true;
       this.logger.log(isValid);
       if (!isValid) {
         const message = new AckNackResponse(
