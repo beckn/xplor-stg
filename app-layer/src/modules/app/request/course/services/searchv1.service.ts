@@ -5,10 +5,7 @@ import { Context } from '../interface/context';
 import { ICourseSearch, Message } from '../interface/request/search';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import {
-  BelemContextConstants,
-  OnestContextConstants,
-} from '../../../../../common/constants/context.constant';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   xplorDomain,
   DomainsEnum,
@@ -37,15 +34,24 @@ export class CourseSearchService {
    */
   createPayload(context: Context, query: Message) {
     try {
+      const bapId = this.configService.get('BELEM_BAP_ID');
+      const bapUri = this.configService.get('BELEM_BAP_URI');
+      const bapGateway = this.configService.get('BELEM_GATEWAY_URL');
+      this.logger.log('BELEM:', {
+        bapId: bapId,
+        bapGateway: bapGateway,
+        bapUri: bapUri,
+      });
+
       const contextPayload: Context = {
         ...context,
         bap_id:
           context?.domain === DomainsEnum.BELEM
-            ? BelemContextConstants.bap_id
+            ? bapId
             : OnestContextConstants.bap_id,
         bap_uri:
           context?.domain === DomainsEnum.BELEM
-            ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+            ? bapUri + `/${xplorDomain.COURSE}`
             : this.configService.get('PROTOCOL_SERVICE_URL') +
               `/${xplorDomain.COURSE}`,
         domain:
@@ -59,9 +65,7 @@ export class CourseSearchService {
       return {
         ...payload,
         gatewayUrl:
-          context?.domain === DomainsEnum.BELEM
-            ? Gateway.belem
-            : Gateway.course,
+          context?.domain === DomainsEnum.BELEM ? bapGateway : Gateway.course,
       };
     } catch (error) {
       return error?.message;

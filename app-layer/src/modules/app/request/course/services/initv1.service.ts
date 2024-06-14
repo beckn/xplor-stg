@@ -3,10 +3,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SelectContext } from '../interface/context';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import {
-  BelemContextConstants,
-  OnestContextConstants,
-} from '../../../../../common/constants/context.constant';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   Action,
   DomainsEnum,
@@ -28,6 +25,14 @@ export class CourseInitService {
 
   async createPayload(request: InitRequestDto) {
     try {
+      const bapId = this.configService.get('BELEM_BAP_ID');
+      const bapUri = this.configService.get('BELEM_BAP_URI');
+      const bapGateway = this.configService.get('BELEM_GATEWAY_URL');
+      this.logger.log('BELEM:', {
+        bapId: bapId,
+        bapGateway: bapGateway,
+        bapUri: bapUri,
+      });
       if (request.context.domain === DomainsEnum.BELEM) {
         this.logger.log(request?.message?.order, 'Item from request');
         const getItemFromDumpDb =
@@ -50,11 +55,11 @@ export class CourseInitService {
           message_id: request.context.message_id,
           bap_id:
             context?.domain === DomainsEnum.BELEM
-              ? BelemContextConstants.bap_id
+              ? bapId
               : OnestContextConstants.bap_id,
           bap_uri:
             context?.domain === DomainsEnum.BELEM
-              ? BelemContextConstants.bap_uri + `/${xplorDomain.COURSE}`
+              ? bapUri + `/${xplorDomain.COURSE}`
               : this.configService.get('PROTOCOL_SERVICE_URL') +
                 `/${xplorDomain.COURSE}`,
           version: OnestContextConstants.version,
