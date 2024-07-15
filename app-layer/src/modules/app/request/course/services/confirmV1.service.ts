@@ -3,10 +3,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SelectContext } from '../interface/context';
 import { ConfigService } from '@nestjs/config';
 import { AxiosService } from '../../../../../common/axios/axios.service';
-import {
-  BelemContextConstants,
-  OnestContextConstants,
-} from '../../../../../common/constants/context.constant';
+import { OnestContextConstants } from '../../../../../common/constants/context.constant';
 import {
   DomainsEnum,
   xplorDomain,

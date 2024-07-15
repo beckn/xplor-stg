@@ -1,0 +1,10 @@
+node_modules
+logs/
+docker/
+# config/default.yaml
+# *.sh
+devops/
+guides/
+dist/
+*.md
+# .env

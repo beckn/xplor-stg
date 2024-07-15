@@ -128,11 +128,13 @@ export class CourseResponseService {
           ? response?.order?.provider?.items?.map((item) => {
               return {
                 id: item?.id,
+                details: item,
               };
             })
           : response?.order?.items?.map((item) => {
               return {
                 id: item?.id,
+                details: item,
               };
             }),
         fulfillments: response?.order?.provider?.fulfillments
@@ -151,6 +153,9 @@ export class CourseResponseService {
         quote: response?.order?.provider?.quote
           ? response?.order?.provider?.quote
           : response?.order?.quote,
+        billing: response?.order?.provider?.billing
+          ? response?.order?.provider?.billing
+          : response?.order?.billing,
         payments: response?.order?.provider?.payments
           ? response?.order?.provider?.payments
           : response?.order?.payments,
