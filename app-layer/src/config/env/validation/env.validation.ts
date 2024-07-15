@@ -9,4 +9,5 @@ export default () => ({
     .default('development'),
   APP_LAYER_PORT: Joi.number().port().required().default(5001),
   MONGODB_URL: Joi.string().required(),
+  GCL_BASE_URL: Joi.string().required().default('http://localhost:3002'),
 });

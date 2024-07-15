@@ -5,3 +5,4 @@
 *.env
 /log
 /api_json_errors.conf
+data

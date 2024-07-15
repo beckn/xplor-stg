@@ -7,4 +7,5 @@ export default () => ({
   GRAFANA_SERVICE_URL: process.env.GRAFANA_SERVICE_URL,
   PROTOCOL_SERVICE_URL: process.env.PROTOCOL_SERVICE_URL,
   MONGODB_URL: process.env.MONGODB_URL,
+  GCL_BASE_URL: process.env.GCL_BASE_URL,
 });

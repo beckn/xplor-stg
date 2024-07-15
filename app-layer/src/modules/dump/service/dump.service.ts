@@ -119,7 +119,9 @@ export class DumpService {
       .exec();
   }
   async upsertDump(providerId: string, dumpData: any): Promise<DumpDocument> {
-    const filter = { provider_id: providerId };
+    const filter = {
+      provider_id: providerId,
+    };
     const update = { ...dumpData }; // Assuming dumpData contains the updated data
     const options = { upsert: true };
 
