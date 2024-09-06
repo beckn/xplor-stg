@@ -43,7 +43,7 @@ deploy-prod:
       sshpass -p $XPLOR_STAGE_PASSWORD ssh $Xplor_Username@$XPLOR_STAGE_IP "
         if [[ -d "$CI_PROJECT_NAME" ]]; then
           cd /home/ubuntu/$CI_PROJECT_NAME
-          docker-compose down
+          docker-compose -f docker-compose.yml down
           cd /home/ubuntu/ && sudo rm -rf $CI_PROJECT_NAME
         fi "
 
