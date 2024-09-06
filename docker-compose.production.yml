@@ -1,8 +1,221 @@
 version: "3"
+
 services:
-  backend:
-    container_name: STG-nest-backend
-    build: .
-    ports:
-     - 1077:5438
+  # onboarding_service:
+  #   logging:
+  #     driver: "file-log-driver"
+  #     options:
+  #       fpath: "/docker/onboarding_service.log"
+  #   container_name: xplor-onboarding-stg-service
+  #   build: ./onboarding
+  #   # ports:
+  #   #   - 5006:5006
+  #   restart: always
+  #   networks:
+  #     - xplor-network
+  #   environment:
+  #     - GRAFANA_SERVICE_URL=${GRAFANA_SERVICE_URL}
+  #     - MONGODB_URL=${MONGODB_URL}
+  #     - ONBOARDING_LAYER_PORT=${ONBOARDING_LAYER_PORT}
+
+  app_service:
+    container_name: xplor-app-stg-service
+    build: ./app-layer
+    # ports:
+    #   - 1105:3000
     restart: always
+    # depends_on:
+    #   - kafka
+    networks:
+      - xplor-network
+    environment:
+      - GRAFANA_SERVICE_URL=${GRAFANA_SERVICE_URL}
+      - MONGODB_URL=${MONGODB_URL}
+      - NODE_Env=${NODE_ENV}
+      - APP_LAYER_PORT=${APP_LAYER_PORT}
+      - PROTOCOL_DATABASE_URL=${PROTOCOL_DATABASE_URL}
+      - PROTOCOL_SERVICE_URL=${PROTOCOL_SERVICE_URL}
+      - APP_SERVICE_URL=${APP_SERVICE_URL}
+      - CORE_SERVICE_URL=${CORE_SERVICE_URL}
+      - IS_NETWORK_MOCK=${IS_NETWORK_MOCK}
+      - IL_SERVICE_URL=${IL_SERVICE_URL}
+      - BELEM_BAP_ID=${BELEM_BAP_ID}
+      - BELEM_BAP_URI=${BELEM_BAP_URI}
+      - BELEM_GATEWAY_URL=${BELEM_GATEWAY_URL}
+      - GCL_BASE_URL=${GCL_BASE_URL}
+      - DOMAINS=${DOMAINS}
+
+  # protocol_service:
+  #   logging:
+  #     driver: "file-log-driver"
+  #     options:
+  #       fpath: "/docker/protocol_service.log"
+  #   container_name: xplor-protocol-stg-service
+  #   build: ./protocol-layer
+  #   # ports:
+  #   #   - 5005:5005
+  #   restart: always
+  #   networks:
+  #     - xplor-network
+  #   environment:
+  #     - GRAFANA_SERVICE_URL=${GRAFANA_SERVICE_URL}
+  #     - MONGODB_URL=${MONGODB_URL}
+  #     - PROTOCOL_APP_PORT=${PROTOCOL_APP_PORT}
+  #     - NODE_ENV=${NODE_ENV}
+  #     - PROTOCOL_DATABASE_URL=${PROTOCOL_DATABASE_URL}
+  #     - APP_SERVICE_URL=${APP_SERVICE_URL}
+  #     - ONDC_PRIVATE_KEY=${ONDC_PRIVATE_KEY}
+  #     - ONDC_SUBSCRIBER_ID=${ONDC_SUBSCRIBER_ID}
+  #     - ONDC_SUBSCRIBER_UNIQUE_KEY_ID=${ONDC_SUBSCRIBER_UNIQUE_KEY_ID}
+  #     - IS_NETWORK_MOCK=${IS_NETWORK_MOCK}
+  #     - BELEM_PRIVATE_KEY=${BELEM_PRIVATE_KEY}
+  #     - BELEM_PUBLIC_KEY=${BELEM_PUBLIC_KEY}
+  #     - BELEM_SUBSCRIBER_ID=${BELEM_SUBSCRIBER_ID}
+  #     - BELEM_UNIQUE_KEY=${BELEM_UNIQUE_KEY}
+
+  xplor_stg_nginx:
+    # logging:
+    #   driver: "file-log-driver"
+    #   options:
+    #     fpath: "/docker/xplor_stg_nginx.log"
+    image: nginx:alpine
+    container_name: xplor-stg-nginx
+    restart: always
+    ports:
+      - "1105:8080"
+    # depends_on:
+      # - onboarding_service
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./log:/etc/nginx/log/
+      - ./api_json_errors.conf:/etc/nginx/api_json_errors.conf
+    networks:
+      - xplor-network
+
+  # zookeeper:
+  #   image: wurstmeister/zookeeper:latest
+  #   ports:
+  #     - "2182:2181"
+  #   networks:
+  #     - xplor-network
+  # kafka:
+  #   image: wurstmeister/kafka:2.11-1.1.1
+  #   ports:
+  #     - "9093:9092"
+  #   restart: always
+  #   links:
+  #     - zookeeper
+  #   environment:
+  #     KAFKA_ADVERTISED_HOST_NAME: kafka
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+  #     KAFKA_DELETE_TOPIC_ENABLE: "true"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.soc
+  #   networks:
+  #     - xplor-network
+
+  gcl_service:
+    # logging:
+      # driver: "file-log-driver"
+      # options:
+      #   fpath: "/docker/gcl_service.log"
+    container_name: xplor-gcl-service-stg-service
+    build: ./generic-client-layer
+    # ports:
+    #   - 1105:3000
+    restart: always
+    # depends_on:
+    #   - kafka
+    networks:
+      - xplor-network
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_NAME=${APP_NAME}
+      - APP_KEY=${APP_KEY}
+      - APP_DEBUG=${APP_DEBUG}
+      - APP_PORT=${APP_PORT}
+      - APP_URL=${APP_URL}
+      - LOG_CHANNEL=${LOG_CHANNEL}
+      - LOG_DEPRECATIONS_CHANNEL=null
+      - LOG_LEVEL=${LOG_LEVEL}
+      - PS_BASE_URI=${PS_BASE_URI}
+      - PS_BAP_ID=${PS_BAP_ID}
+      - PS_BAP_URI=${PS_BAP_URI}
+      - PS_CITY_NAME=${PS_CITY_NAME}
+      - PS_CITY_CODE=${PS_CITY_CODE}
+      - PS_COUNTRY_NAME=${PS_COUNTRY_NAME}
+      - PS_COUNTRY_CODE=${PS_COUNTRY_CODE}
+      - BAP_WEBHOOK_URI=${BAP_WEBHOOK_URI}
+      - BAP_SEARCH_WEBHOOK_URI=${BAP_SEARCH_WEBHOOK_URI}
+
+  ps_bap_client:
+    container_name: xplor-ps-bap-client-stg-service
+    build: 
+      context: ./protocol-server
+      dockerfile: Dockerfile.bap_client
+      # args:
+      #   port: ${BAP_CLIENT_PORT}
+    # command: ["./start_bap_client.sh"]
+    # ports:
+    #   - 5005:5005
+    restart: always
+    networks:
+      - xplor-network
+  
+  ps_bap_network:
+    container_name: xplor-ps-bap-network-stg-service
+    build: 
+      context: ./protocol-server
+      dockerfile: Dockerfile.bap_network
+      # args:
+      #   default_yml: default-bap-network.yml
+        # port: ${BAP_NETWORK_PORT}
+    # command: ["./start_bap_network.sh"]
+    # ports:
+    #   - 5005:5005
+    restart: always
+    networks:
+      - xplor-network
+
+  mongo_db:
+    image: mongo
+    restart: unless-stopped
+    # volumes:
+    #   - ./data/mongo_DB:/data/db
+    
+    # ports:
+    #   - "27017:27017"
+    networks:
+      - xplor-network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=tvast
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=ps
+
+  redis_db:
+    image: redis:6.2.5-alpine
+    restart: unless-stopped
+    networks:
+      - xplor-network
+    # ports:
+    #   - "6379:6379"
+    # volumes:
+    #   - ./data/redis_DB:/data
+
+  queue_service:
+    image: rabbitmq:3.9.11-management-alpine
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - xplor-network
+    environment:
+      AMQP_URL: "amqp://queue_service?connection_attempts=3&retry_delay=5"
+      RABBITMQ_DEFAULT_USER: "tvast"
+      RABBITMQ_DEFAULT_PASS: "password"
+
+networks:
+  xplor-network:
+    external: true
