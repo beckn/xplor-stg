@@ -52,3 +52,4 @@ deploy-prod:
     - sshpass -p $XPLOR_PROD_PASSWORD ssh -tt $Xplor_Username@$XPLOR_PROD_HOST  "
         cd /home/ubuntu/STG-nest-backend && chmod +x start.sh && ./start.sh "
     - echo "https://xplor-stg-nest-prod.thewitslab.com"
+    
