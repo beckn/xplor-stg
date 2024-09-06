@@ -44,10 +44,10 @@ deploy-prod:
         if [[ -d "$CI_PROJECT_NAME" ]]; then
           cd /home/ubuntu/$CI_PROJECT_NAME
           docker-compose -f docker-compose.yml down
-          cd /home/ubuntu/ && sudo rm -rf $CI_PROJECT_NAME
+          cd /home/ubuntu/ && sudo rm -rf STG-nest-backend
         fi "
 
-    - sshpass -p $XPLOR_PROD_PASSWORD ssh $Xplor_Username@$XPLOR_PROD_HOST  "git clone -b feat/develop https://user:'$GITLAB_ACCESS_TOKEN'@gitlab.thewitslab.com/wil-workspace/xplor/STG-nest-backend.git"
+    - sshpass -p $XPLOR_PROD_PASSWORD ssh $Xplor_Username@$XPLOR_PROD_HOST  "git clone -b main https://user:'$GITLAB_ACCESS_TOKEN'@gitlab.thewitslab.com/wil-workspace/xplor/STG-nest-backend.git"
     - sshpass -p $XPLOR_PROD_PASSWORD scp .env $Xplor_Username@$XPLOR_PROD_HOST:/home/ubuntu/STG-nest-backend
     - sshpass -p $XPLOR_PROD_PASSWORD ssh -tt $Xplor_Username@$XPLOR_PROD_HOST  "
         cd /home/ubuntu/STG-nest-backend && chmod +x start.sh && ./start.sh "
